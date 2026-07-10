@@ -1,0 +1,1225 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "done": "Done",
+    "back": "Back",
+    "loading": "Loading…",
+    "error": "Error",
+    "ok": "OK",
+    "outstation": "Outstation",
+    "withinCity": "Within City",
+    "cashChip": "💵 Cash",
+    "couponChip": "🏷 Coupon",
+    "sameAsMyNumber": "Same as my number",
+    "categories": {
+      "cab": "Cab",
+      "truck": "Truck",
+      "ambulance": "Ambulance"
+    },
+    "tabs": {
+      "home": "Home",
+      "rides": "Rides",
+      "profile": "Profile"
+    }
+  },
+  "auth": {
+    "login": {
+      "logoSub": "Logistics and Rides",
+      "signIn": "Sign In",
+      "signUp": "Sign Up",
+      "createAccount": "Create Account",
+      "fullNameLabel": "FULL NAME",
+      "fullNamePlaceholder": "Priya Sharma",
+      "phoneLabel": "PHONE",
+      "phonePlaceholder": "9876543210",
+      "referralLabel": "REFERRAL CODE (OPTIONAL)",
+      "referralPlaceholder": "e.g. GU7X2K9A",
+      "referralValid": "✓ Referred by {{name}}",
+      "referralInvalid": "Invalid code — you can still sign up",
+      "emailLabel": "EMAIL",
+      "emailPlaceholder": "you@gmail.com",
+      "passwordLabel": "PASSWORD",
+      "passwordPlaceholder": "Min 8 characters",
+      "errors": {
+        "fillFields": "Please fill in all fields",
+        "invalidEmailTitle": "Invalid Email",
+        "invalidEmail": "Enter a valid email",
+        "invalidPhone": "Enter a valid 10-digit phone number",
+        "invalidPassword": "Password must be at least 8 characters",
+        "loginFailedTitle": "Login Failed",
+        "loginFailedDefault": "Invalid email or password",
+        "signupFailedTitle": "Signup Failed",
+        "signupFailedDefault": "Something went wrong"
+      }
+    }
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "subGreeting": "Where are you going today?",
+    "activeRide": {
+      "inProgress": "Ride in progress",
+      "statusLabels": {
+        "searching": "Finding a driver...",
+        "accepted": "Driver assigned",
+        "arriving": "Driver arriving",
+        "in_progress": "On the way"
+      },
+      "dropFallback": "Drop location"
+    },
+    "upcoming": {
+      "title": "🗓 Upcoming ride",
+      "dropFallback": "Drop location",
+      "view": "View",
+      "cancel": "Cancel",
+      "cancelAlert": {
+        "title": "Cancel scheduled ride",
+        "message": "This ride hasn't been dispatched yet — cancelling is free. Cancel it?",
+        "keep": "Keep it",
+        "confirm": "Yes, Cancel"
+      },
+      "cancelError": "Could not cancel. Please try again."
+    },
+    "services": {
+      "title": "Services",
+      "cab": {
+        "name": "Cab",
+        "desc": "2W, 3W, 4W"
+      },
+      "truck": {
+        "name": "Truck",
+        "desc": "City & outstation"
+      },
+      "ambulance": {
+        "name": "Ambulance",
+        "desc": "BLS / ALS"
+      }
+    },
+    "savedPlaces": {
+      "title": "Saved places",
+      "add": "+ Add",
+      "emptyTitle": "No saved places yet",
+      "emptySub": "After booking, you can save your pickup or drop as Home, Office, or any custom label"
+    },
+    "promo": {
+      "title": "First ride free!",
+      "desc": "Use code BOGIE100 for ₹100 off",
+      "claim": "Claim"
+    }
+  },
+  "booking": {
+    "title": "Book a Service",
+    "chooseVehicleSub": "Choose your vehicle type",
+    "pickupPlaceholder": "Set pickup on map",
+    "dropPlaceholder": "Set drop on map",
+    "pickupFallback": "Pickup point",
+    "dropFallback": "Drop point",
+    "distanceApprox": "Approx {{km}} km",
+    "chooseVehicle": "Choose vehicle",
+    "fare": {
+      "estimated": "Estimated fare",
+      "base": "Base ₹{{amount}}",
+      "perKm": "₹{{amount}}/km",
+      "distanceKm": "{{km}} km"
+    },
+    "payment": {
+      "title": "Payment method",
+      "cash": "Cash",
+      "upi": "UPI",
+      "card": "Card"
+    },
+    "serviceFallback": "Service",
+    "bookButton": "Book {{service}}",
+    "bookButtonWithFare": "Book {{service}} · ₹{{fare}}",
+    "groups": {
+      "truckCity": "Truck — City",
+      "truckOutstation": "Truck — Outstation"
+    },
+    "errors": {
+      "setPickupTitle": "Set pickup",
+      "setPickupMsg": "Tap the pickup row to set it on the map.",
+      "setDropTitle": "Set drop",
+      "setDropMsg": "Tap the drop row to set it on the map.",
+      "chooseVehicleTitle": "Choose a vehicle",
+      "chooseVehicleMsg": "Select a service to continue.",
+      "riderIdMissing": "Could not identify your rider account. Please log out and log in again.",
+      "bookingFailed": "Could not create booking"
+    },
+    "session": {
+      "expiredTitle": "Session Expired",
+      "expiredMsg": "Please log in again to continue.",
+      "couldNotIdentify": "Could not identify your account. Please log in again."
+    },
+    "missingInfoTitle": "Missing Information",
+    "missingInfoMsg": "Please provide: {{fields}}",
+    "failedTitle": "Booking Failed",
+    "failedDefault": "Could not create booking. Please try again.",
+    "proceedWith": "Proceed with {{name}} →",
+    "selectVehicle": "Select a vehicle",
+    "selectAmbulance": "Select an ambulance",
+    "overlay": {
+      "pickupLocationTitle": "Pickup location",
+      "dropLocationTitle": "Drop location",
+      "searchPickup": "Search pickup...",
+      "searchDestination": "Search destination...",
+      "useCurrentLocation": "Use current location",
+      "autoDetect": "Auto-detect my location",
+      "fetchingLocation": "Fetching your location..."
+    },
+    "schedule": {
+      "now": "⏰ Now",
+      "nowChip": "⚡ Now",
+      "chip": "🗓 {{date}}",
+      "chipPlaceholder": "🗓 Schedule",
+      "pickTimeTitle": "Pick a time",
+      "pickTimeMsg": "Choose a date and time for your scheduled ride.",
+      "scheduleFor": "Schedule for {{time}} →",
+      "bookNowWithFare": "Book Now · ₹{{amount}}",
+      "rideScheduledTitle": "✅ Ride Scheduled",
+      "rideScheduledMsg": "Your ride is scheduled for {{time}}. We'll find your driver ~15 minutes before pickup.",
+      "truckScheduledMsg": "Your truck is scheduled for {{time}}. We'll find your driver ~15 minutes before pickup.",
+      "selectedTimeFallback": "the selected time"
+    },
+    "review": {
+      "title": "Review Booking",
+      "route": "Route",
+      "fareBreakdown": "Fare Breakdown",
+      "totalCharges": "Total Charges",
+      "estimatedFare": "Estimated Fare",
+      "baseFare": "Base Fare",
+      "distanceCharge": "Distance Charge",
+      "distanceChargeSub": "{{km}} km × ₹{{rate}}/km",
+      "distanceKmLabel": "Distance ({{km}} km)",
+      "total": "Total",
+      "coupon": "Coupon",
+      "couponWithCode": "Coupon ({{code}})",
+      "previousCancellationFee": "Previous cancellation fee",
+      "addedFromEarlierRide": "Added from an earlier ride",
+      "cashPaymentNote": "💵 Cash payment after the ride",
+      "paymentAfterDelivery": "💵 Payment after delivery",
+      "readBeforeBooking": "📋 Read before booking",
+      "receiverDetails": "Receiver Details",
+      "name": "Name",
+      "mobile": "Mobile",
+      "loadingService": "Loading Service",
+      "unloadingService": "Unloading Service"
+    },
+    "rules": {
+      "truck": [
+        "Driver will arrive within 30–60 minutes of booking.",
+        "Extra charges may apply for excessive waiting time.",
+        "Payment to be made after delivery is complete.",
+        "Goods must be legally permitted for transport.",
+        "Fragile or high-value items must be declared before loading."
+      ]
+    },
+    "coupons": {
+      "title": "Offers & Coupons",
+      "currentTotal": "Current total: ₹{{amount}}",
+      "enterCode": "Enter coupon code",
+      "apply": "Apply",
+      "notEligible": "Not eligible",
+      "availableOffers": "Available Offers",
+      "invalidCode": "Invalid coupon code",
+      "minFareRequired": "Min fare ₹{{amount}} required",
+      "minOrderRequired": "Min order ₹{{amount}} required",
+      "savesAmount": "Saves ₹{{amount}}",
+      "applied": "Applied: {{code}}",
+      "applyCouponOrOffer": "Apply Coupon or Offer"
+    }
+  },
+  "locationPicker": {
+    "searchPickupPlaceholder": "Search pickup location...",
+    "searchDropPlaceholder": "Search drop location...",
+    "gettingAddress": "Getting address...",
+    "moveMapPlaceholder": "Move map to set location",
+    "customLabelPlaceholder": "Label (e.g. Gym, Mom's House)",
+    "save": "Save",
+    "saveWithStar": "⭐ Save",
+    "sheetLabelPickup": "PICKUP LOCATION",
+    "sheetLabelDrop": "DROP LOCATION",
+    "confirmPickup": "Confirm pickup",
+    "confirmDrop": "Confirm drop",
+    "saveAlert": {
+      "title": "Save this place as...",
+      "home": "🏠 Home",
+      "office": "💼 Office",
+      "custom": "✏️ Custom label"
+    },
+    "noAddressAlert": {
+      "title": "No address",
+      "setLocation": "Set a location first",
+      "setLocationMap": "Set a location on the map first"
+    },
+    "savedToast": "Saved! ⭐",
+    "savedToastMsg": "\"{{label}}\" saved to your places",
+    "saveError": "Could not save this place"
+  },
+  "cab": {
+    "home": {
+      "whereTo": "Where to?",
+      "youAreHere": "You are here",
+      "placeFallback": "Place",
+      "categories": {
+        "cab": "Cab",
+        "auto": "Auto",
+        "rentals": "Rentals",
+        "twoWheeler": "2 Wheeler",
+        "outstation": "Outstation"
+      },
+      "locationNeededAlert": {
+        "title": "Location needed",
+        "message": "Please allow location access first"
+      },
+      "restorePill": "↑ Where to?",
+      "currentLocation": "Current Location"
+    },
+    "booking": {
+      "setYourTrip": "Set your trip",
+      "restorePill": "↑ Set your trip"
+    },
+    "review": {
+      "serviceFallback": "Cab"
+    },
+    "vehicles": {
+      "chooseARide": "Choose a ride",
+      "approxKm": "~{{km}} km",
+      "noCabsAvailable": "No cabs available",
+      "etaAway_one": "{{count}} min away",
+      "etaAway_other": "{{count}} min away",
+      "hourlyRental": "Hourly Rental",
+      "hourlyRentalDesc": "Book by the hour, go anywhere",
+      "flexible": "FLEXIBLE",
+      "fromAmount": "From ₹{{amount}}",
+      "collapsedChooseRide": "↑ Choose a ride",
+      "selectArrow": "Select →",
+      "ourFleet": "Our Fleet",
+      "extras": {
+        "cab_any": {
+          "label": "Book Any",
+          "desc": "Any available cab"
+        },
+        "cab_prime_sed": {
+          "label": "Prime Sedan",
+          "desc": "Premium sedan ride"
+        },
+        "cab_mini_nonac": {
+          "label": "Mini Non-AC",
+          "desc": "Budget-friendly ride"
+        }
+      }
+    },
+    "coupons": {
+      "catalog": {
+        "bogie100": "₹100 off on your ride",
+        "ride10": "10% off on cab bookings",
+        "newuser": "₹150 off for new users"
+      }
+    },
+    "rentals": {
+      "title": "Hourly Rentals",
+      "addressWithPin": "📍 {{address}}",
+      "choosePackage": "Choose a package",
+      "selectVehicleTitle": "Select vehicle",
+      "upToKm": "upto {{km}} km",
+      "noVehiclesAvailable": "No vehicles available",
+      "pickPackage": "Pick package",
+      "popular": "POPULAR",
+      "popularFare": "Popular Fare",
+      "viewDetails": "View details",
+      "selectAPackage": "Select a package",
+      "duration_one": "{{count}} hr",
+      "duration_other": "{{count}} hrs"
+    },
+    "vehicleTypes": {
+      "cab_2w": {
+        "label": "2 Wheeler",
+        "desc": "Beat the traffic"
+      },
+      "cab_3w": {
+        "label": "Auto",
+        "desc": "Quickest auto ride in town"
+      },
+      "cab_4w": {
+        "label": "Mini",
+        "desc": "Affordable & comfortable"
+      },
+      "cab_4w_suv": {
+        "label": "Prime SUV",
+        "desc": "Spacious & premium"
+      }
+    }
+  },
+  "truck": {
+    "index": {
+      "bookATruck": "Book a Truck",
+      "chooseDeliveryType": "Choose your delivery type",
+      "localDelivery": "Local delivery",
+      "interstateTransport": "Interstate transport",
+      "collapsedBookTruck": "↑ Book a Truck"
+    },
+    "booking": {
+      "title": "Booking Details",
+      "deliveryLabel": "{{scope}} Delivery",
+      "pickupLocationLabel": "Pickup Location",
+      "dropLocationLabel": "Drop Location",
+      "receiverNamePlaceholder": "Receiver's Name *",
+      "receiverPhonePlaceholder": "Receiver's Mobile Number *",
+      "hintSetPickup": "Set a pickup location above",
+      "hintSetDrop": "Set a drop location above",
+      "confirmProceed": "Confirm & Proceed →"
+    },
+    "serviceFallback": "Truck",
+    "addons": {
+      "title": "Add-ons & Offers",
+      "addonServicesTitle": "Add-on Services",
+      "loadingServiceSub": "Helpers will load your goods at pickup",
+      "unloadingServiceSub": "Helpers will unload at destination",
+      "estimatedTotalTitle": "Estimated Total",
+      "addonServicesLine": "Add-on services",
+      "proceedToReview": "Proceed to Review →"
+    },
+    "vehicles": {
+      "title": "Choose Vehicle",
+      "approxKmScope": "~{{km}} km · {{scope}}",
+      "noneTitle": "No vehicles available",
+      "noneSub": "No truck services found for this route type",
+      "capacityFallback": "Variable load capacity",
+      "loadCapacity": {
+        "truck_city_tata_ace": "Up to 750 kg",
+        "truck_city_14ft": "Up to 3 tons",
+        "truck_city_open": "Up to 7 tons",
+        "truck_city_container": "Up to 7 tons",
+        "truck_os_14ft": "Up to 3 tons — Long distance",
+        "truck_os_20ft": "Long distance",
+        "truck_os_container": "Long distance",
+        "truck_os_trailer": "Long distance",
+        "cab_2w": "Up to 20 kg parcel"
+      },
+      "baseChip": "₹{{amount}} base",
+      "perKmChip": "+₹{{amount}}/km",
+      "collapsedChooseVehicle": "↑ Choose Vehicle"
+    },
+    "coupons": {
+      "catalog": {
+        "bogie100": "₹100 off on first booking",
+        "truck10": "10% off on truck bookings",
+        "newuser": "₹150 off for new users"
+      }
+    }
+  },
+  "ambulance": {
+    "index": {
+      "title": "Book an Ambulance",
+      "selectServiceType": "Select service type",
+      "zeroCommissionTitle": "Zero Commission Policy",
+      "zeroCommissionText": "bogie charges NO commission on ambulance services. 100% goes to the provider.",
+      "freeBadge": "FREE",
+      "freeTitle": "Free Ambulance",
+      "freeSub": "Govt / NGO sponsored",
+      "paidTitle": "Paid Ambulance",
+      "paidSub": "Private medical service",
+      "disclaimer": "📋 Free ambulances are subject to availability.\nResponse time may vary.",
+      "collapsedBookAmbulance": "↑ Book an Ambulance"
+    },
+    "purposes": {
+      "patient_transfer": "Patient Transfer",
+      "emergency": "Emergency",
+      "dead_body": "Dead Body Transfer",
+      "patient_transfer_sub": "Shifting patient between hospitals or home",
+      "emergency_sub": "Immediate medical response needed",
+      "dead_body_sub": "Respectful transfer of deceased"
+    },
+    "subTypes": {
+      "bls": "Basic Life Support (BLS)",
+      "als": "Advanced Life Support (ALS)",
+      "blsShort": "Basic Life Support",
+      "blsDesc": "Oxygen, paramedic, first aid",
+      "alsShort": "Advanced Life Support",
+      "alsDesc": "ICU on wheels, ventilator, doctor"
+    },
+    "booking": {
+      "title": "Ambulance Details",
+      "freeService": "Free Service",
+      "paidService": "Paid Service",
+      "bannerFree": "🆓 Free Service — No charges will be applied",
+      "bannerPaid": "🚑 Paid Service — Charges based on service type",
+      "purposeSectionTitle": "Purpose of Ambulance *",
+      "urgentBanner": "🚨 EMERGENCY MODE — Priority dispatch activated",
+      "ambulanceTypeRequired": "Ambulance Type Required *",
+      "pickupLocationLabel": "Pickup Location *",
+      "dropLocationLabel": "Drop Location *",
+      "dropPlaceholder": "Tap to search hospitals or any location",
+      "patientContactTitle": "Patient & Contact Details *",
+      "patientNamePlaceholder": "Patient Name *",
+      "contactPhonePlaceholder": "Contact Mobile Number *",
+      "medicalNotesTitle": "Medical Notes (optional)",
+      "medicalNotesPlaceholder": "Any special requirements, medical conditions,\noxygen need, wheelchair, etc.",
+      "charCount": "{{count}}/300",
+      "confirmRequestFree": "Confirm & Request Free →",
+      "confirmChooseHospital": "Confirm & Choose Hospital →",
+      "dropSearchPlaceholder": "Search hospitals or any address...",
+      "nearbyHospitalsSection": "🏥 Nearby Hospitals",
+      "searchResultsSection": "📍 Search Results",
+      "noResults": "No results found. Try a different search.",
+      "deadBodyModal": {
+        "title": "Respectful Transfer Service",
+        "body": "We offer respectful and dignified transfer services. Our trained staff will handle the deceased with utmost care and sensitivity.\n\nProper documentation (death certificate) may be required at pickup and drop locations.",
+        "confirm": "I Understand, Proceed"
+      }
+    },
+    "freeInfo": {
+      "title": "Free Ambulance Service",
+      "subtitle": "NGO / Sewa Organisation",
+      "zeroBannerTitle": "Zero Commission — 100% Free Service",
+      "zeroBannerSub": "bogie charges nothing. This is a completely free service provided by registered NGOs.",
+      "purposeLine": "Purpose: {{purpose}}",
+      "purposeLineWithSubType": "Purpose: {{purpose}}  ·  {{subtype}}",
+      "autoAssignNote": "The nearest available NGO ambulance will be automatically assigned to your request. You cannot choose a specific NGO.",
+      "ourRegisteredPartners": "Our Registered Partners",
+      "noNgoPartners": "No NGO partners found in your area. Service is still available via 108.",
+      "ngoAreaLabel": "Area: {{area}}",
+      "ngoVehicleCount_one": "🚑 {{count}} vehicle available",
+      "ngoVehicleCount_other": "🚑 {{count}} vehicles available",
+      "ngoCoverageLabel": "Coverage: {{areas}}",
+      "nearbyHospitalsRef": "🏥 Nearby Hospitals (for reference)",
+      "referenceNote": "These hospitals are shown for reference only. Free ambulances go to nearest available NGO.",
+      "hospitalDistance": "📍 {{km}} km away · {{area}}",
+      "requestBtnEmergency": "🚨 Emergency Free Request",
+      "requestBtnNormal": "Request Free Ambulance 🚑",
+      "collapsedInfo": "↑ Free Ambulance Info"
+    },
+    "vehicles": {
+      "title": "Choose Ambulance",
+      "subtitle": "~{{km}} km · Paid service",
+      "noneTitle": "No ambulances available",
+      "noneSub": "Please try again or call 108",
+      "recommendedEmergency": "⚡ Recommended for Emergency",
+      "suitablePatientTransfer": "✓ Suitable for Patient Transfer",
+      "suitableRespectfulTransfer": "✓ Suitable for Respectful Transfer",
+      "meta": {
+        "bls": {
+          "desc": "Equipped with basic medical equipment, trained paramedic, oxygen cylinder"
+        },
+        "als": {
+          "desc": "ICU on wheels — ventilator, defibrillator, advanced cardiac monitoring"
+        },
+        "transport": {
+          "desc": "Non-emergency patient transfer, comfortable and safe"
+        }
+      },
+      "equipment": {
+        "Oxygen": "Oxygen",
+        "First Aid": "First Aid",
+        "Stretcher": "Stretcher",
+        "Paramedic": "Paramedic",
+        "Ventilator": "Ventilator",
+        "Defibrillator": "Defibrillator",
+        "ECG Monitor": "ECG Monitor",
+        "IV Fluids": "IV Fluids",
+        "Doctor": "Doctor",
+        "Wheelchair": "Wheelchair",
+        "Attendant": "Attendant"
+      },
+      "rateNote": "₹{{base}} base · ₹{{perKm}}/km · {{km}} km"
+    },
+    "review": {
+      "freeAmbulance": "Free Ambulance",
+      "paidAmbulance": "Paid Ambulance",
+      "urgent": "URGENT",
+      "zeroCommissionBanner": "🏥 Zero Platform Commission on Ambulance Services",
+      "emergencyBannerText": "🚨 This is an emergency booking. We will dispatch the nearest available ambulance immediately.",
+      "freeDisclaimer": "⚠️ Free ambulance availability depends on government/NGO resources in your area.",
+      "selectedHospital": "Selected Hospital",
+      "summary": {
+        "title": "Booking Summary",
+        "type": "Type",
+        "typeFree": "Free Ambulance (NGO Assigned)",
+        "typePaid": "Paid Ambulance",
+        "purpose": "Purpose",
+        "ambType": "Amb. Type",
+        "hospital": "Hospital",
+        "pickup": "Pickup",
+        "drop": "Drop",
+        "patient": "Patient",
+        "contact": "Contact",
+        "notes": "Notes"
+      },
+      "charges": {
+        "title": "Charges",
+        "serviceCharge": "Service Charge",
+        "commission": "Commission",
+        "commissionZero": "₹0 (Zero Commission)",
+        "commissionZeroCheck": "₹0 (Zero Commission ✅)",
+        "govNgo": "Government/NGO",
+        "govNgoCovered": "✅ Covered",
+        "free": "FREE"
+      },
+      "paymentNote": "💡 Payment is made directly to {{hospital}}.\nbogie charges zero commission on ambulance services.",
+      "rules": [
+        "Ambulance will arrive within 15–30 minutes depending on traffic.",
+        "For dead body transfer, proper documentation may be required.",
+        "Free ambulances are subject to government/NGO availability.",
+        "In case of emergency, also call 108 (National Ambulance Service).",
+        "bogie charges ZERO commission on ambulance services."
+      ],
+      "btn": {
+        "free": "Request Free Ambulance 🚑",
+        "emergency": "EMERGENCY REQUEST 🚨",
+        "paid": "Book {{hospital}} 🚑"
+      },
+      "hospitalFallback": "Ambulance",
+      "hospitalFallbackLower": "hospital",
+      "toastFree": "Free ambulance requested! Help is on the way 🚑",
+      "toastPaid": "Ambulance booked at {{hospital}}! Driver is being assigned 🚑"
+    }
+  },
+  "profile": {
+    "settings": {
+      "title": "Settings",
+      "language": "Language",
+      "languageSub": "Choose your preferred language",
+      "preferencesHeader": "PREFERENCES",
+      "pushNotifications": {
+        "label": "Push notifications",
+        "sub": "Trip updates, promos, and alerts"
+      },
+      "alwaysOnLocation": {
+        "label": "Always-on location",
+        "sub": "For faster pickup detection"
+      },
+      "accountHeader": "ACCOUNT",
+      "changePassword": "Change password",
+      "deleteAccount": "Delete account"
+    },
+    "home": {
+      "menu": {
+        "family": {
+          "label": "Family",
+          "sub": "Manage teen, adult and senior accounts"
+        },
+        "settings": {
+          "label": "Settings"
+        },
+        "addresses": {
+          "label": "Saved addresses"
+        },
+        "wallet": {
+          "label": "Wallet",
+          "sub": "Payment methods & bogie cash"
+        },
+        "refer": {
+          "label": "Refer & Earn",
+          "sub": "Invite friends, earn ₹50"
+        },
+        "promos": {
+          "label": "Promo codes"
+        },
+        "notifications": {
+          "label": "Notifications"
+        },
+        "drive": {
+          "label": "Become a Driver",
+          "sub": "Earn by driving or delivering"
+        },
+        "help": {
+          "label": "Help",
+          "sub": "Trip issues, payments, support"
+        },
+        "safety": {
+          "label": "Safety",
+          "sub": "Emergency SOS, trusted contacts"
+        },
+        "inbox": {
+          "label": "Inbox"
+        },
+        "legal": {
+          "label": "Legal"
+        }
+      },
+      "support": {
+        "label": "Chat with Support",
+        "sub": "24/7 · AI + Human agents"
+      },
+      "promoBanner": {
+        "title": "First ride free!",
+        "sub": "Use code BOGIE100 for Rs.100 off"
+      },
+      "signOut": "Sign Out",
+      "signOutAlert": {
+        "title": "Sign out?",
+        "message": "You will be logged out.",
+        "confirm": "Sign out"
+      },
+      "companyAttribution": "A Unit of Aggarwal Publicity & Marketing Pvt. Ltd."
+    },
+    "wallet": {
+      "title": "Wallet",
+      "bogieCash": "bogie Cash",
+      "addMoney": "+ Add Money",
+      "comingSoonTitle": "Coming Soon",
+      "comingSoonTopup": "Direct wallet top-up will be available in an upcoming update.",
+      "comingSoonMethod": "{{method}} setup will be available soon.",
+      "paymentMethods": "Payment Methods",
+      "methods": {
+        "cash": {
+          "sub": "Pay directly to driver"
+        },
+        "upi": {
+          "sub": "Google Pay, PhonePe, Paytm"
+        },
+        "card": {
+          "label": "Credit / Debit Card",
+          "sub": "Visa, Mastercard, RuPay"
+        }
+      },
+      "transactionHistory": "Transaction History",
+      "noTransactions": "No transactions yet",
+      "noTransactionsSub": "Your ride payments and wallet top-ups will appear here.",
+      "referralBonus": "Referral bonus — friend's first ride",
+      "earnCash": "Earn bogie Cash",
+      "earn": {
+        "refer": {
+          "title": "Refer friends",
+          "sub": "Earn ₹50 for each friend who completes a ride"
+        },
+        "promo": {
+          "title": "Use promo codes",
+          "sub": "Apply promo codes to earn bogie Cash"
+        },
+        "firstRide": {
+          "title": "First ride bonus",
+          "sub": "Complete your first ride to earn ₹50 Cash"
+        }
+      }
+    },
+    "safety": {
+      "title": "Safety",
+      "sosBannerTitle": "Your Safety is Our Priority",
+      "sosBannerSub": "Emergency help is always one tap away during any bogie trip.",
+      "emergencySosHeader": "EMERGENCY SOS",
+      "sosInfoText": "During a ride, tap the red SOS button on the tracking screen. Away from a ride, use the button above. Either way you can call 112 directly, share your live location, or alert bogie support in one tap.",
+      "beforeRideHeader": "BEFORE YOUR RIDE",
+      "beforeRide": [
+        "Verify driver name and vehicle number before getting in",
+        "Share your trip with trusted contacts (Share button on tracking screen)",
+        "Sit in the back seat when possible",
+        "Keep your phone charged"
+      ],
+      "duringRideHeader": "DURING YOUR RIDE",
+      "duringRide": [
+        "Track your route on the app",
+        "If route seems wrong, ask driver politely",
+        "Call driver from within the app — avoid sharing personal number",
+        "Share live location with family"
+      ],
+      "afterRideHeader": "AFTER YOUR RIDE",
+      "afterRide": [
+        "Rate your driver honestly",
+        "Report any issues immediately",
+        "Lost something? Contact driver via Help → Lost Item"
+      ],
+      "emergencyContactHeader": "EMERGENCY CONTACT",
+      "contactNameLabel": "Name",
+      "contactNamePlaceholder": "e.g. Mom, Rahul",
+      "contactPhoneLabel": "Phone number",
+      "contactPhonePlaceholder": "10-digit mobile number",
+      "contactHint": "When you use Share Live Location in an SOS, we'll offer to send it straight to this contact via SMS.",
+      "update": "Update",
+      "remove": "Remove",
+      "invalidPhone": "Enter a valid phone number",
+      "savedTitle": "Saved",
+      "savedMsg": "Your emergency contact will be offered when you share your live location.",
+      "saveErrorMsg": "Could not save. Please try again.",
+      "emergencyNumbersHeader": "EMERGENCY NUMBERS",
+      "numbers": {
+        "police": "Police",
+        "womenHelpline": "Women Helpline",
+        "childHelpline": "Child Helpline"
+      },
+      "bogieSupport": "bogie Support"
+    },
+    "legal": {
+      "title": "Legal",
+      "items": {
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "cookies": "Cookie Policy",
+        "community": "Community Guidelines",
+        "licenses": "Licenses"
+      },
+      "copyright": "© 2026 bogie Logistics · Aggarwal Publicity and Marketing Pvt. Ltd. · All rights reserved.",
+      "copyrightMultiline": "© 2026 bogie Logistics\nAggarwal Publicity and Marketing Pvt. Ltd.\nAll rights reserved.",
+      "privacy": {
+        "subtitle": "Privacy Policy — bogie",
+        "datesLabel": "Effective: {{effective}} | Updated: {{updated}}"
+      },
+      "terms": {
+        "datesLabel": "Effective Date: {{effective}} · Last Updated: {{updated}}"
+      }
+    },
+    "promos": {
+      "title": "Promo codes",
+      "enterCodeLabel": "Enter promo code",
+      "placeholder": "e.g. BOGIE100",
+      "apply": "Apply",
+      "enterCodeAlertTitle": "Enter a code",
+      "enterCodeAlertMsg": "Type a promo code first",
+      "appliedAlertTitle": "Promo Applied!",
+      "appliedAlertMsg": "Code \"{{code}}\" has been applied.",
+      "activeTitle": "🏷 BOGIE100",
+      "activeSub": "₹100 off your first ride · Expires Dec 31, 2026"
+    },
+    "refer": {
+      "title": "Refer & Earn",
+      "errorText": "Couldn't load your referral code.",
+      "retryBtn": "Retry",
+      "heroTitle": "Invite friends, earn ₹50!",
+      "heroSub": "You get ₹50 when your friend takes their first ride. Plus ₹25 when THEY refer someone too!",
+      "codeLabel": "YOUR REFERRAL CODE",
+      "copyBtn": "📋 Copy",
+      "copiedTitle": "Copied",
+      "copiedCodeMsg": "Referral code copied to clipboard",
+      "copiedLinkMsg": "Referral link copied to clipboard",
+      "waBtn": "💬 Share on WhatsApp",
+      "linkBtn": "🔗 Copy Link",
+      "shareMessage": "🚖 Join me on bogie! Use my referral code *{{code}}* when signing up and start riding. Download: {{link}}",
+      "statFriendsJoined": "Friends Joined",
+      "statEarned": "Earned",
+      "statPending": "Pending",
+      "sectionTitle": "My Referrals",
+      "emptyTitle": "No referrals yet",
+      "emptySub": "Share your code to start earning",
+      "viaFriendSuffix": " (via your friend)",
+      "joinedOn": "Joined {{date}}",
+      "statusPending": "⏳ Pending first ride",
+      "statusCredited": "✅ Credited"
+    },
+    "family": {
+      "title": "Family",
+      "bannerTitle": "Manage your family",
+      "bannerSub": "Add family members and manage their bogie accounts from one place.",
+      "teen": {
+        "label": "Add a teen account",
+        "sub": "For riders aged 13-17"
+      },
+      "senior": {
+        "label": "Add a senior account",
+        "sub": "For riders aged 65+"
+      },
+      "adult": {
+        "label": "Add an adult",
+        "sub": "For riders aged 18+"
+      }
+    },
+    "addresses": {
+      "title": "Saved addresses",
+      "emptyTitle": "No saved addresses",
+      "emptySub": "Save your frequent locations while setting pickup or drop",
+      "removeAlertTitle": "Remove",
+      "removeAlertMsg": "Remove \"{{label}}\"?",
+      "remove": "Remove"
+    },
+    "inbox": {
+      "title": "Inbox",
+      "emptyTitle": "No messages yet",
+      "emptySub": "Notifications about your trips and account will appear here."
+    },
+    "help": {
+      "title": "Help & Support",
+      "sections": {
+        "booking": {
+          "title": "BOOKING ISSUES",
+          "items": [
+            {
+              "q": "How do I book a ride?",
+              "a": "Tap Cab, Truck, or Ambulance on the home screen. Enter your pickup and drop location, select your vehicle type, and tap Confirm."
+            },
+            {
+              "q": "Can I schedule a ride in advance?",
+              "a": "Currently bogie supports instant bookings only. Scheduled rides are coming soon."
+            },
+            {
+              "q": "Why can't I find a driver?",
+              "a": "No drivers may be available in your area right now. Try again in a few minutes or adjust your pickup location slightly."
+            }
+          ]
+        },
+        "payments": {
+          "title": "PAYMENTS",
+          "items": [
+            {
+              "q": "What payment methods are accepted?",
+              "a": "Cash, UPI (Google Pay, PhonePe, Paytm), Credit/Debit cards, and bogie Wallet."
+            },
+            {
+              "q": "I was charged incorrectly.",
+              "a": "Raise a dispute within 24 hours: Help → Payment Issue → Wrong Charge. Our team will review and respond within 2 business days."
+            },
+            {
+              "q": "How do I get a refund?",
+              "a": "Approved refunds are processed in 5–7 business days back to your original payment method."
+            }
+          ]
+        },
+        "cancellations": {
+          "title": "CANCELLATIONS",
+          "items": [
+            {
+              "q": "How do I cancel a booking?",
+              "a": "Open the active booking screen and tap Cancel. Cancellation within 2 minutes is free; a small fee of ₹30–₹50 may apply after that."
+            },
+            {
+              "q": "My driver cancelled. What happens?",
+              "a": "We will automatically try to match you with another driver. If unavailable, a full refund is processed immediately."
+            }
+          ]
+        },
+        "truck": {
+          "title": "TRUCK BOOKINGS",
+          "items": [
+            {
+              "q": "What items cannot be transported?",
+              "a": "Weapons, explosives, drugs, illegal items, live animals without permits, and human remains without proper documentation."
+            },
+            {
+              "q": "Is my cargo insured?",
+              "a": "Basic protection is included. You can purchase full cargo insurance at the time of booking for complete cover."
+            }
+          ]
+        },
+        "ambulance": {
+          "title": "AMBULANCE",
+          "items": [
+            {
+              "q": "Is the free ambulance really free?",
+              "a": "Yes — it is government/NGO sponsored. Subject to availability. Response time is not guaranteed. For life-threatening emergencies, always call 108 first."
+            },
+            {
+              "q": "What is included in a paid BLS ambulance?",
+              "a": "Trained paramedic, oxygen cylinder, first aid kit, stretcher, and basic patient monitoring equipment."
+            }
+          ]
+        }
+      },
+      "contactTitle": "Still need help?",
+      "contactSub": "Our support team is available 8 AM – 10 PM daily",
+      "contactBtn": "Email Support"
+    },
+    "drive": {
+      "title": "Become a Driver",
+      "heroTitle": "Earn on your schedule",
+      "heroSub": "Drive with bogie and earn money whenever you want. Be your own boss.",
+      "ctaBtn": "Sign up to drive",
+      "errorAlertMsg": "Could not open the page. Please try again.",
+      "features": {
+        "earnMore": {
+          "title": "Earn more",
+          "sub": "Competitive fares + incentives"
+        },
+        "flexibleHours": {
+          "title": "Flexible hours",
+          "sub": "Work whenever you want"
+        },
+        "staySafe": {
+          "title": "Stay safe",
+          "sub": "24/7 support and insurance"
+        }
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "sectionHeader": "NOTIFICATION PREFERENCES",
+      "required": "Required",
+      "note": "Ride updates cannot be disabled — they are essential for your safety and booking management.",
+      "prefs": {
+        "trips": {
+          "label": "Ride Updates",
+          "sub": "Booking confirmations, driver assigned, ride started, completed"
+        },
+        "promos": {
+          "label": "Promotions & Offers",
+          "sub": "Special discounts and promo codes"
+        },
+        "news": {
+          "label": "bogie News",
+          "sub": "New features and app updates"
+        },
+        "sms": {
+          "label": "SMS Alerts",
+          "sub": "Critical ride updates via SMS"
+        },
+        "email": {
+          "label": "Email Notifications",
+          "sub": "Weekly summary and invoices"
+        }
+      }
+    }
+  },
+  "history": {
+    "title": "Your Rides",
+    "tripsCount_one": "{{count}} trip",
+    "tripsCount_other": "{{count}} trips",
+    "loading": "Loading your rides...",
+    "empty": {
+      "title": "No rides yet",
+      "subtitle": "Your trips will appear here",
+      "cta": "Book a ride to get started",
+      "button": "Book a ride"
+    },
+    "pickupFallback": "Pickup",
+    "dropFallback": "Drop",
+    "rideFallback": "Ride",
+    "fareFinal": "₹{{amount}}",
+    "fareEstimated": "~₹{{amount}}",
+    "scheduledPickup": "🗓 Pickup {{time}}",
+    "cancellationFee": "Cancellation fee: ₹{{amount}}",
+    "today": "Today, {{time}}",
+    "yesterday": "Yesterday, {{time}}",
+    "status": {
+      "searching": "searching",
+      "accepted": "accepted",
+      "arriving": "arriving",
+      "in_progress": "in progress",
+      "completed": "completed",
+      "cancelled": "cancelled",
+      "scheduled": "scheduled"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadCount_one": "{{count}} unread",
+    "unreadCount_other": "{{count}} unread",
+    "empty": {
+      "title": "No notifications yet",
+      "sub": "Offers, ride updates, and news will appear here"
+    },
+    "timeAgo": {
+      "justNow": "just now",
+      "minutes": "{{count}}m ago",
+      "hours": "{{count}}h ago",
+      "days": "{{count}}d ago"
+    },
+    "types": {
+      "general": "general",
+      "announcement": "announcement",
+      "offer": "offer",
+      "coupon": "coupon",
+      "news": "news",
+      "ride": "ride"
+    }
+  },
+  "tracking": {
+    "status": {
+      "scheduled": {
+        "title": "Ride scheduled",
+        "sub": "We'll find your driver closer to pickup time"
+      },
+      "searching": {
+        "title": "Finding a driver...",
+        "sub": "Matching you with nearby drivers"
+      },
+      "accepted": {
+        "title": "Driver on the way",
+        "sub": "Your driver is heading to you"
+      },
+      "arriving": {
+        "title": "Driver has arrived",
+        "sub": "Share your OTP to start the trip"
+      },
+      "in_progress": {
+        "title": "On the way",
+        "sub": "Heading to your destination"
+      },
+      "completed": {
+        "title": "Trip completed",
+        "sub": "Thanks for riding with bogie"
+      },
+      "cancelled": {
+        "title": "Booking cancelled",
+        "sub": "This trip was cancelled"
+      }
+    },
+    "voice": {
+      "accepted": "Driver has been assigned and is on the way",
+      "arriving": "Your driver has arrived at the pickup point",
+      "inProgress": "Your ride has started. Heading to destination",
+      "completed": "You have arrived at your destination. Have a great day!"
+    },
+    "distMeters": "{{m}} m",
+    "distKm": "{{km}} km",
+    "durationMins_one": "{{count}} min",
+    "durationMins_other": "{{count}} mins",
+    "loading": "Loading your trip...",
+    "bookingNotFound": "Booking not found",
+    "goHome": "Go Home",
+    "failedToLoad": "Failed to load booking",
+    "nearbyLooking": "Looking for available drivers...",
+    "nearbyDrivers_one": "🚗 {{count}} driver nearby",
+    "nearbyDrivers_other": "🚗 {{count}} drivers nearby",
+    "distToDriver": "Driver {{dist}}",
+    "distToDrop": "Drop {{dist}}",
+    "driverFallback": "Your driver",
+    "vehicleFallback": "Vehicle",
+    "callDriverTitle": "Call Driver",
+    "callDriverMsg": "Call {{name}} at {{phone}}?",
+    "callDriverFallback": "driver",
+    "call": "Call",
+    "otpShareLabel": "Share with driver",
+    "otpSub": "Driver needs this to start your ride",
+    "ambulanceInfo": {
+      "zeroCommission": "🏥 Zero Commission Service",
+      "hospitalLabel": "Hospital",
+      "callHospital": "📞 Call",
+      "freeNoCharge": "🆓 Free Ambulance — No charges apply",
+      "emergency": "🚨 EMERGENCY — Priority Response"
+    },
+    "farePaid": "Fare paid",
+    "fareEstimated": "Estimated fare",
+    "scheduledPickupLabel": "🗓 Pickup scheduled for",
+    "scheduledFindDriverSub": "We'll find your driver ~15 minutes before pickup",
+    "cancelRideBtn": "Cancel Ride",
+    "cancellationFeeNotice": "A ₹{{fee}} cancellation fee will be added to your next ride.",
+    "viewMyRides": "View My Rides",
+    "expandHint": "▲  Route details",
+    "collapseHint": "▼  Collapse",
+    "fareEstimateTitle": "Fare estimate",
+    "tripFare": "Trip fare",
+    "distanceLabel": "Distance",
+    "restorePillPrefix": "↑ {{title}}",
+    "cancelDialog": {
+      "title": "Cancel Ride",
+      "defaultMsg": "Are you sure you want to cancel?",
+      "keepRide": "Keep Ride",
+      "yesCancel": "Yes, Cancel",
+      "ambulanceMsg": "Ambulance rides are always free to cancel — no charges apply. Cancel this booking?",
+      "scheduledMsg": "This ride hasn't been dispatched yet — cancelling is free. Cancel this scheduled ride?",
+      "freeWindowMsg": "Cancel this ride? No charges — you're within the free window.",
+      "feeTitle": "Cancellation Fee Applies",
+      "feeMsg": "Cancelling now will add a ₹{{fee}} cancellation fee to your next ride. Cancel anyway?",
+      "feeCancelBtn": "Cancel — ₹{{fee}}"
+    },
+    "rate": {
+      "title": "Rate driver",
+      "selectStars": "Please select at least 1 star",
+      "error": "Could not submit rating."
+    },
+    "completion": {
+      "title": "Trip Completed!",
+      "sub": "Thanks for riding with bogie",
+      "farePaid": "Fare Paid",
+      "driver": "Driver",
+      "duration": "Duration",
+      "durationMin": "{{count}} min",
+      "howWasTrip": "How was your trip?",
+      "commentPlaceholder": "Leave a comment (optional)",
+      "submitGoHome": "Submit & Go Home",
+      "skip": "Skip"
+    },
+    "chat": {
+      "driverFallback": "Driver",
+      "rideInProgress": "Ride in progress",
+      "chatUnavailable": "Chat unavailable",
+      "sendMessagePrompt": "Send a message to your driver.",
+      "chatOpensLater": "Chat opens once your driver is on the way.",
+      "quickReplies": [
+        "I'm waiting outside",
+        "Please call me",
+        "On my way down"
+      ],
+      "inputPlaceholder": "Type a message...",
+      "disabledBarText": "💬 Chat is available once your driver is on the way"
+    }
+  },
+  "support": {
+    "index": {
+      "title": "bogie SUPPORT",
+      "subtitle": "🤖 AI Assistant available 24/7",
+      "lostItem": "Lost an Item?",
+      "recentConversations": "RECENT CONVERSATIONS",
+      "emptyTitle": "No conversations yet",
+      "emptySub": "Tap \"Start New Chat\" to get help from our AI + human support team.",
+      "resolved": "✅ Resolved",
+      "noMessagesYet": "No messages yet",
+      "timeAgo": {
+        "justNow": "just now",
+        "minutesAgo": "{{count}} min ago",
+        "hoursAgo": "{{count}} hr ago",
+        "daysAgo": "{{count}} days ago"
+      }
+    },
+    "status": {
+      "open": "Open",
+      "in_progress": "In Progress",
+      "resolved": "Resolved"
+    },
+    "chat": {
+      "headerFallback": "Support Chat",
+      "emptyChat": "Send a message to get started.",
+      "botName": "🤖 bogie Assistant",
+      "agentFallback": "Support Agent",
+      "wasHelpful": "Was this helpful?",
+      "yesResolved": "✅ Yes, resolved",
+      "stillNeedHelp": "❌ Still need help",
+      "gladToHelp": "Glad we could help! 🎉",
+      "connectingSupport": "🎧 Connecting you with our support team — they'll respond here shortly.",
+      "quickIssues": [
+        "My ride was cancelled",
+        "I was overcharged",
+        "Driver didn't arrive",
+        "I need a refund",
+        "App is not working",
+        "Ambulance booking help"
+      ],
+      "inputPlaceholder": "Type your message...",
+      "quickIssuesBtn": "📋 Quick issues ▾",
+      "errorConnecting": "Could not connect you to support. Please try again."
+    },
+    "lostItem": {
+      "title": "Report Lost Item",
+      "whichRide": "Which ride?",
+      "noCompletedRides": "No completed rides found.",
+      "whatDidYouLose": "What did you lose?",
+      "itemPlaceholder": "e.g. Black backpack, phone, wallet...",
+      "photoOptional": "Photo (optional)",
+      "removePhoto": "Remove",
+      "addPhoto": "📷 Add a photo",
+      "additionalDetails": "Additional details (optional)",
+      "detailsPlaceholder": "Anything else that might help — where you kept it, when you noticed it missing...",
+      "submitReport": "Submit Report →",
+      "permissionNeededTitle": "Permission needed",
+      "permissionNeededMsg": "Allow photo access to attach a picture.",
+      "notAvailableTitle": "Not available yet",
+      "notAvailableMsg": "Photo attachments need the latest app update. You can still submit your report without a photo.",
+      "selectRideTitle": "Select a ride",
+      "selectRideMsg": "Please choose which ride you lost your item on.",
+      "addDetailsTitle": "Add details",
+      "addDetailsMsg": "Please describe what you lost.",
+      "submitErrorMsg": "Could not submit your report. Please try again."
+    },
+    "new": {
+      "title": "New Support Chat",
+      "heading": "How can we help you today?",
+      "subheading": "Tap the question closest to your issue for an instant answer.",
+      "category": {
+        "ride": "Ride Issues",
+        "payment": "Payment Issues",
+        "driver": "Driver Issues",
+        "general": "General"
+      },
+      "relatedBooking": "Related booking (optional)",
+      "bookingPlaceholder": "Booking ID (e.g. 4aaa3406)",
+      "orTypeOwn": "Or type your own question",
+      "messagePlaceholder": "Describe your issue in detail...",
+      "startChat": "Start Chat →",
+      "addMessageTitle": "Add a message",
+      "addMessageMsg": "Please describe your issue in detail.",
+      "startChatError": "Could not start chat. Please try again.",
+      "generalSupportSubject": "General support"
+    }
+  }
+}

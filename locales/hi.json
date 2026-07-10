@@ -1,0 +1,1225 @@
+{
+  "common": {
+    "cancel": "रद्द करें",
+    "save": "सेव करें",
+    "done": "हो गया",
+    "back": "वापस",
+    "loading": "लोड हो रहा है…",
+    "error": "गड़बड़ी",
+    "ok": "ठीक है",
+    "outstation": "आउटस्टेशन",
+    "withinCity": "शहर के अंदर",
+    "cashChip": "💵 कैश",
+    "couponChip": "🏷 कूपन",
+    "sameAsMyNumber": "मेरा नंबर ही इस्तेमाल करें",
+    "categories": {
+      "cab": "कैब",
+      "truck": "ट्रक",
+      "ambulance": "एम्बुलेंस"
+    },
+    "tabs": {
+      "home": "होम",
+      "rides": "राइड्स",
+      "profile": "प्रोफाइल"
+    }
+  },
+  "auth": {
+    "login": {
+      "logoSub": "लॉजिस्टिक्स और राइड्स",
+      "signIn": "साइन इन करें",
+      "signUp": "साइन अप करें",
+      "createAccount": "अकाउंट बनाएं",
+      "fullNameLabel": "पूरा नाम",
+      "fullNamePlaceholder": "प्रिया शर्मा",
+      "phoneLabel": "फ़ोन नंबर",
+      "phonePlaceholder": "9876543210",
+      "referralLabel": "रेफ़रल कोड (वैकल्पिक)",
+      "referralPlaceholder": "जैसे GU7X2K9A",
+      "referralValid": "✓ {{name}} द्वारा रेफ़र किया गया",
+      "referralInvalid": "अमान्य कोड — आप फिर भी साइन अप कर सकते हैं",
+      "emailLabel": "ईमेल",
+      "emailPlaceholder": "you@gmail.com",
+      "passwordLabel": "पासवर्ड",
+      "passwordPlaceholder": "कम से कम 8 अक्षर",
+      "errors": {
+        "fillFields": "कृपया सभी फ़ील्ड भरें",
+        "invalidEmailTitle": "अमान्य ईमेल",
+        "invalidEmail": "एक मान्य ईमेल दर्ज करें",
+        "invalidPhone": "10 अंकों का मान्य फ़ोन नंबर दर्ज करें",
+        "invalidPassword": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
+        "loginFailedTitle": "लॉगिन विफल",
+        "loginFailedDefault": "ईमेल या पासवर्ड गलत है",
+        "signupFailedTitle": "साइन अप विफल",
+        "signupFailedDefault": "कुछ गड़बड़ हो गई"
+      }
+    }
+  },
+  "home": {
+    "greeting": {
+      "morning": "सुप्रभात",
+      "afternoon": "नमस्ते",
+      "evening": "शुभ संध्या"
+    },
+    "subGreeting": "आज कहाँ जाना है?",
+    "activeRide": {
+      "inProgress": "राइड जारी है",
+      "statusLabels": {
+        "searching": "ड्राइवर ढूंढा जा रहा है...",
+        "accepted": "ड्राइवर असाइन हो गया",
+        "arriving": "ड्राइवर पहुंच रहा है",
+        "in_progress": "राइड जारी है"
+      },
+      "dropFallback": "ड्रॉप लोकेशन"
+    },
+    "upcoming": {
+      "title": "🗓 आने वाली राइड",
+      "dropFallback": "ड्रॉप लोकेशन",
+      "view": "देखें",
+      "cancel": "रद्द करें",
+      "cancelAlert": {
+        "title": "शेड्यूल राइड रद्द करें",
+        "message": "यह राइड अभी डिस्पैच नहीं हुई है — रद्द करना मुफ़्त है। रद्द करें?",
+        "keep": "रहने दें",
+        "confirm": "हां, रद्द करें"
+      },
+      "cancelError": "रद्द नहीं हो सका। दोबारा कोशिश करें।"
+    },
+    "services": {
+      "title": "सेवाएं",
+      "cab": {
+        "name": "कैब",
+        "desc": "2W, 3W, 4W"
+      },
+      "truck": {
+        "name": "ट्रक",
+        "desc": "शहर और आउटस्टेशन"
+      },
+      "ambulance": {
+        "name": "एम्बुलेंस",
+        "desc": "BLS / ALS"
+      }
+    },
+    "savedPlaces": {
+      "title": "सेव की गई जगहें",
+      "add": "+ जोड़ें",
+      "emptyTitle": "अभी कोई जगह सेव नहीं है",
+      "emptySub": "बुकिंग के बाद, आप अपनी पिकअप या ड्रॉप को होम, ऑफिस या किसी भी कस्टम लेबल से सेव कर सकते हैं"
+    },
+    "promo": {
+      "title": "पहली राइड फ्री!",
+      "desc": "₹100 की छूट के लिए कोड BOGIE100 इस्तेमाल करें",
+      "claim": "क्लेम करें"
+    }
+  },
+  "booking": {
+    "title": "सेवा बुक करें",
+    "chooseVehicleSub": "अपना वाहन प्रकार चुनें",
+    "pickupPlaceholder": "मैप पर पिकअप सेट करें",
+    "dropPlaceholder": "मैप पर ड्रॉप सेट करें",
+    "pickupFallback": "पिकअप पॉइंट",
+    "dropFallback": "ड्रॉप पॉइंट",
+    "distanceApprox": "लगभग {{km}} किमी",
+    "chooseVehicle": "वाहन चुनें",
+    "fare": {
+      "estimated": "अनुमानित किराया",
+      "base": "बेस ₹{{amount}}",
+      "perKm": "₹{{amount}}/किमी",
+      "distanceKm": "{{km}} किमी"
+    },
+    "payment": {
+      "title": "पेमेंट का तरीका",
+      "cash": "कैश",
+      "upi": "UPI",
+      "card": "कार्ड"
+    },
+    "serviceFallback": "सेवा",
+    "bookButton": "{{service}} बुक करें",
+    "bookButtonWithFare": "{{service}} बुक करें · ₹{{fare}}",
+    "groups": {
+      "truckCity": "ट्रक — शहर",
+      "truckOutstation": "ट्रक — आउटस्टेशन"
+    },
+    "errors": {
+      "setPickupTitle": "पिकअप सेट करें",
+      "setPickupMsg": "इसे मैप पर सेट करने के लिए पिकअप रो पर टैप करें।",
+      "setDropTitle": "ड्रॉप सेट करें",
+      "setDropMsg": "इसे मैप पर सेट करने के लिए ड्रॉप रो पर टैप करें।",
+      "chooseVehicleTitle": "एक वाहन चुनें",
+      "chooseVehicleMsg": "जारी रखने के लिए एक सेवा चुनें।",
+      "riderIdMissing": "आपका राइडर अकाउंट पहचाना नहीं जा सका। कृपया लॉग आउट करके दोबारा लॉगिन करें।",
+      "bookingFailed": "बुकिंग नहीं बन सकी"
+    },
+    "session": {
+      "expiredTitle": "सेशन एक्सपायर हो गया",
+      "expiredMsg": "जारी रखने के लिए कृपया फिर से लॉगिन करें।",
+      "couldNotIdentify": "आपका अकाउंट पहचाना नहीं जा सका। कृपया फिर से लॉगिन करें।"
+    },
+    "missingInfoTitle": "जानकारी अधूरी है",
+    "missingInfoMsg": "कृपया यह जानकारी दें: {{fields}}",
+    "failedTitle": "बुकिंग विफल",
+    "failedDefault": "बुकिंग नहीं बन सकी। दोबारा कोशिश करें।",
+    "proceedWith": "{{name}} के साथ आगे बढ़ें →",
+    "selectVehicle": "एक वाहन चुनें",
+    "selectAmbulance": "एक एम्बुलेंस चुनें",
+    "overlay": {
+      "pickupLocationTitle": "पिकअप लोकेशन",
+      "dropLocationTitle": "ड्रॉप लोकेशन",
+      "searchPickup": "पिकअप खोजें...",
+      "searchDestination": "गंतव्य खोजें...",
+      "useCurrentLocation": "मौजूदा लोकेशन इस्तेमाल करें",
+      "autoDetect": "मेरी लोकेशन अपने आप पता करें",
+      "fetchingLocation": "आपकी लोकेशन ढूंढी जा रही है..."
+    },
+    "schedule": {
+      "now": "⏰ अभी",
+      "nowChip": "⚡ अभी",
+      "chip": "🗓 {{date}}",
+      "chipPlaceholder": "🗓 शेड्यूल करें",
+      "pickTimeTitle": "समय चुनें",
+      "pickTimeMsg": "अपनी शेड्यूल राइड के लिए तारीख और समय चुनें।",
+      "scheduleFor": "{{time}} के लिए शेड्यूल करें →",
+      "bookNowWithFare": "अभी बुक करें · ₹{{amount}}",
+      "rideScheduledTitle": "✅ राइड शेड्यूल हो गई",
+      "rideScheduledMsg": "आपकी राइड {{time}} के लिए शेड्यूल है। पिकअप से ~15 मिनट पहले हम आपके लिए ड्राइवर ढूंढेंगे।",
+      "truckScheduledMsg": "आपका ट्रक {{time}} के लिए शेड्यूल है। पिकअप से ~15 मिनट पहले हम आपके लिए ड्राइवर ढूंढेंगे।",
+      "selectedTimeFallback": "चुने गए समय"
+    },
+    "review": {
+      "title": "बुकिंग रिव्यू करें",
+      "route": "रूट",
+      "fareBreakdown": "किराए का ब्यौरा",
+      "totalCharges": "कुल शुल्क",
+      "estimatedFare": "अनुमानित किराया",
+      "baseFare": "बेस किराया",
+      "distanceCharge": "दूरी का शुल्क",
+      "distanceChargeSub": "{{km}} किमी × ₹{{rate}}/किमी",
+      "distanceKmLabel": "दूरी ({{km}} किमी)",
+      "total": "कुल",
+      "coupon": "कूपन",
+      "couponWithCode": "कूपन ({{code}})",
+      "previousCancellationFee": "पिछली कैंसिलेशन फीस",
+      "addedFromEarlierRide": "पहले की राइड से जोड़ी गई",
+      "cashPaymentNote": "💵 राइड के बाद कैश पेमेंट",
+      "paymentAfterDelivery": "💵 डिलीवरी के बाद पेमेंट",
+      "readBeforeBooking": "📋 बुकिंग से पहले पढ़ें",
+      "receiverDetails": "प्राप्तकर्ता का विवरण",
+      "name": "नाम",
+      "mobile": "मोबाइल",
+      "loadingService": "लोडिंग सर्विस",
+      "unloadingService": "अनलोडिंग सर्विस"
+    },
+    "rules": {
+      "truck": [
+        "बुकिंग के 30–60 मिनट के अंदर ड्राइवर पहुंच जाएगा।",
+        "ज़्यादा इंतज़ार करने पर अतिरिक्त शुल्क लग सकता है।",
+        "डिलीवरी पूरी होने के बाद पेमेंट करना होगा।",
+        "सामान कानूनी रूप से ट्रांसपोर्ट के लिए मान्य होना चाहिए।",
+        "नाज़ुक या कीमती सामान लोड करने से पहले बताना ज़रूरी है।"
+      ]
+    },
+    "coupons": {
+      "title": "ऑफ़र और कूपन",
+      "currentTotal": "मौजूदा कुल राशि: ₹{{amount}}",
+      "enterCode": "कूपन कोड डालें",
+      "apply": "लागू करें",
+      "notEligible": "पात्र नहीं",
+      "availableOffers": "उपलब्ध ऑफ़र",
+      "invalidCode": "अमान्य कूपन कोड",
+      "minFareRequired": "कम से कम ₹{{amount}} का किराया ज़रूरी है",
+      "minOrderRequired": "कम से कम ₹{{amount}} का ऑर्डर ज़रूरी है",
+      "savesAmount": "₹{{amount}} की बचत",
+      "applied": "लागू हुआ: {{code}}",
+      "applyCouponOrOffer": "कूपन या ऑफ़र लागू करें"
+    }
+  },
+  "locationPicker": {
+    "searchPickupPlaceholder": "पिकअप लोकेशन खोजें...",
+    "searchDropPlaceholder": "ड्रॉप लोकेशन खोजें...",
+    "gettingAddress": "पता लाया जा रहा है...",
+    "moveMapPlaceholder": "लोकेशन सेट करने के लिए मैप घुमाएं",
+    "customLabelPlaceholder": "लेबल (जैसे Gym, Mom's House)",
+    "save": "सेव करें",
+    "saveWithStar": "⭐ सेव करें",
+    "sheetLabelPickup": "पिकअप लोकेशन",
+    "sheetLabelDrop": "ड्रॉप लोकेशन",
+    "confirmPickup": "पिकअप कन्फर्म करें",
+    "confirmDrop": "ड्रॉप कन्फर्म करें",
+    "saveAlert": {
+      "title": "इस जगह को इस रूप में सेव करें...",
+      "home": "🏠 होम",
+      "office": "💼 ऑफिस",
+      "custom": "✏️ कस्टम लेबल"
+    },
+    "noAddressAlert": {
+      "title": "कोई पता नहीं",
+      "setLocation": "पहले एक लोकेशन सेट करें",
+      "setLocationMap": "पहले मैप पर एक लोकेशन सेट करें"
+    },
+    "savedToast": "सेव हो गया! ⭐",
+    "savedToastMsg": "\"{{label}}\" आपकी जगहों में सेव हो गई",
+    "saveError": "यह जगह सेव नहीं हो सकी"
+  },
+  "cab": {
+    "home": {
+      "whereTo": "कहाँ जाना है?",
+      "youAreHere": "आप यहां हैं",
+      "placeFallback": "जगह",
+      "categories": {
+        "cab": "कैब",
+        "auto": "ऑटो",
+        "rentals": "रेंटल",
+        "twoWheeler": "2 व्हीलर",
+        "outstation": "आउटस्टेशन"
+      },
+      "locationNeededAlert": {
+        "title": "लोकेशन चाहिए",
+        "message": "कृपया पहले लोकेशन एक्सेस की अनुमति दें"
+      },
+      "restorePill": "↑ कहाँ जाना है?",
+      "currentLocation": "मौजूदा लोकेशन"
+    },
+    "booking": {
+      "setYourTrip": "अपनी राइड सेट करें",
+      "restorePill": "↑ अपनी राइड सेट करें"
+    },
+    "review": {
+      "serviceFallback": "कैब"
+    },
+    "vehicles": {
+      "chooseARide": "राइड चुनें",
+      "approxKm": "~{{km}} किमी",
+      "noCabsAvailable": "कोई कैब उपलब्ध नहीं है",
+      "etaAway_one": "{{count}} मिनट दूर",
+      "etaAway_other": "{{count}} मिनट दूर",
+      "hourlyRental": "ऑवरली रेंटल",
+      "hourlyRentalDesc": "घंटे के हिसाब से बुक करें, कहीं भी जाएं",
+      "flexible": "फ्लेक्सिबल",
+      "fromAmount": "₹{{amount}} से शुरू",
+      "collapsedChooseRide": "↑ राइड चुनें",
+      "selectArrow": "चुनें →",
+      "ourFleet": "हमारी गाड़ियां",
+      "extras": {
+        "cab_any": {
+          "label": "कोई भी बुक करें",
+          "desc": "जो भी कैब उपलब्ध हो"
+        },
+        "cab_prime_sed": {
+          "label": "प्राइम सेडान",
+          "desc": "प्रीमियम सेडान राइड"
+        },
+        "cab_mini_nonac": {
+          "label": "मिनी नॉन-AC",
+          "desc": "किफ़ायती राइड"
+        }
+      }
+    },
+    "coupons": {
+      "catalog": {
+        "bogie100": "आपकी राइड पर ₹100 की छूट",
+        "ride10": "कैब बुकिंग पर 10% की छूट",
+        "newuser": "नए यूज़र के लिए ₹150 की छूट"
+      }
+    },
+    "rentals": {
+      "title": "ऑवरली रेंटल",
+      "addressWithPin": "📍 {{address}}",
+      "choosePackage": "पैकेज चुनें",
+      "selectVehicleTitle": "वाहन चुनें",
+      "upToKm": "{{km}} किमी तक",
+      "noVehiclesAvailable": "कोई वाहन उपलब्ध नहीं है",
+      "pickPackage": "पैकेज चुनें",
+      "popular": "लोकप्रिय",
+      "popularFare": "लोकप्रिय किराया",
+      "viewDetails": "विवरण देखें",
+      "selectAPackage": "एक पैकेज चुनें",
+      "duration_one": "{{count}} घंटा",
+      "duration_other": "{{count}} घंटे"
+    },
+    "vehicleTypes": {
+      "cab_2w": {
+        "label": "2 व्हीलर",
+        "desc": "ट्रैफिक से बचें"
+      },
+      "cab_3w": {
+        "label": "ऑटो",
+        "desc": "शहर की सबसे तेज़ ऑटो राइड"
+      },
+      "cab_4w": {
+        "label": "मिनी",
+        "desc": "किफ़ायती और आरामदायक"
+      },
+      "cab_4w_suv": {
+        "label": "प्राइम SUV",
+        "desc": "स्पेशियस और प्रीमियम"
+      }
+    }
+  },
+  "truck": {
+    "index": {
+      "bookATruck": "ट्रक बुक करें",
+      "chooseDeliveryType": "अपना डिलीवरी प्रकार चुनें",
+      "localDelivery": "लोकल डिलीवरी",
+      "interstateTransport": "इंटरस्टेट ट्रांसपोर्ट",
+      "collapsedBookTruck": "↑ ट्रक बुक करें"
+    },
+    "booking": {
+      "title": "बुकिंग विवरण",
+      "deliveryLabel": "{{scope}} डिलीवरी",
+      "pickupLocationLabel": "पिकअप लोकेशन",
+      "dropLocationLabel": "ड्रॉप लोकेशन",
+      "receiverNamePlaceholder": "प्राप्तकर्ता का नाम *",
+      "receiverPhonePlaceholder": "प्राप्तकर्ता का मोबाइल नंबर *",
+      "hintSetPickup": "ऊपर पिकअप लोकेशन सेट करें",
+      "hintSetDrop": "ऊपर ड्रॉप लोकेशन सेट करें",
+      "confirmProceed": "कन्फर्म करें और आगे बढ़ें →"
+    },
+    "serviceFallback": "ट्रक",
+    "addons": {
+      "title": "ऐड-ऑन और ऑफ़र",
+      "addonServicesTitle": "ऐड-ऑन सर्विसेज़",
+      "loadingServiceSub": "हेल्पर्स पिकअप पर आपका सामान लोड करेंगे",
+      "unloadingServiceSub": "हेल्पर्स डेस्टिनेशन पर सामान उतारेंगे",
+      "estimatedTotalTitle": "अनुमानित कुल राशि",
+      "addonServicesLine": "ऐड-ऑन सर्विसेज़",
+      "proceedToReview": "रिव्यू के लिए आगे बढ़ें →"
+    },
+    "vehicles": {
+      "title": "वाहन चुनें",
+      "approxKmScope": "~{{km}} किमी · {{scope}}",
+      "noneTitle": "कोई वाहन उपलब्ध नहीं है",
+      "noneSub": "इस रूट प्रकार के लिए कोई ट्रक सर्विस नहीं मिली",
+      "capacityFallback": "परिवर्तनीय लोड क्षमता",
+      "loadCapacity": {
+        "truck_city_tata_ace": "750 किग्रा तक",
+        "truck_city_14ft": "3 टन तक",
+        "truck_city_open": "7 टन तक",
+        "truck_city_container": "7 टन तक",
+        "truck_os_14ft": "3 टन तक — लंबी दूरी",
+        "truck_os_20ft": "लंबी दूरी",
+        "truck_os_container": "लंबी दूरी",
+        "truck_os_trailer": "लंबी दूरी",
+        "cab_2w": "20 किग्रा तक पार्सल"
+      },
+      "baseChip": "₹{{amount}} बेस",
+      "perKmChip": "+₹{{amount}}/किमी",
+      "collapsedChooseVehicle": "↑ वाहन चुनें"
+    },
+    "coupons": {
+      "catalog": {
+        "bogie100": "पहली बुकिंग पर ₹100 की छूट",
+        "truck10": "ट्रक बुकिंग पर 10% की छूट",
+        "newuser": "नए यूज़र के लिए ₹150 की छूट"
+      }
+    }
+  },
+  "ambulance": {
+    "index": {
+      "title": "एम्बुलेंस बुक करें",
+      "selectServiceType": "सेवा प्रकार चुनें",
+      "zeroCommissionTitle": "ज़ीरो कमीशन नीति",
+      "zeroCommissionText": "bogie एम्बुलेंस सेवाओं पर कोई कमीशन नहीं लेता। 100% पैसा सेवा प्रदाता को जाता है।",
+      "freeBadge": "फ्री",
+      "freeTitle": "फ्री एम्बुलेंस",
+      "freeSub": "सरकारी / NGO प्रायोजित",
+      "paidTitle": "पेड एम्बुलेंस",
+      "paidSub": "निजी मेडिकल सेवा",
+      "disclaimer": "📋 फ्री एम्बुलेंस उपलब्धता पर निर्भर है।\nपहुंचने का समय अलग-अलग हो सकता है।",
+      "collapsedBookAmbulance": "↑ एम्बुलेंस बुक करें"
+    },
+    "purposes": {
+      "patient_transfer": "मरीज़ ट्रांसफर",
+      "emergency": "इमरजेंसी",
+      "dead_body": "शव परिवहन",
+      "patient_transfer_sub": "मरीज़ को अस्पतालों के बीच या घर से ले जाना",
+      "emergency_sub": "तुरंत मेडिकल सहायता चाहिए",
+      "dead_body_sub": "शव का सम्मानजनक परिवहन"
+    },
+    "subTypes": {
+      "bls": "बेसिक लाइफ सपोर्ट (BLS)",
+      "als": "एडवांस्ड लाइफ सपोर्ट (ALS)",
+      "blsShort": "बेसिक लाइफ सपोर्ट",
+      "blsDesc": "ऑक्सीजन, पैरामेडिक, प्राथमिक उपचार",
+      "alsShort": "एडवांस्ड लाइफ सपोर्ट",
+      "alsDesc": "आईसीयू जैसी सुविधा, वेंटिलेटर, डॉक्टर"
+    },
+    "booking": {
+      "title": "एम्बुलेंस विवरण",
+      "freeService": "फ्री सेवा",
+      "paidService": "पेड सेवा",
+      "bannerFree": "🆓 फ्री सेवा — कोई शुल्क नहीं लगेगा",
+      "bannerPaid": "🚑 पेड सेवा — सेवा के प्रकार अनुसार शुल्क",
+      "purposeSectionTitle": "एम्बुलेंस का उद्देश्य *",
+      "urgentBanner": "🚨 इमरजेंसी मोड — प्राथमिकता के आधार पर भेजा जा रहा है",
+      "ambulanceTypeRequired": "आवश्यक एम्बुलेंस प्रकार *",
+      "pickupLocationLabel": "पिकअप लोकेशन *",
+      "dropLocationLabel": "ड्रॉप लोकेशन *",
+      "dropPlaceholder": "अस्पताल या कोई भी लोकेशन खोजने के लिए टैप करें",
+      "patientContactTitle": "मरीज़ और संपर्क विवरण *",
+      "patientNamePlaceholder": "मरीज़ का नाम *",
+      "contactPhonePlaceholder": "संपर्क मोबाइल नंबर *",
+      "medicalNotesTitle": "मेडिकल नोट्स (वैकल्पिक)",
+      "medicalNotesPlaceholder": "कोई खास ज़रूरत, मेडिकल स्थिति,\nऑक्सीजन की ज़रूरत, व्हीलचेयर, आदि।",
+      "charCount": "{{count}}/300",
+      "confirmRequestFree": "कन्फर्म करें और फ्री रिक्वेस्ट करें →",
+      "confirmChooseHospital": "कन्फर्म करें और अस्पताल चुनें →",
+      "dropSearchPlaceholder": "अस्पताल या कोई पता खोजें...",
+      "nearbyHospitalsSection": "🏥 आस-पास के अस्पताल",
+      "searchResultsSection": "📍 खोज परिणाम",
+      "noResults": "कोई परिणाम नहीं मिला। दूसरी खोज करें।",
+      "deadBodyModal": {
+        "title": "सम्मानजनक परिवहन सेवा",
+        "body": "हम शव का सम्मानजनक और गरिमापूर्ण परिवहन प्रदान करते हैं। हमारा प्रशिक्षित स्टाफ पूरी सावधानी और संवेदनशीलता के साथ यह काम करेगा।\n\nपिकअप और ड्रॉप स्थान पर उचित दस्तावेज़ (डेथ सर्टिफिकेट) की ज़रूरत पड़ सकती है।",
+        "confirm": "मैं सहमत हूं, आगे बढ़ें"
+      }
+    },
+    "freeInfo": {
+      "title": "फ्री एम्बुलेंस सेवा",
+      "subtitle": "NGO / सेवा संस्था",
+      "zeroBannerTitle": "ज़ीरो कमीशन — 100% मुफ्त सेवा",
+      "zeroBannerSub": "bogie कोई शुल्क नहीं लेता। यह पूरी तरह से पंजीकृत NGO द्वारा दी जाने वाली मुफ्त सेवा है।",
+      "purposeLine": "उद्देश्य: {{purpose}}",
+      "purposeLineWithSubType": "उद्देश्य: {{purpose}}  ·  {{subtype}}",
+      "autoAssignNote": "आपके अनुरोध के लिए सबसे नज़दीकी उपलब्ध NGO एम्बुलेंस अपने आप असाइन की जाएगी। आप किसी खास NGO को नहीं चुन सकते।",
+      "ourRegisteredPartners": "हमारे पंजीकृत साझेदार",
+      "noNgoPartners": "आपके क्षेत्र में कोई NGO साझेदार नहीं मिला। सेवा अभी भी 108 के ज़रिए उपलब्ध है।",
+      "ngoAreaLabel": "क्षेत्र: {{area}}",
+      "ngoVehicleCount_one": "🚑 {{count}} गाड़ी उपलब्ध",
+      "ngoVehicleCount_other": "🚑 {{count}} गाड़ियां उपलब्ध",
+      "ngoCoverageLabel": "कवरेज: {{areas}}",
+      "nearbyHospitalsRef": "🏥 आस-पास के अस्पताल (सिर्फ जानकारी के लिए)",
+      "referenceNote": "ये अस्पताल सिर्फ जानकारी के लिए दिखाए गए हैं। फ्री एम्बुलेंस सबसे नज़दीकी उपलब्ध NGO से भेजी जाती है।",
+      "hospitalDistance": "📍 {{km}} किमी दूर · {{area}}",
+      "requestBtnEmergency": "🚨 इमरजेंसी फ्री रिक्वेस्ट",
+      "requestBtnNormal": "फ्री एम्बुलेंस के लिए रिक्वेस्ट करें 🚑",
+      "collapsedInfo": "↑ फ्री एम्बुलेंस जानकारी"
+    },
+    "vehicles": {
+      "title": "एम्बुलेंस चुनें",
+      "subtitle": "~{{km}} किमी · पेड सेवा",
+      "noneTitle": "कोई एम्बुलेंस उपलब्ध नहीं है",
+      "noneSub": "कृपया दोबारा कोशिश करें या 108 पर कॉल करें",
+      "recommendedEmergency": "⚡ इमरजेंसी के लिए अनुशंसित",
+      "suitablePatientTransfer": "✓ मरीज़ ट्रांसफर के लिए उपयुक्त",
+      "suitableRespectfulTransfer": "✓ सम्मानजनक परिवहन के लिए उपयुक्त",
+      "meta": {
+        "bls": {
+          "desc": "बेसिक मेडिकल उपकरण, प्रशिक्षित पैरामेडिक, ऑक्सीजन सिलेंडर से लैस"
+        },
+        "als": {
+          "desc": "आईसीयू जैसी सुविधा — वेंटिलेटर, डिफिब्रिलेटर, एडवांस्ड कार्डियक मॉनिटरिंग"
+        },
+        "transport": {
+          "desc": "गैर-इमरजेंसी मरीज़ ट्रांसफर, आरामदायक और सुरक्षित"
+        }
+      },
+      "equipment": {
+        "Oxygen": "ऑक्सीजन",
+        "First Aid": "प्राथमिक उपचार",
+        "Stretcher": "स्ट्रेचर",
+        "Paramedic": "पैरामेडिक",
+        "Ventilator": "वेंटिलेटर",
+        "Defibrillator": "डिफिब्रिलेटर",
+        "ECG Monitor": "ECG मॉनिटर",
+        "IV Fluids": "IV फ्लुइड्स",
+        "Doctor": "डॉक्टर",
+        "Wheelchair": "व्हीलचेयर",
+        "Attendant": "सहायक"
+      },
+      "rateNote": "₹{{base}} बेस · ₹{{perKm}}/किमी · {{km}} किमी"
+    },
+    "review": {
+      "freeAmbulance": "फ्री एम्बुलेंस",
+      "paidAmbulance": "पेड एम्बुलेंस",
+      "urgent": "अर्जेंट",
+      "zeroCommissionBanner": "🏥 एम्बुलेंस सेवाओं पर ज़ीरो प्लेटफ़ॉर्म कमीशन",
+      "emergencyBannerText": "🚨 यह एक इमरजेंसी बुकिंग है। हम तुरंत सबसे नज़दीकी उपलब्ध एम्बुलेंस भेजेंगे।",
+      "freeDisclaimer": "⚠️ फ्री एम्बुलेंस की उपलब्धता आपके क्षेत्र में सरकारी/NGO संसाधनों पर निर्भर करती है।",
+      "selectedHospital": "चुना गया अस्पताल",
+      "summary": {
+        "title": "बुकिंग सारांश",
+        "type": "प्रकार",
+        "typeFree": "फ्री एम्बुलेंस (NGO असाइन)",
+        "typePaid": "पेड एम्बुलेंस",
+        "purpose": "उद्देश्य",
+        "ambType": "एम्बु. प्रकार",
+        "hospital": "अस्पताल",
+        "pickup": "पिकअप",
+        "drop": "ड्रॉप",
+        "patient": "मरीज़",
+        "contact": "संपर्क",
+        "notes": "नोट्स"
+      },
+      "charges": {
+        "title": "शुल्क",
+        "serviceCharge": "सेवा शुल्क",
+        "commission": "कमीशन",
+        "commissionZero": "₹0 (ज़ीरो कमीशन)",
+        "commissionZeroCheck": "₹0 (ज़ीरो कमीशन ✅)",
+        "govNgo": "सरकार/NGO",
+        "govNgoCovered": "✅ कवर्ड",
+        "free": "फ्री"
+      },
+      "paymentNote": "💡 पेमेंट सीधे {{hospital}} को की जाती है।\nbogie एम्बुलेंस सेवाओं पर ज़ीरो कमीशन लेता है।",
+      "rules": [
+        "ट्रैफ़िक के अनुसार एम्बुलेंस 15–30 मिनट में पहुंच जाएगी।",
+        "शव परिवहन के लिए, उचित दस्तावेज़ की ज़रूरत पड़ सकती है।",
+        "फ्री एम्बुलेंस सरकारी/NGO उपलब्धता पर निर्भर है।",
+        "इमरजेंसी की स्थिति में, 108 (नेशनल एम्बुलेंस सेवा) पर भी कॉल करें।",
+        "bogie एम्बुलेंस सेवाओं पर ज़ीरो कमीशन लेता है।"
+      ],
+      "btn": {
+        "free": "फ्री एम्बुलेंस के लिए रिक्वेस्ट करें 🚑",
+        "emergency": "इमरजेंसी रिक्वेस्ट 🚨",
+        "paid": "{{hospital}} बुक करें 🚑"
+      },
+      "hospitalFallback": "एम्बुलेंस",
+      "hospitalFallbackLower": "अस्पताल",
+      "toastFree": "फ्री एम्बुलेंस रिक्वेस्ट हो गई! मदद आ रही है 🚑",
+      "toastPaid": "{{hospital}} पर एम्बुलेंस बुक हो गई! ड्राइवर असाइन किया जा रहा है 🚑"
+    }
+  },
+  "profile": {
+    "settings": {
+      "title": "सेटिंग्स",
+      "language": "भाषा",
+      "languageSub": "अपनी पसंदीदा भाषा चुनें",
+      "preferencesHeader": "प्राथमिकताएं",
+      "pushNotifications": {
+        "label": "पुश नोटिफिकेशन",
+        "sub": "राइड अपडेट, प्रोमो, और अलर्ट"
+      },
+      "alwaysOnLocation": {
+        "label": "हमेशा-ऑन लोकेशन",
+        "sub": "तेज पिकअप पहचान के लिए"
+      },
+      "accountHeader": "अकाउंट",
+      "changePassword": "पासवर्ड बदलें",
+      "deleteAccount": "अकाउंट डिलीट करें"
+    },
+    "home": {
+      "menu": {
+        "family": {
+          "label": "फैमिली",
+          "sub": "टीन, एडल्ट और सीनियर अकाउंट मैनेज करें"
+        },
+        "settings": {
+          "label": "सेटिंग्स"
+        },
+        "addresses": {
+          "label": "सेव किए पते"
+        },
+        "wallet": {
+          "label": "वॉलेट",
+          "sub": "पेमेंट के तरीके और bogie कैश"
+        },
+        "refer": {
+          "label": "रेफ़र करें और कमाएं",
+          "sub": "दोस्तों को बुलाएं, ₹50 कमाएं"
+        },
+        "promos": {
+          "label": "प्रोमो कोड"
+        },
+        "notifications": {
+          "label": "नोटिफिकेशन"
+        },
+        "drive": {
+          "label": "ड्राइवर बनें",
+          "sub": "गाड़ी चलाकर या डिलीवरी करके कमाएं"
+        },
+        "help": {
+          "label": "सहायता",
+          "sub": "ट्रिप से जुड़ी समस्याएं, पेमेंट, सपोर्ट"
+        },
+        "safety": {
+          "label": "सुरक्षा",
+          "sub": "इमरजेंसी SOS, भरोसेमंद कॉन्टैक्ट्स"
+        },
+        "inbox": {
+          "label": "इनबॉक्स"
+        },
+        "legal": {
+          "label": "कानूनी जानकारी"
+        }
+      },
+      "support": {
+        "label": "सपोर्ट से चैट करें",
+        "sub": "24/7 · AI + ह्यूमन एजेंट"
+      },
+      "promoBanner": {
+        "title": "पहली राइड फ्री!",
+        "sub": "Rs.100 की छूट के लिए कोड BOGIE100 इस्तेमाल करें"
+      },
+      "signOut": "साइन आउट करें",
+      "signOutAlert": {
+        "title": "साइन आउट करें?",
+        "message": "आप लॉग आउट हो जाएंगे।",
+        "confirm": "साइन आउट करें"
+      },
+      "companyAttribution": "Aggarwal Publicity & Marketing Pvt. Ltd. की एक इकाई"
+    },
+    "wallet": {
+      "title": "वॉलेट",
+      "bogieCash": "bogie कैश",
+      "addMoney": "+ पैसे जोड़ें",
+      "comingSoonTitle": "जल्द आ रहा है",
+      "comingSoonTopup": "सीधे वॉलेट में पैसे जोड़ने की सुविधा जल्द उपलब्ध होगी।",
+      "comingSoonMethod": "{{method}} सेटअप जल्द उपलब्ध होगा।",
+      "paymentMethods": "पेमेंट के तरीके",
+      "methods": {
+        "cash": {
+          "sub": "सीधे ड्राइवर को पेमेंट करें"
+        },
+        "upi": {
+          "sub": "Google Pay, PhonePe, Paytm"
+        },
+        "card": {
+          "label": "क्रेडिट / डेबिट कार्ड",
+          "sub": "Visa, Mastercard, RuPay"
+        }
+      },
+      "transactionHistory": "लेन-देन का इतिहास",
+      "noTransactions": "अभी कोई लेन-देन नहीं",
+      "noTransactionsSub": "आपकी राइड पेमेंट और वॉलेट टॉप-अप यहां दिखेंगे।",
+      "referralBonus": "रेफ़रल बोनस — दोस्त की पहली राइड",
+      "earnCash": "bogie कैश कमाएं",
+      "earn": {
+        "refer": {
+          "title": "दोस्तों को रेफ़र करें",
+          "sub": "हर दोस्त की पहली राइड पूरी होने पर ₹50 कमाएं"
+        },
+        "promo": {
+          "title": "प्रोमो कोड इस्तेमाल करें",
+          "sub": "bogie कैश कमाने के लिए प्रोमो कोड लगाएं"
+        },
+        "firstRide": {
+          "title": "पहली राइड बोनस",
+          "sub": "अपनी पहली राइड पूरी करके ₹50 कैश कमाएं"
+        }
+      }
+    },
+    "safety": {
+      "title": "सुरक्षा",
+      "sosBannerTitle": "आपकी सुरक्षा हमारी प्राथमिकता है",
+      "sosBannerSub": "किसी भी bogie राइड के दौरान इमरजेंसी सहायता एक टैप दूर है।",
+      "emergencySosHeader": "इमरजेंसी SOS",
+      "sosInfoText": "राइड के दौरान, ट्रैकिंग स्क्रीन पर लाल SOS बटन दबाएं। राइड से बाहर, ऊपर दिया गया बटन इस्तेमाल करें। दोनों ही स्थिति में आप सीधे 112 पर कॉल कर सकते हैं, अपनी लाइव लोकेशन शेयर कर सकते हैं, या एक टैप में bogie सपोर्ट को सूचित कर सकते हैं।",
+      "beforeRideHeader": "राइड से पहले",
+      "beforeRide": [
+        "बैठने से पहले ड्राइवर का नाम और वाहन नंबर जांचें",
+        "अपनी ट्रिप भरोसेमंद कॉन्टैक्ट्स के साथ शेयर करें (ट्रैकिंग स्क्रीन पर शेयर बटन)",
+        "जब संभव हो, पिछली सीट पर बैठें",
+        "अपना फ़ोन चार्ज रखें"
+      ],
+      "duringRideHeader": "राइड के दौरान",
+      "duringRide": [
+        "ऐप पर अपना रूट देखते रहें",
+        "अगर रूट गलत लगे, तो ड्राइवर से विनम्रता से पूछें",
+        "ड्राइवर को ऐप के अंदर से कॉल करें — अपना निजी नंबर शेयर करने से बचें",
+        "परिवार के साथ लाइव लोकेशन शेयर करें"
+      ],
+      "afterRideHeader": "राइड के बाद",
+      "afterRide": [
+        "अपने ड्राइवर को ईमानदारी से रेट करें",
+        "कोई भी समस्या हो तो तुरंत रिपोर्ट करें",
+        "कुछ खो गया? Help → Lost Item के ज़रिए ड्राइवर से संपर्क करें"
+      ],
+      "emergencyContactHeader": "इमरजेंसी कॉन्टैक्ट",
+      "contactNameLabel": "नाम",
+      "contactNamePlaceholder": "जैसे Mom, Rahul",
+      "contactPhoneLabel": "फ़ोन नंबर",
+      "contactPhonePlaceholder": "10-अंकों का मोबाइल नंबर",
+      "contactHint": "जब आप SOS में Share Live Location इस्तेमाल करेंगे, हम इसे सीधे इस कॉन्टैक्ट को SMS से भेजने का विकल्प देंगे।",
+      "update": "अपडेट करें",
+      "remove": "हटाएं",
+      "invalidPhone": "एक मान्य फ़ोन नंबर दर्ज करें",
+      "savedTitle": "सेव हो गया",
+      "savedMsg": "जब आप अपनी लाइव लोकेशन शेयर करेंगे, आपका इमरजेंसी कॉन्टैक्ट सुझाया जाएगा।",
+      "saveErrorMsg": "सेव नहीं हो सका। दोबारा कोशिश करें।",
+      "emergencyNumbersHeader": "इमरजेंसी नंबर",
+      "numbers": {
+        "police": "पुलिस",
+        "womenHelpline": "महिला हेल्पलाइन",
+        "childHelpline": "चाइल्ड हेल्पलाइन"
+      },
+      "bogieSupport": "bogie सपोर्ट"
+    },
+    "legal": {
+      "title": "कानूनी जानकारी",
+      "items": {
+        "terms": "सेवा की शर्तें",
+        "privacy": "गोपनीयता नीति",
+        "cookies": "कुकी नीति",
+        "community": "सामुदायिक दिशानिर्देश",
+        "licenses": "लाइसेंस"
+      },
+      "copyright": "© 2026 bogie Logistics · Aggarwal Publicity and Marketing Pvt. Ltd. · सर्वाधिकार सुरक्षित।",
+      "copyrightMultiline": "© 2026 bogie Logistics\nAggarwal Publicity and Marketing Pvt. Ltd.\nसर्वाधिकार सुरक्षित।",
+      "privacy": {
+        "subtitle": "गोपनीयता नीति — bogie",
+        "datesLabel": "प्रभावी: {{effective}} | अपडेट किया गया: {{updated}}"
+      },
+      "terms": {
+        "datesLabel": "प्रभावी तिथि: {{effective}} · अंतिम अपडेट: {{updated}}"
+      }
+    },
+    "promos": {
+      "title": "प्रोमो कोड",
+      "enterCodeLabel": "प्रोमो कोड दर्ज करें",
+      "placeholder": "जैसे BOGIE100",
+      "apply": "अप्लाई करें",
+      "enterCodeAlertTitle": "कोड दर्ज करें",
+      "enterCodeAlertMsg": "पहले प्रोमो कोड टाइप करें",
+      "appliedAlertTitle": "प्रोमो लागू हो गया!",
+      "appliedAlertMsg": "कोड \"{{code}}\" लागू कर दिया गया है।",
+      "activeTitle": "🏷 BOGIE100",
+      "activeSub": "आपकी पहली राइड पर ₹100 की छूट · 31 दिसंबर 2026 तक वैध"
+    },
+    "refer": {
+      "title": "रेफर करें और कमाएं",
+      "errorText": "आपका रेफरल कोड लोड नहीं हो सका।",
+      "retryBtn": "फिर से कोशिश करें",
+      "heroTitle": "दोस्तों को बुलाएं, ₹50 कमाएं!",
+      "heroSub": "जब आपका दोस्त पहली राइड लेता है, तो आपको ₹50 मिलते हैं। साथ ही, जब वे किसी और को रेफर करते हैं तो ₹25 और मिलते हैं!",
+      "codeLabel": "आपका रेफरल कोड",
+      "copyBtn": "📋 कॉपी करें",
+      "copiedTitle": "कॉपी हो गया",
+      "copiedCodeMsg": "रेफरल कोड क्लिपबोर्ड पर कॉपी हो गया",
+      "copiedLinkMsg": "रेफरल लिंक क्लिपबोर्ड पर कॉपी हो गया",
+      "waBtn": "💬 व्हाट्सएप पर शेयर करें",
+      "linkBtn": "🔗 लिंक कॉपी करें",
+      "shareMessage": "🚖 bogie पर मेरे साथ जुड़ें! साइन अप करते समय मेरा रेफरल कोड *{{code}}* इस्तेमाल करें और राइड शुरू करें। डाउनलोड करें: {{link}}",
+      "statFriendsJoined": "जुड़े दोस्त",
+      "statEarned": "कमाई",
+      "statPending": "पेंडिंग",
+      "sectionTitle": "मेरे रेफरल",
+      "emptyTitle": "अभी तक कोई रेफरल नहीं",
+      "emptySub": "कमाई शुरू करने के लिए अपना कोड शेयर करें",
+      "viaFriendSuffix": " (आपके दोस्त के जरिए)",
+      "joinedOn": "{{date}} को जुड़े",
+      "statusPending": "⏳ पहली राइड बाकी है",
+      "statusCredited": "✅ क्रेडिट हो गया"
+    },
+    "family": {
+      "title": "परिवार",
+      "bannerTitle": "अपने परिवार को मैनेज करें",
+      "bannerSub": "परिवार के सदस्यों को जोड़ें और एक ही जगह से उनके bogie अकाउंट मैनेज करें।",
+      "teen": {
+        "label": "टीन अकाउंट जोड़ें",
+        "sub": "13-17 वर्ष के राइडर्स के लिए"
+      },
+      "senior": {
+        "label": "सीनियर अकाउंट जोड़ें",
+        "sub": "65+ वर्ष के राइडर्स के लिए"
+      },
+      "adult": {
+        "label": "एक एडल्ट जोड़ें",
+        "sub": "18+ वर्ष के राइडर्स के लिए"
+      }
+    },
+    "addresses": {
+      "title": "सेव किए गए पते",
+      "emptyTitle": "कोई सेव किया गया पता नहीं",
+      "emptySub": "पिकअप या ड्रॉप सेट करते समय अपनी बार-बार इस्तेमाल होने वाली जगहें सेव करें",
+      "removeAlertTitle": "हटाएं",
+      "removeAlertMsg": "\"{{label}}\" हटाएं?",
+      "remove": "हटाएं"
+    },
+    "inbox": {
+      "title": "इनबॉक्स",
+      "emptyTitle": "अभी तक कोई मैसेज नहीं",
+      "emptySub": "आपकी राइड्स और अकाउंट से जुड़े नोटिफिकेशन यहां दिखाई देंगे।"
+    },
+    "help": {
+      "title": "सहायता और सपोर्ट",
+      "sections": {
+        "booking": {
+          "title": "बुकिंग से जुड़ी समस्याएं",
+          "items": [
+            {
+              "q": "मैं राइड कैसे बुक करूं?",
+              "a": "होम स्क्रीन पर कैब, ट्रक, या एम्बुलेंस पर टैप करें। अपनी पिकअप और ड्रॉप लोकेशन डालें, अपना वाहन प्रकार चुनें, और कन्फर्म पर टैप करें।"
+            },
+            {
+              "q": "क्या मैं पहले से राइड शेड्यूल कर सकता हूं?",
+              "a": "फिलहाल bogie केवल इंस्टेंट बुकिंग सपोर्ट करता है। शेड्यूल्ड राइड्स जल्द आ रही हैं।"
+            },
+            {
+              "q": "मुझे ड्राइवर क्यों नहीं मिल रहा?",
+              "a": "हो सकता है अभी आपके इलाके में कोई ड्राइवर उपलब्ध न हो। कुछ मिनट बाद फिर कोशिश करें या अपनी पिकअप लोकेशन थोड़ी बदलें।"
+            }
+          ]
+        },
+        "payments": {
+          "title": "पेमेंट",
+          "items": [
+            {
+              "q": "कौन से पेमेंट तरीके स्वीकार किए जाते हैं?",
+              "a": "कैश, UPI (Google Pay, PhonePe, Paytm), क्रेडिट/डेबिट कार्ड, और bogie वॉलेट।"
+            },
+            {
+              "q": "मुझसे गलत चार्ज लिया गया।",
+              "a": "24 घंटे के अंदर शिकायत दर्ज करें: Help → Payment Issue → Wrong Charge। हमारी टीम 2 कार्य दिवसों में जांच कर जवाब देगी।"
+            },
+            {
+              "q": "मुझे रिफंड कैसे मिलेगा?",
+              "a": "अप्रूव्ड रिफंड 5–7 कार्य दिवसों में आपके मूल पेमेंट तरीके में वापस भेज दिया जाता है।"
+            }
+          ]
+        },
+        "cancellations": {
+          "title": "रद्दीकरण",
+          "items": [
+            {
+              "q": "मैं बुकिंग कैसे रद्द करूं?",
+              "a": "एक्टिव बुकिंग स्क्रीन खोलें और Cancel पर टैप करें। 2 मिनट के अंदर रद्द करने पर कोई चार्ज नहीं है; उसके बाद ₹30–₹50 का मामूली शुल्क लग सकता है।"
+            },
+            {
+              "q": "मेरे ड्राइवर ने रद्द कर दिया। अब क्या होगा?",
+              "a": "हम अपने आप आपको दूसरे ड्राइवर से मैच करने की कोशिश करेंगे। अगर कोई उपलब्ध नहीं है, तो पूरा रिफंड तुरंत कर दिया जाएगा।"
+            }
+          ]
+        },
+        "truck": {
+          "title": "ट्रक बुकिंग",
+          "items": [
+            {
+              "q": "कौन सी चीजें ट्रांसपोर्ट नहीं की जा सकतीं?",
+              "a": "हथियार, विस्फोटक, ड्रग्स, गैरकानूनी सामान, बिना परमिट के जीवित जानवर, और बिना उचित दस्तावेजों के मानव अवशेष।"
+            },
+            {
+              "q": "क्या मेरा माल इंश्योर्ड है?",
+              "a": "बेसिक सुरक्षा शामिल है। पूरी सुरक्षा के लिए आप बुकिंग के समय पूरा कार्गो इंश्योरेंस खरीद सकते हैं।"
+            }
+          ]
+        },
+        "ambulance": {
+          "title": "एम्बुलेंस",
+          "items": [
+            {
+              "q": "क्या फ्री एम्बुलेंस सच में मुफ्त है?",
+              "a": "हां — यह सरकार/NGO द्वारा प्रायोजित है। उपलब्धता पर निर्भर है। पहुंचने का समय तय नहीं है। जानलेवा इमरजेंसी में हमेशा सबसे पहले 108 पर कॉल करें।"
+            },
+            {
+              "q": "पेड BLS एम्बुलेंस में क्या शामिल है?",
+              "a": "ट्रेंड पैरामेडिक, ऑक्सीजन सिलेंडर, फर्स्ट एड किट, स्ट्रेचर, और बेसिक पेशेंट मॉनिटरिंग उपकरण।"
+            }
+          ]
+        }
+      },
+      "contactTitle": "अब भी मदद चाहिए?",
+      "contactSub": "हमारी सपोर्ट टीम रोज सुबह 8 बजे से रात 10 बजे तक उपलब्ध है",
+      "contactBtn": "ईमेल सपोर्ट"
+    },
+    "drive": {
+      "title": "ड्राइवर बनें",
+      "heroTitle": "अपने समय पर कमाएं",
+      "heroSub": "bogie के साथ ड्राइव करें और जब चाहें पैसे कमाएं। खुद के बॉस बनें।",
+      "ctaBtn": "ड्राइव करने के लिए साइन अप करें",
+      "errorAlertMsg": "पेज नहीं खुल सका। कृपया फिर से कोशिश करें।",
+      "features": {
+        "earnMore": {
+          "title": "ज्यादा कमाएं",
+          "sub": "बेहतर किराया + इंसेंटिव"
+        },
+        "flexibleHours": {
+          "title": "फ्लेक्सिबल समय",
+          "sub": "जब चाहें काम करें"
+        },
+        "staySafe": {
+          "title": "सुरक्षित रहें",
+          "sub": "24/7 सपोर्ट और इंश्योरेंस"
+        }
+      }
+    },
+    "notifications": {
+      "title": "नोटिफिकेशन",
+      "sectionHeader": "नोटिफिकेशन प्राथमिकताएं",
+      "required": "आवश्यक",
+      "note": "राइड अपडेट बंद नहीं किए जा सकते — ये आपकी सुरक्षा और बुकिंग मैनेजमेंट के लिए जरूरी हैं।",
+      "prefs": {
+        "trips": {
+          "label": "राइड अपडेट",
+          "sub": "बुकिंग कन्फर्मेशन, ड्राइवर असाइन, राइड शुरू, पूरी हुई"
+        },
+        "promos": {
+          "label": "प्रमोशन और ऑफर",
+          "sub": "खास छूट और प्रोमो कोड"
+        },
+        "news": {
+          "label": "bogie न्यूज़",
+          "sub": "नए फीचर्स और ऐप अपडेट"
+        },
+        "sms": {
+          "label": "SMS अलर्ट",
+          "sub": "SMS के जरिए जरूरी राइड अपडेट"
+        },
+        "email": {
+          "label": "ईमेल नोटिफिकेशन",
+          "sub": "साप्ताहिक सारांश और इनवॉइस"
+        }
+      }
+    }
+  },
+  "history": {
+    "title": "आपकी राइड्स",
+    "tripsCount_one": "{{count}} राइड",
+    "tripsCount_other": "{{count}} राइड्स",
+    "loading": "आपकी राइड्स लोड हो रही हैं...",
+    "empty": {
+      "title": "अभी कोई राइड नहीं",
+      "subtitle": "आपकी राइड्स यहां दिखेंगी",
+      "cta": "शुरू करने के लिए एक राइड बुक करें",
+      "button": "राइड बुक करें"
+    },
+    "pickupFallback": "पिकअप",
+    "dropFallback": "ड्रॉप",
+    "rideFallback": "राइड",
+    "fareFinal": "₹{{amount}}",
+    "fareEstimated": "~₹{{amount}}",
+    "scheduledPickup": "🗓 पिकअप {{time}}",
+    "cancellationFee": "कैंसिलेशन फीस: ₹{{amount}}",
+    "today": "आज, {{time}}",
+    "yesterday": "कल, {{time}}",
+    "status": {
+      "searching": "ड्राइवर खोजा जा रहा है",
+      "accepted": "स्वीकृत",
+      "arriving": "पहुंच रहा है",
+      "in_progress": "जारी है",
+      "completed": "पूरी हुई",
+      "cancelled": "रद्द",
+      "scheduled": "शेड्यूल्ड"
+    }
+  },
+  "notifications": {
+    "title": "नोटिफिकेशन",
+    "unreadCount_one": "{{count}} अनरीड",
+    "unreadCount_other": "{{count}} अनरीड",
+    "empty": {
+      "title": "अभी कोई नोटिफिकेशन नहीं",
+      "sub": "ऑफ़र, राइड अपडेट और खबरें यहां दिखेंगी"
+    },
+    "timeAgo": {
+      "justNow": "अभी अभी",
+      "minutes": "{{count}} मिनट पहले",
+      "hours": "{{count}} घंटे पहले",
+      "days": "{{count}} दिन पहले"
+    },
+    "types": {
+      "general": "सामान्य",
+      "announcement": "घोषणा",
+      "offer": "ऑफ़र",
+      "coupon": "कूपन",
+      "news": "खबर",
+      "ride": "राइड"
+    }
+  },
+  "tracking": {
+    "status": {
+      "scheduled": {
+        "title": "राइड शेड्यूल हो गई",
+        "sub": "पिकअप समय के करीब हम आपके लिए ड्राइवर ढूंढेंगे"
+      },
+      "searching": {
+        "title": "ड्राइवर ढूंढा जा रहा है...",
+        "sub": "आपको पास के ड्राइवरों से मिलाया जा रहा है"
+      },
+      "accepted": {
+        "title": "ड्राइवर आ रहा है",
+        "sub": "आपका ड्राइवर आपकी तरफ आ रहा है"
+      },
+      "arriving": {
+        "title": "ड्राइवर पहुंच गया है",
+        "sub": "ट्रिप शुरू करने के लिए अपना OTP बताएं"
+      },
+      "in_progress": {
+        "title": "राइड जारी है",
+        "sub": "आपके गंतव्य की ओर जा रहे हैं"
+      },
+      "completed": {
+        "title": "ट्रिप पूरी हुई",
+        "sub": "bogie के साथ राइड करने के लिए धन्यवाद"
+      },
+      "cancelled": {
+        "title": "बुकिंग रद्द हुई",
+        "sub": "यह ट्रिप रद्द कर दी गई थी"
+      }
+    },
+    "voice": {
+      "accepted": "ड्राइवर असाइन हो गया है और आपकी तरफ आ रहा है",
+      "arriving": "आपका ड्राइवर पिकअप पॉइंट पर पहुंच गया है",
+      "inProgress": "आपकी राइड शुरू हो गई है। गंतव्य की ओर जा रहे हैं",
+      "completed": "आप अपने गंतव्य पर पहुंच गए हैं। आपका दिन शुभ हो!"
+    },
+    "distMeters": "{{m}} मी",
+    "distKm": "{{km}} किमी",
+    "durationMins_one": "{{count}} मिनट",
+    "durationMins_other": "{{count}} मिनट",
+    "loading": "आपकी ट्रिप लोड हो रही है...",
+    "bookingNotFound": "बुकिंग नहीं मिली",
+    "goHome": "होम पर जाएं",
+    "failedToLoad": "बुकिंग लोड नहीं हो सकी",
+    "nearbyLooking": "उपलब्ध ड्राइवर ढूंढे जा रहे हैं...",
+    "nearbyDrivers_one": "🚗 {{count}} ड्राइवर पास में",
+    "nearbyDrivers_other": "🚗 {{count}} ड्राइवर पास में",
+    "distToDriver": "ड्राइवर {{dist}}",
+    "distToDrop": "ड्रॉप {{dist}}",
+    "driverFallback": "आपका ड्राइवर",
+    "vehicleFallback": "वाहन",
+    "callDriverTitle": "ड्राइवर को कॉल करें",
+    "callDriverMsg": "{{phone}} पर {{name}} को कॉल करें?",
+    "callDriverFallback": "ड्राइवर",
+    "call": "कॉल करें",
+    "otpShareLabel": "ड्राइवर के साथ शेयर करें",
+    "otpSub": "आपकी राइड शुरू करने के लिए ड्राइवर को यह चाहिए",
+    "ambulanceInfo": {
+      "zeroCommission": "🏥 ज़ीरो कमीशन सेवा",
+      "hospitalLabel": "अस्पताल",
+      "callHospital": "📞 कॉल करें",
+      "freeNoCharge": "🆓 फ्री एम्बुलेंस — कोई शुल्क नहीं",
+      "emergency": "🚨 इमरजेंसी — प्राथमिकता रिस्पॉन्स"
+    },
+    "farePaid": "किराया चुकाया",
+    "fareEstimated": "अनुमानित किराया",
+    "scheduledPickupLabel": "🗓 पिकअप शेड्यूल है",
+    "scheduledFindDriverSub": "पिकअप से ~15 मिनट पहले हम आपके लिए ड्राइवर ढूंढेंगे",
+    "cancelRideBtn": "राइड रद्द करें",
+    "cancellationFeeNotice": "आपकी अगली राइड में ₹{{fee}} की कैंसिलेशन फीस जोड़ी जाएगी।",
+    "viewMyRides": "मेरी राइड्स देखें",
+    "expandHint": "▲  रूट विवरण",
+    "collapseHint": "▼  छोटा करें",
+    "fareEstimateTitle": "किराया अनुमान",
+    "tripFare": "ट्रिप किराया",
+    "distanceLabel": "दूरी",
+    "restorePillPrefix": "↑ {{title}}",
+    "cancelDialog": {
+      "title": "राइड रद्द करें",
+      "defaultMsg": "क्या आप वाकई रद्द करना चाहते हैं?",
+      "keepRide": "राइड रखें",
+      "yesCancel": "हां, रद्द करें",
+      "ambulanceMsg": "एम्बुलेंस राइड रद्द करना हमेशा मुफ़्त है — कोई शुल्क नहीं लगता। यह बुकिंग रद्द करें?",
+      "scheduledMsg": "यह राइड अभी डिस्पैच नहीं हुई है — रद्द करना मुफ़्त है। इस शेड्यूल राइड को रद्द करें?",
+      "freeWindowMsg": "इस राइड को रद्द करें? कोई शुल्क नहीं — आप फ्री विंडो के अंदर हैं।",
+      "feeTitle": "कैंसिलेशन फीस लागू होगी",
+      "feeMsg": "अभी रद्द करने पर आपकी अगली राइड में ₹{{fee}} की कैंसिलेशन फीस जुड़ेगी। फिर भी रद्द करें?",
+      "feeCancelBtn": "रद्द करें — ₹{{fee}}"
+    },
+    "rate": {
+      "title": "ड्राइवर को रेट करें",
+      "selectStars": "कम से कम 1 स्टार चुनें",
+      "error": "रेटिंग सबमिट नहीं हो सकी।"
+    },
+    "completion": {
+      "title": "ट्रिप पूरी हुई!",
+      "sub": "bogie के साथ राइड करने के लिए धन्यवाद",
+      "farePaid": "चुकाया गया किराया",
+      "driver": "ड्राइवर",
+      "duration": "अवधि",
+      "durationMin": "{{count}} मिनट",
+      "howWasTrip": "आपकी ट्रिप कैसी रही?",
+      "commentPlaceholder": "कमेंट लिखें (वैकल्पिक)",
+      "submitGoHome": "सबमिट करें और होम जाएं",
+      "skip": "छोड़ें"
+    },
+    "chat": {
+      "driverFallback": "ड्राइवर",
+      "rideInProgress": "राइड जारी है",
+      "chatUnavailable": "चैट उपलब्ध नहीं है",
+      "sendMessagePrompt": "अपने ड्राइवर को मैसेज भेजें।",
+      "chatOpensLater": "ड्राइवर के रास्ते में आने पर चैट खुलेगी।",
+      "quickReplies": [
+        "मैं बाहर इंतज़ार कर रहा/रही हूं",
+        "कृपया मुझे कॉल करें",
+        "नीचे आ रहा/रही हूं"
+      ],
+      "inputPlaceholder": "मैसेज टाइप करें...",
+      "disabledBarText": "💬 ड्राइवर के रास्ते में आने पर चैट उपलब्ध होगी"
+    }
+  },
+  "support": {
+    "index": {
+      "title": "bogie सपोर्ट",
+      "subtitle": "🤖 AI असिस्टेंट 24/7 उपलब्ध है",
+      "lostItem": "कुछ खो गया?",
+      "recentConversations": "हाल की बातचीत",
+      "emptyTitle": "अभी कोई बातचीत नहीं",
+      "emptySub": "हमारी AI + ह्यूमन सपोर्ट टीम से मदद पाने के लिए \"Start New Chat\" पर टैप करें।",
+      "resolved": "✅ हल हो गया",
+      "noMessagesYet": "अभी कोई मैसेज नहीं",
+      "timeAgo": {
+        "justNow": "अभी अभी",
+        "minutesAgo": "{{count}} मिनट पहले",
+        "hoursAgo": "{{count}} घंटे पहले",
+        "daysAgo": "{{count}} दिन पहले"
+      }
+    },
+    "status": {
+      "open": "खुला",
+      "in_progress": "प्रगति पर",
+      "resolved": "हल हो गया"
+    },
+    "chat": {
+      "headerFallback": "सपोर्ट चैट",
+      "emptyChat": "शुरू करने के लिए एक मैसेज भेजें।",
+      "botName": "🤖 bogie असिस्टेंट",
+      "agentFallback": "सपोर्ट एजेंट",
+      "wasHelpful": "क्या यह मददगार रहा?",
+      "yesResolved": "✅ हां, हल हो गया",
+      "stillNeedHelp": "❌ अभी भी मदद चाहिए",
+      "gladToHelp": "मदद कर पाकर खुशी हुई! 🎉",
+      "connectingSupport": "🎧 आपको हमारी सपोर्ट टीम से जोड़ा जा रहा है — वे यहां जल्द जवाब देंगे।",
+      "quickIssues": [
+        "मेरी राइड रद्द हो गई",
+        "मुझसे ज़्यादा पैसे लिए गए",
+        "ड्राइवर नहीं आया",
+        "मुझे रिफंड चाहिए",
+        "ऐप काम नहीं कर रहा",
+        "एम्बुलेंस बुकिंग में मदद चाहिए"
+      ],
+      "inputPlaceholder": "अपना मैसेज टाइप करें...",
+      "quickIssuesBtn": "📋 सामान्य समस्याएं ▾",
+      "errorConnecting": "आपको सपोर्ट से नहीं जोड़ा जा सका। दोबारा कोशिश करें।"
+    },
+    "lostItem": {
+      "title": "खोई हुई वस्तु की रिपोर्ट करें",
+      "whichRide": "कौन सी राइड?",
+      "noCompletedRides": "कोई पूरी हुई राइड नहीं मिली।",
+      "whatDidYouLose": "आपने क्या खोया?",
+      "itemPlaceholder": "जैसे काला बैकपैक, फोन, वॉलेट...",
+      "photoOptional": "फोटो (वैकल्पिक)",
+      "removePhoto": "हटाएं",
+      "addPhoto": "📷 फोटो जोड़ें",
+      "additionalDetails": "अतिरिक्त विवरण (वैकल्पिक)",
+      "detailsPlaceholder": "कुछ भी जो मदद कर सके — आपने इसे कहां रखा था, कब पता चला कि यह खो गया...",
+      "submitReport": "रिपोर्ट सबमिट करें →",
+      "permissionNeededTitle": "अनुमति चाहिए",
+      "permissionNeededMsg": "फोटो जोड़ने के लिए फोटो एक्सेस की अनुमति दें।",
+      "notAvailableTitle": "अभी उपलब्ध नहीं",
+      "notAvailableMsg": "फोटो अटैचमेंट के लिए ऐप का नया अपडेट चाहिए। आप बिना फोटो के भी अपनी रिपोर्ट सबमिट कर सकते हैं।",
+      "selectRideTitle": "एक राइड चुनें",
+      "selectRideMsg": "कृपया चुनें कि आपने किस राइड में अपनी वस्तु खोई।",
+      "addDetailsTitle": "विवरण जोड़ें",
+      "addDetailsMsg": "कृपया बताएं कि आपने क्या खोया।",
+      "submitErrorMsg": "आपकी रिपोर्ट सबमिट नहीं हो सकी। दोबारा कोशिश करें।"
+    },
+    "new": {
+      "title": "नई सपोर्ट चैट",
+      "heading": "आज हम आपकी कैसे मदद कर सकते हैं?",
+      "subheading": "तुरंत जवाब के लिए अपनी समस्या से मिलते-जुलते सवाल पर टैप करें।",
+      "category": {
+        "ride": "राइड से जुड़ी समस्याएं",
+        "payment": "पेमेंट से जुड़ी समस्याएं",
+        "driver": "ड्राइवर से जुड़ी समस्याएं",
+        "general": "सामान्य"
+      },
+      "relatedBooking": "संबंधित बुकिंग (वैकल्पिक)",
+      "bookingPlaceholder": "बुकिंग ID (जैसे 4aaa3406)",
+      "orTypeOwn": "या अपना सवाल खुद टाइप करें",
+      "messagePlaceholder": "अपनी समस्या विस्तार से बताएं...",
+      "startChat": "चैट शुरू करें →",
+      "addMessageTitle": "मैसेज जोड़ें",
+      "addMessageMsg": "कृपया अपनी समस्या विस्तार से बताएं।",
+      "startChatError": "चैट शुरू नहीं हो सकी। दोबारा कोशिश करें।",
+      "generalSupportSubject": "सामान्य सपोर्ट"
+    }
+  }
+}

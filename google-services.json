@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "452086529308",
+    "project_id": "bogie-7ea4f",
+    "storage_bucket": "bogie-7ea4f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452086529308:android:69ae1cbf73f10116274ed9",
+        "android_client_info": {
+          "package_name": "com.gogoo.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOQlfoRcHCxhFZqGV5UHw2xRo_2d6og1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

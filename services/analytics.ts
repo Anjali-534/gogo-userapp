@@ -455,7 +455,8 @@ export const setUserProperties = (user: {
       user_type: "rider",
     });
     await crashlytics().setUserId(user.id);
-    await crashlytics().setAttributes({ name: user.name || "unknown", phone: user.phone || "unknown", type: "rider" });
+    // Never send raw PII (phone) to Crashlytics — name + type is enough for support correlation.
+    await crashlytics().setAttributes({ name: user.name || "unknown", type: "rider" });
   });
 
 export const trackLogin = (params: { method: "phone" | "otp" | "email"; userId: string }) =>

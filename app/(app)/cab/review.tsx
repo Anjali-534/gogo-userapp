@@ -138,8 +138,7 @@ export default function CabReviewScreen() {
       };
 
       if (vehicleSlug) body.vehicle_slug = vehicleSlug;
-      if (couponCode) body.promo_code      = couponCode;
-      if (couponDisc) body.discount_amount = couponDisc;
+      if (couponCode) body.promo_code = couponCode;
       if (scheduleMode === "schedule" && scheduledDate) {
         body.is_scheduled = true;
         body.scheduled_at = scheduledDate.toISOString();
@@ -188,8 +187,25 @@ export default function CabReviewScreen() {
         return;
       }
 
-      await AsyncStorage.setItem("active_booking_id", bookingId);
-      router.replace(`/(app)/tracking/${bookingId}` as any);
+      const proceed = async () => {
+        await AsyncStorage.setItem("active_booking_id", bookingId);
+        router.replace(`/(app)/tracking/${bookingId}` as any);
+      };
+
+      // The server determines the real discount from the promo_codes table —
+      // couponDisc here was only ever the client's pre-booking estimate.
+      // Only interrupt with a confirmation if the server actually landed on
+      // a different number.
+      const serverDiscount = couponCode ? Number(res.data?.discount_amount || 0) : 0;
+      if (couponCode && Math.abs(serverDiscount - couponDisc) > 0.5) {
+        Alert.alert(
+          t("booking.review.couponAdjustedTitle"),
+          t("booking.review.couponAdjustedMsg", { amount: serverDiscount }),
+          [{ text: t("common.ok"), onPress: proceed }]
+        );
+        return;
+      }
+      await proceed();
     } catch (e: any) {
       if (e.response?.status === 401) {
         await AsyncStorage.multiRemove(["access_token", "rider_id", "user"]);

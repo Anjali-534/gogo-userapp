@@ -197,6 +197,8 @@
       "total": "Total",
       "coupon": "Coupon",
       "couponWithCode": "Coupon ({{code}})",
+      "couponAdjustedTitle": "Discount updated",
+      "couponAdjustedMsg": "The applied discount was ₹{{amount}} based on the current offer terms.",
       "previousCancellationFee": "Previous cancellation fee",
       "addedFromEarlierRide": "Added from an earlier ride",
       "cashPaymentNote": "💵 Cash payment after the ride",

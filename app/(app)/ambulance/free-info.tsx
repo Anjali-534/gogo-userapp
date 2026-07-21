@@ -81,7 +81,7 @@ export default function AmbulanceFreeInfoScreen() {
   // ── Data loading ──────────────────────────────────────────────────────────
   useEffect(() => {
     axios
-      .get(`${API}/gogoo/ambulance/ngos`)
+      .get(`${API}/gogoo/ambulance/ngos/public`)
       .then(r => setNgos(r.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));

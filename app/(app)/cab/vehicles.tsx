@@ -192,6 +192,7 @@ export default function CabVehiclesScreen() {
         serviceTypeId:  selected.id,
         serviceName:    selected.label,
         vehicleEmoji:   selected.emoji,
+        vehicleSlug:    selected.slug,
         estimatedFare:  String(selected.fare),
         distanceKm:     String(Math.round(estKm * 10) / 10),
         couponCode,

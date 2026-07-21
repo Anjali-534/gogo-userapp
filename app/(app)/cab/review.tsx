@@ -42,7 +42,7 @@ export default function CabReviewScreen() {
   const {
     pickupAddress, dropAddress,
     pickupLat, pickupLng, dropLat, dropLng,
-    serviceTypeId, serviceName, vehicleEmoji,
+    serviceTypeId, serviceName, vehicleEmoji, vehicleSlug,
     estimatedFare, distanceKm,
     couponCode, couponDiscount,
   } = params;
@@ -137,6 +137,7 @@ export default function CabReviewScreen() {
         distance_km:     km,
       };
 
+      if (vehicleSlug) body.vehicle_slug = vehicleSlug;
       if (couponCode) body.promo_code      = couponCode;
       if (couponDisc) body.discount_amount = couponDisc;
       if (scheduleMode === "schedule" && scheduledDate) {

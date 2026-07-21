@@ -154,6 +154,8 @@ export default function TruckReviewScreen() {
         drop_address:    dropAddress || "",
         estimated_fare:  displayTotal,
         distance_km:     km,
+        loading_addon:   loadingAddon   === "true",
+        unloading_addon: unloadingAddon === "true",
       };
 
       if (couponCode) body.promo_code      = couponCode;

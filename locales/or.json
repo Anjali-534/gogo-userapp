@@ -130,7 +130,13 @@
       "title": "ପେମେଣ୍ଟ ପଦ୍ଧତି",
       "cash": "କ୍ୟାଶ୍",
       "upi": "UPI",
-      "card": "କାର୍ଡ"
+      "card": "କାର୍ଡ",
+      "wallet": "bogie Wallet",
+      "walletSub": "ବାଲାନ୍ସ: ₹{{balance}}",
+      "walletInsufficient": "ପର୍ଯ୍ୟାପ୍ତ ବାଲାନ୍ସ ନାହିଁ",
+      "walletNotConfigured": "ଶୀଘ୍ର ଆସୁଛି",
+      "walletInsufficientAlert": "ଆପଣଙ୍କ bogie Wallet ବାଲାନ୍ସ (₹{{balance}}) ଏହି ରାଇଡ୍‌ର ଭଡ଼ାଠାରୁ କମ୍। ଟଙ୍କା ଯୋଡନ୍ତୁ କିମ୍ବା କ୍ୟାଶ୍‌ରେ ପେମେଣ୍ଟ କରନ୍ତୁ।",
+      "walletNotConfiguredAlert": "ୱାଲେଟ୍ ପେମେଣ୍ଟ ଏବେ ଉପଲବ୍ଧ ନାହିଁ। ଦୟାକରି ବର୍ତ୍ତମାନ କ୍ୟାଶ୍‌ରେ ପେମେଣ୍ଟ କରନ୍ତୁ।"
     },
     "serviceFallback": "ସେବା",
     "bookButton": "{{service}} ବୁକ୍ କରନ୍ତୁ",
@@ -575,7 +581,8 @@
       "hospitalFallback": "ଆମ୍ବୁଲାନ୍ସ",
       "hospitalFallbackLower": "ଡାକ୍ତରଖାନା",
       "toastFree": "ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ରିକୱେଷ୍ଟ ହେଲା! ସାହାଯ୍ୟ ଆସୁଛି 🚑",
-      "toastPaid": "{{hospital}} ରେ ଆମ୍ବୁଲାନ୍ସ ବୁକ୍ ହେଲା! ଡ୍ରାଇଭର ନିଯୁକ୍ତ ହେଉଛନ୍ତି 🚑"
+      "toastPaid": "{{hospital}} ରେ ଆମ୍ବୁଲାନ୍ସ ବୁକ୍ ହେଲା! ଡ୍ରାଇଭର ନିଯୁକ୍ତ ହେଉଛନ୍ତି 🚑",
+      "walletPaidNote": "✅ ୱାଲେଟ୍ ବାଲାନ୍ସରୁ ପେମେଣ୍ଟ ହୋଇଛି"
     }
   },
   "profile": {

@@ -130,7 +130,13 @@
       "title": "पेमेंट का तरीका",
       "cash": "कैश",
       "upi": "UPI",
-      "card": "कार्ड"
+      "card": "कार्ड",
+      "wallet": "bogie Wallet",
+      "walletSub": "बैलेंस: ₹{{balance}}",
+      "walletInsufficient": "बैलेंस कम है",
+      "walletNotConfigured": "जल्द आ रहा है",
+      "walletInsufficientAlert": "आपका bogie Wallet बैलेंस (₹{{balance}}) इस राइड के किराए से कम है। पैसे जोड़ें या कैश से भुगतान करें।",
+      "walletNotConfiguredAlert": "वॉलेट पेमेंट अभी उपलब्ध नहीं है। कृपया अभी के लिए कैश से भुगतान करें।"
     },
     "serviceFallback": "सेवा",
     "bookButton": "{{service}} बुक करें",
@@ -575,7 +581,8 @@
       "hospitalFallback": "एम्बुलेंस",
       "hospitalFallbackLower": "अस्पताल",
       "toastFree": "फ्री एम्बुलेंस रिक्वेस्ट हो गई! मदद आ रही है 🚑",
-      "toastPaid": "{{hospital}} पर एम्बुलेंस बुक हो गई! ड्राइवर असाइन किया जा रहा है 🚑"
+      "toastPaid": "{{hospital}} पर एम्बुलेंस बुक हो गई! ड्राइवर असाइन किया जा रहा है 🚑",
+      "walletPaidNote": "✅ वॉलेट बैलेंस से भुगतान किया गया"
     }
   },
   "profile": {

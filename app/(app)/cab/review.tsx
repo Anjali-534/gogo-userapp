@@ -9,6 +9,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { trackBookingCompleted, trackBookingFailed, trackPaymentViewed } from "@/services/analytics";
 import SchedulePicker from "../../../components/SchedulePicker";
+import PaymentMethodToggle from "../../../components/PaymentMethodToggle";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -56,6 +57,9 @@ export default function CabReviewScreen() {
   const [scheduleMode, setScheduleMode] = useState<"now" | "schedule">("now");
   const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "wallet">("cash");
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [paymentsAvailable, setPaymentsAvailable] = useState(false);
 
   const displayTotal = Math.max(0, baseFare - couponDisc) + outstandingFee;
 
@@ -65,10 +69,18 @@ export default function CabReviewScreen() {
       try {
         const token = await AsyncStorage.getItem("access_token");
         if (!token) return;
-        const res = await axios.get(`${API}/gogoo/rider/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOutstandingFee(Number(res.data?.outstanding_cancellation_fee || 0));
+        const headers = { Authorization: `Bearer ${token}` };
+        const [profileRes, ledgerRes] = await Promise.allSettled([
+          axios.get(`${API}/gogoo/rider/profile`, { headers }),
+          axios.get(`${API}/gogoo/wallet/ledger`, { headers }),
+        ]);
+        if (profileRes.status === "fulfilled") {
+          setOutstandingFee(Number(profileRes.value.data?.outstanding_cancellation_fee || 0));
+        }
+        if (ledgerRes.status === "fulfilled") {
+          setWalletBalance(Number(ledgerRes.value.data?.balance || 0));
+          setPaymentsAvailable(!!ledgerRes.value.data?.payments_available);
+        }
       } catch {}
     })();
   }, []);
@@ -135,6 +147,7 @@ export default function CabReviewScreen() {
         drop_address:    dropAddress || "",
         estimated_fare:  displayTotal,
         distance_km:     km,
+        payment_method:  paymentMethod,
       };
 
       if (vehicleSlug) body.vehicle_slug = vehicleSlug;
@@ -298,6 +311,13 @@ export default function CabReviewScreen() {
       </ScrollView>
 
       <View style={s.footer}>
+        <PaymentMethodToggle
+          value={paymentMethod}
+          onChange={setPaymentMethod}
+          walletBalance={walletBalance}
+          paymentsAvailable={paymentsAvailable}
+          fare={displayTotal}
+        />
         <View style={s.modeRow}>
           <TouchableOpacity
             style={[s.modeChip, scheduleMode === "now" && s.modeChipActive]}

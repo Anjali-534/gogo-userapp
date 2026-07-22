@@ -130,7 +130,13 @@
       "title": "Payment method",
       "cash": "Cash",
       "upi": "UPI",
-      "card": "Card"
+      "card": "Card",
+      "wallet": "bogie Wallet",
+      "walletSub": "Balance: ₹{{balance}}",
+      "walletInsufficient": "Not enough balance",
+      "walletNotConfigured": "Coming soon",
+      "walletInsufficientAlert": "Your bogie Wallet balance (₹{{balance}}) is lower than this ride's fare. Add money or pay by cash instead.",
+      "walletNotConfiguredAlert": "Wallet payments aren't available yet. Please pay by cash for now."
     },
     "serviceFallback": "Service",
     "bookButton": "Book {{service}}",
@@ -577,7 +583,8 @@
       "hospitalFallback": "Ambulance",
       "hospitalFallbackLower": "hospital",
       "toastFree": "Free ambulance requested! Help is on the way 🚑",
-      "toastPaid": "Ambulance booked at {{hospital}}! Driver is being assigned 🚑"
+      "toastPaid": "Ambulance booked at {{hospital}}! Driver is being assigned 🚑",
+      "walletPaidNote": "✅ Paid from wallet balance"
     }
   },
   "profile": {
@@ -666,6 +673,25 @@
       "comingSoonTitle": "Coming Soon",
       "comingSoonTopup": "Direct wallet top-up will be available in an upcoming update.",
       "comingSoonMethod": "{{method}} setup will be available soon.",
+      "paymentsComingSoonTitle": "Payments coming soon",
+      "paymentsComingSoonSub": "Wallet top-ups will be enabled here shortly. Ride payments still work as cash in the meantime.",
+      "addMoneyModalTitle": "Add Money",
+      "addMoneyAmountLabel": "Amount to add",
+      "addMoneyAmountPlaceholder": "Enter amount",
+      "addMoneyRangeHint": "Between ₹{{min}} and ₹{{max}}",
+      "addMoneyInvalidAmount": "Enter an amount between ₹{{min}} and ₹{{max}}",
+      "addMoneyProceed": "Proceed to Pay",
+      "addMoneyCreatingOrder": "Setting up payment…",
+      "addMoneyOrderFailed": "Couldn't start the payment. Please try again.",
+      "checkoutStubTitle": "Checkout coming soon",
+      "checkoutStubMsg": "Payment order created — the in-app checkout screen isn't wired up yet. This is where Razorpay's payment sheet will open once it's connected.",
+      "ledgerType": {
+        "topup": "Wallet top-up",
+        "ride_payment": "Ride payment",
+        "refund": "Refund",
+        "referral_credit": "Referral bonus",
+        "adjustment": "Adjustment"
+      },
       "paymentMethods": "Payment Methods",
       "methods": {
         "cash": {

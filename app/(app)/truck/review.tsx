@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import SchedulePicker from "../../../components/SchedulePicker";
+import PaymentMethodToggle from "../../../components/PaymentMethodToggle";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -65,6 +66,9 @@ export default function TruckReviewScreen() {
   const [scheduleMode, setScheduleMode] = useState<"now" | "schedule">("now");
   const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "wallet">("cash");
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [paymentsAvailable, setPaymentsAvailable] = useState(false);
   const rulesAnim = React.useRef(new Animated.Value(0)).current;
 
   const displayTotal = (parseFloat(totalFare || "0") || Math.max(0, base + loadCharge + unloadCharge - couponDisc)) + outstandingFee;
@@ -83,10 +87,18 @@ export default function TruckReviewScreen() {
       try {
         const token = await AsyncStorage.getItem("access_token");
         if (!token) return;
-        const res = await axios.get(`${API}/gogoo/rider/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOutstandingFee(Number(res.data?.outstanding_cancellation_fee || 0));
+        const headers = { Authorization: `Bearer ${token}` };
+        const [profileRes, ledgerRes] = await Promise.allSettled([
+          axios.get(`${API}/gogoo/rider/profile`, { headers }),
+          axios.get(`${API}/gogoo/wallet/ledger`, { headers }),
+        ]);
+        if (profileRes.status === "fulfilled") {
+          setOutstandingFee(Number(profileRes.value.data?.outstanding_cancellation_fee || 0));
+        }
+        if (ledgerRes.status === "fulfilled") {
+          setWalletBalance(Number(ledgerRes.value.data?.balance || 0));
+          setPaymentsAvailable(!!ledgerRes.value.data?.payments_available);
+        }
       } catch {}
     })();
   }, []);
@@ -156,6 +168,7 @@ export default function TruckReviewScreen() {
         distance_km:     km,
         loading_addon:   loadingAddon   === "true",
         unloading_addon: unloadingAddon === "true",
+        payment_method:  paymentMethod,
       };
 
       if (couponCode) body.promo_code = couponCode;
@@ -357,6 +370,13 @@ export default function TruckReviewScreen() {
       </ScrollView>
 
       <View style={s.footer}>
+        <PaymentMethodToggle
+          value={paymentMethod}
+          onChange={setPaymentMethod}
+          walletBalance={walletBalance}
+          paymentsAvailable={paymentsAvailable}
+          fare={displayTotal}
+        />
         <View style={s.modeRow}>
           <TouchableOpacity
             style={[s.modeChip, scheduleMode === "now" && s.modeChipActive]}

@@ -77,6 +77,11 @@ export default function AmbulanceReviewScreen() {
 
   const [booking,   setBooking]   = useState(false);
   const [rulesOpen, setRulesOpen] = useState(isEmergency);
+  // Ambulance never shows a cash/wallet picker (kept frictionless for an
+  // emergency flow) — the server silently auto-selects wallet when the
+  // balance covers the fare. This is just a transparency note so the rider
+  // isn't confused later about how they were charged, not a decision point.
+  const [walletPaidNote, setWalletPaidNote] = useState(false);
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -185,6 +190,13 @@ export default function AmbulanceReviewScreen() {
         ? t("ambulance.review.toastFree")
         : t("ambulance.review.toastPaid", { hospital: hospitalName || t("ambulance.review.hospitalFallbackLower") });
       await AsyncStorage.setItem("pending_toast", toastMsg);
+
+      if (res.data?.payment_method === "wallet") {
+        // Non-blocking — just a heads-up, not a decision. Shown briefly
+        // before moving on so it doesn't add a tap/delay to an emergency flow.
+        setWalletPaidNote(true);
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+      }
 
       router.replace(`/(app)/tracking/${bookingId}` as any);
     } catch (e: any) {
@@ -359,6 +371,12 @@ export default function AmbulanceReviewScreen() {
       </ScrollView>
 
       {/* Book button */}
+      {walletPaidNote && (
+        <View style={s.walletNoteBanner} pointerEvents="none">
+          <Text style={s.walletNoteText}>{t("ambulance.review.walletPaidNote")}</Text>
+        </View>
+      )}
+
       <View style={s.footer}>
         {isEmergency && !booking ? (
           <Animated.View style={{ opacity: pulseAnim }}>
@@ -498,6 +516,12 @@ const s = StyleSheet.create({
     backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
+  walletNoteBanner: {
+    position: "absolute", bottom: 118, left: 20, right: 20,
+    backgroundColor: "#111827", borderRadius: RADIUS.input,
+    paddingVertical: 10, paddingHorizontal: 16, alignItems: "center",
+  },
+  walletNoteText: { color: "#fff", fontSize: 13, fontWeight: "700" },
   bookBtn: {
     borderRadius: RADIUS.card, paddingVertical: 18, alignItems: "center",
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,

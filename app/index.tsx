@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import axios from "axios";
 import { trackAppOpen, setUserProperties } from "@/services/analytics";
 import { requestPermissionsOnce } from "@/services/permissions";
+import { clearSession, clearToken, getToken, migrateTokenIfNeeded } from "@/services/session";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 const ACTIVE_STATUSES = ["searching", "accepted", "arriving", "in_progress"];
@@ -23,6 +24,7 @@ async function checkFreshInstall() {
     const installedFlag = await AsyncStorage.getItem(FIRST_LAUNCH_KEY);
     if (!installedFlag) {
       await AsyncStorage.clear();
+      await clearToken(); // SecureStore (Keychain on iOS) survives AsyncStorage.clear()
       await AsyncStorage.setItem(FIRST_LAUNCH_KEY, "true");
       return true;
     }
@@ -48,7 +50,8 @@ export default function Index() {
         return;
       }
 
-      const token = await AsyncStorage.getItem("access_token");
+      await migrateTokenIfNeeded();
+      const token = await getToken();
       if (!token) {
         setTarget("/(auth)/login");
       } else {
@@ -71,7 +74,7 @@ export default function Index() {
           setTarget(active ? `/(app)/tracking/${active.id}` : "/(app)/home");
         } catch (e: any) {
           if (e.response?.status === 401) {
-            await AsyncStorage.multiRemove(["access_token", "rider_id", "user"]);
+            await clearSession();
             setTarget("/(auth)/login");
           } else {
             setTarget("/(app)/home");

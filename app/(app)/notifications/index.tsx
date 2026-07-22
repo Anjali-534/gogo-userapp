@@ -4,6 +4,7 @@ import {
   TouchableOpacity, ActivityIndicator, RefreshControl, Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
@@ -47,7 +48,7 @@ export default function NotificationsScreen() {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res = await axios.get(`${API}/gogoo/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -66,7 +67,7 @@ export default function NotificationsScreen() {
     if (alreadyRead) return;
     setItems(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.post(`${API}/gogoo/notifications/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });

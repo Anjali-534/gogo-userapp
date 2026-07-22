@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -20,7 +21,7 @@ export default function AddressesScreen() {
   const fetchPlaces = async () => {
     setLoading(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res   = await axios.get(`${API}/gogoo/rider/saved-places`, { headers: { Authorization: `Bearer ${token}` } });
       setPlaces(res.data || []);
     } catch {} finally { setLoading(false); }
@@ -30,7 +31,7 @@ export default function AddressesScreen() {
     Alert.alert(t("profile.addresses.removeAlertTitle"), t("profile.addresses.removeAlertMsg", { label }), [
       { text: t("common.cancel"), style: "cancel" },
       { text: t("profile.addresses.remove"), style: "destructive", onPress: async () => {
-        const token = await AsyncStorage.getItem("access_token");
+        const token = await getToken();
         await axios.delete(`${API}/gogoo/rider/saved-places/${encodeURIComponent(label)}`, { headers: { Authorization: `Bearer ${token}` } });
         fetchPlaces();
       }},

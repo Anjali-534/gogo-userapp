@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import { trackLogin } from "@/services/analytics";
 import { registerPushToken } from "@/services/notifications";
+import { setToken } from "@/services/session";
 import LanguageSwitcherButton from "@/components/LanguageSwitcherButton";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -43,9 +44,9 @@ export default function LoginScreen() {
   };
 
   const storeSession = async (data: any) => {
-    await AsyncStorage.setItem("access_token", data.access_token);
-    await AsyncStorage.setItem("rider_id",     String(data.rider_id || ""));
-    await AsyncStorage.setItem("user",         JSON.stringify(data.user));
+    await setToken(data.access_token);
+    await AsyncStorage.setItem("rider_id", String(data.rider_id || ""));
+    await AsyncStorage.setItem("user",     JSON.stringify(data.user));
   };
 
   const validateEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());

@@ -4,6 +4,7 @@ import {
   TouchableOpacity, ActivityIndicator, RefreshControl, Linking, Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearToken, getToken } from "@/services/session";
 import { useRouter } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import axios from "axios";
@@ -30,7 +31,7 @@ export default function ReferScreen() {
     if (isRefresh) setRefreshing(true); else setLoading(true);
     setError(false);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const headers = { Authorization: `Bearer ${token}` };
       const [codeRes, listRes] = await Promise.allSettled([
         axios.get(`${API}/gogoo/referral/my-code`, { headers }),
@@ -41,7 +42,8 @@ export default function ReferScreen() {
       } else {
         console.error("referral/my-code failed:", codeRes.reason?.response?.data || codeRes.reason?.message);
         if (codeRes.reason?.response?.status === 401) {
-          await AsyncStorage.multiRemove(["access_token", "user", "rider_id"]);
+          await clearToken();
+          await AsyncStorage.multiRemove(["user", "rider_id"]);
           router.replace("/(auth)/login" as any);
           return;
         }

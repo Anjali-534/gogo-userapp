@@ -4,6 +4,7 @@ import {
   SafeAreaView, ActivityIndicator, Image, Animated, Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import { useRouter, useFocusEffect } from "expo-router";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
@@ -71,7 +72,7 @@ export default function HomeScreen() {
     try {
       const storedId = await AsyncStorage.getItem("active_booking_id");
       if (!storedId) return;
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       if (!token) return;
       const res = await axios.get(`${API}/gogoo/bookings/${storedId}`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
@@ -108,7 +109,7 @@ export default function HomeScreen() {
 
   const fetchUnreadCount = async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       if (!token) return;
       const res = await axios.get(`${API}/gogoo/notifications/unread-count`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
@@ -130,7 +131,7 @@ export default function HomeScreen() {
 
   const fetchRiderStats = async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res   = await axios.get(`${API}/gogoo/rider/profile`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
@@ -147,7 +148,7 @@ export default function HomeScreen() {
 
   const fetchActiveBooking = async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       if (!token) return;
       const res = await axios.get(`${API}/gogoo/rider/bookings`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
@@ -168,7 +169,7 @@ export default function HomeScreen() {
       { text: t("home.upcoming.cancelAlert.confirm"), style: "destructive", onPress: async () => {
         setCancellingId(bookingId);
         try {
-          const token = await AsyncStorage.getItem("access_token");
+          const token = await getToken();
           await axios.patch(`${API}/gogoo/bookings/${bookingId}/status`,
             { status: "cancelled", cancelled_by: "rider", cancel_reason: "Cancelled by rider before dispatch" },
             { headers: { Authorization: `Bearer ${token}` } });
@@ -190,7 +191,7 @@ export default function HomeScreen() {
   const fetchSavedPlaces = async () => {
     setLoadingPlaces(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res   = await axios.get(`${API}/gogoo/rider/saved-places`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });

@@ -5,6 +5,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import SchedulePicker from "../../../components/SchedulePicker";
@@ -85,7 +86,7 @@ export default function TruckReviewScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const token = await AsyncStorage.getItem("access_token");
+        const token = await getToken();
         if (!token) return;
         const headers = { Authorization: `Bearer ${token}` };
         const [profileRes, ledgerRes] = await Promise.allSettled([
@@ -120,7 +121,7 @@ export default function TruckReviewScreen() {
     }
     setBooking(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       if (!token) {
         Alert.alert(t("booking.session.expiredTitle"), t("booking.session.expiredMsg"));
         setBooking(false);
@@ -138,7 +139,8 @@ export default function TruckReviewScreen() {
           if (riderId) await AsyncStorage.setItem("rider_id", riderId);
         } catch (profileErr: any) {
           if (profileErr?.response?.status === 401) {
-            await AsyncStorage.multiRemove(["access_token", "rider_id", "user"]);
+            await clearToken();
+            await AsyncStorage.multiRemove(["rider_id", "user"]);
             Alert.alert(t("booking.session.expiredTitle"), t("booking.session.expiredMsg"), [
               { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
             ]);
@@ -231,7 +233,8 @@ export default function TruckReviewScreen() {
       await proceed();
     } catch (e: any) {
       if (e.response?.status === 401) {
-        await AsyncStorage.multiRemove(["access_token", "rider_id", "user"]);
+        await clearToken();
+        await AsyncStorage.multiRemove(["rider_id", "user"]);
         Alert.alert(t("booking.session.expiredTitle"), t("booking.session.expiredMsg"), [
           { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
         ]);

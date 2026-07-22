@@ -8,6 +8,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { trackScreenView, trackBookingStarted } from "@/services/analytics";
@@ -52,7 +53,7 @@ export default function CabIndexScreen() {
   const fetchSavedPlaces = async () => {
     setLoadingPlaces(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res   = await axios.get(`${API}/gogoo/rider/saved-places`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });

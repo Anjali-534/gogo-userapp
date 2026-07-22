@@ -5,6 +5,7 @@ import {
   StatusBar, ActivityIndicator, Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -59,7 +60,7 @@ export default function SupportChatScreen() {
   const fetchMessages = useCallback(async () => {
     if (!ticket_id) return;
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res = await axios.get(`${API}/gogoo/support/chat/${ticket_id}/messages`, {
         headers: { Authorization: `Bearer ${token ?? ""}` },
       });
@@ -68,7 +69,8 @@ export default function SupportChatScreen() {
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 100);
     } catch (e: any) {
       if (e?.response?.status === 401) {
-        await AsyncStorage.multiRemove(["access_token", "rider_id", "user", "active_booking_id"]);
+        await clearToken();
+        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
         router.replace("/(auth)/login" as any);
         return;
       }
@@ -86,7 +88,7 @@ export default function SupportChatScreen() {
   const markResolved = async () => {
     setHelpfulChoice("resolved");
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.patch(`${API}/gogoo/support/tickets/${ticket_id}`,
         { status: "resolved" },
         { headers: { Authorization: `Bearer ${token ?? ""}` } },
@@ -98,7 +100,7 @@ export default function SupportChatScreen() {
   const escalate = async () => {
     setEscalating(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.post(`${API}/gogoo/support/chat/${ticket_id}/escalate`,
         { category: category || "general" },
         { headers: { Authorization: `Bearer ${token ?? ""}` } },
@@ -118,7 +120,7 @@ export default function SupportChatScreen() {
     setInput("");
     setSending(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.post(
         `${API}/gogoo/support/chat/${ticket_id}/messages`,
         { message: text, sender_type: "rider", sender_name: userName },

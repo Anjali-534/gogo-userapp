@@ -5,6 +5,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -34,7 +35,7 @@ function fmtDate(iso: string) {
 }
 
 async function authHeaders() {
-  const token = await AsyncStorage.getItem("access_token");
+  const token = await getToken();
   return { Authorization: `Bearer ${token}` };
 }
 

@@ -6,6 +6,7 @@ import {
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { getToken } from "@/services/session";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
@@ -35,7 +36,7 @@ async function getBestLocation(fallbackLat?: number, fallbackLng?: number) {
 
 async function fireSOSAlert(action: string, bookingId?: string, lat?: number, lng?: number) {
   try {
-    const token = await AsyncStorage.getItem("access_token");
+    const token = await getToken();
     if (!token) return;
     await axios.post(
       `${API}/gogoo/sos`,
@@ -138,7 +139,7 @@ export default function SOSButton({
     setAlerting(true);
     try {
       const loc = await getBestLocation(fallbackLat, fallbackLng);
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.post(
         `${API}/gogoo/sos`,
         { booking_id: bookingId, lat: loc?.lat || 0, lng: loc?.lng || 0, triggered_by: "rider", action: "support" },

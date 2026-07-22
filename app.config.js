@@ -51,5 +51,6 @@ module.exports = ({ config }) => ({
     "@react-native-firebase/perf/app.plugin.js",
     "expo-font",
     "./plugins/withDisableAndroidBackup.js",
+    "expo-secure-store",
   ],
 });

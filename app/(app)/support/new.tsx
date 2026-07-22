@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView, Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -38,7 +39,7 @@ export default function NewSupportChatScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem("access_token").then(token =>
+    getToken().then(token =>
       axios.get(`${API}/gogoo/support/faq`, { headers: { Authorization: `Bearer ${token ?? ""}` } })
     )
       .then(res => setFaqItems(res.data?.items || []))
@@ -49,7 +50,7 @@ export default function NewSupportChatScreen() {
   const startChat = async (body: Record<string, string>, category: string) => {
     setSubmitting(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res = await axios.post(`${API}/gogoo/support/chat/start`, body, {
         headers: { Authorization: `Bearer ${token}` },
       });

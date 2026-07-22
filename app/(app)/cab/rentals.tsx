@@ -8,6 +8,7 @@ import { PickupMarker } from "../../../components/VehicleMarkers";
 import { VEHICLE_INFO } from "../../../components/VehicleInfo";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -90,7 +91,7 @@ export default function RentalsScreen() {
     if (!selectedPkg || !selectedVehicle) return;
     setBooking(true);
     try {
-      const token   = await AsyncStorage.getItem("access_token");
+      const token   = await getToken();
       let   riderId = await AsyncStorage.getItem("rider_id") || "";
       if (!riderId) {
         const p = await axios.get(`${API}/gogoo/rider/profile`, {
@@ -124,7 +125,8 @@ export default function RentalsScreen() {
       }
     } catch (e: any) {
       if (e?.response?.status === 401) {
-        await AsyncStorage.multiRemove(["access_token", "rider_id", "user", "active_booking_id"]);
+        await clearToken();
+        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
         router.replace("/(auth)/login" as any);
         return;
       }

@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearToken, getToken } from "@/services/session";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,7 @@ export default function HistoryScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const token = await AsyncStorage.getItem("access_token");
+        const token = await getToken();
         const res   = await axios.get(`${API}/gogoo/rider/bookings`, {
           headers: { Authorization: `Bearer ${token ?? ""}` },
         });
@@ -31,7 +32,8 @@ export default function HistoryScreen() {
         trackHistoryViewed({ bookingCount: loaded.length });
       } catch (e: any) {
         if (e?.response?.status === 401) {
-          await AsyncStorage.multiRemove(["access_token", "rider_id", "user", "active_booking_id"]);
+          await clearToken();
+          await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
           router.replace("/(auth)/login" as any);
           return;
         }

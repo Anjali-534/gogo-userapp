@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nextProvider } from "react-i18next";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { trackUserInteraction } from "@/services/analytics";
+import { getToken } from "@/services/session";
 import i18n, { initI18n } from "@/i18n";
 
 // Held until initI18n() resolves so the app never flashes English before
@@ -28,7 +29,7 @@ async function handleReferralURL(url: string | null) {
     const pathMatch = /^\/?r\/([A-Za-z0-9]+)/i.exec(path || "");
     const code = pathMatch?.[1] || (queryParams?.code as string | undefined);
     if (!code) return;
-    const loggedIn = await AsyncStorage.getItem("access_token");
+    const loggedIn = await getToken();
     if (loggedIn) return;
     await AsyncStorage.setItem("pending_referral_code", code.toUpperCase());
   } catch {}

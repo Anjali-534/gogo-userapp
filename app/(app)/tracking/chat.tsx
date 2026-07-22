@@ -5,6 +5,7 @@ import {
   StatusBar, ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -41,7 +42,7 @@ export default function RideChatScreen() {
   const fetchMessages = useCallback(async () => {
     if (!id) return;
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const [msgRes, bookingRes] = await Promise.all([
         axios.get(`${API}/gogoo/bookings/${id}/messages`, { headers: { Authorization: `Bearer ${token ?? ""}` } }),
         axios.get(`${API}/gogoo/bookings/${id}`, { headers: { Authorization: `Bearer ${token ?? ""}` } }),
@@ -65,7 +66,7 @@ export default function RideChatScreen() {
     setInput("");
     setSending(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.post(
         `${API}/gogoo/bookings/${id}/messages`,
         { message: trimmed },

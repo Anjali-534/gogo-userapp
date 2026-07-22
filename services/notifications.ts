@@ -3,6 +3,7 @@ import * as Device from "expo-device";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { getToken } from "./session";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
@@ -52,7 +53,7 @@ async function requestPushToken(): Promise<string | null> {
 // Call on login/signup and on app foreground, so the backend always has a
 // fresh token to target for push (referral credits, support replies, etc).
 export async function registerPushToken(): Promise<void> {
-  const accessToken = await AsyncStorage.getItem("access_token");
+  const accessToken = await getToken();
   if (!accessToken) return;
   const pushToken = await requestPushToken();
   if (!pushToken) return;

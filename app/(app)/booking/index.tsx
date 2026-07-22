@@ -5,6 +5,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -140,7 +141,7 @@ export default function BookingScreen() {
 
     setBooking(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
 
       // Ensure rider_id is always populated — fetch from profile if empty
       let riderId = (await AsyncStorage.getItem("rider_id")) || "";

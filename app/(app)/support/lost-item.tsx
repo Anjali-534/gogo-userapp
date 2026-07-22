@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView, Platform, Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "@/services/session";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -42,7 +43,7 @@ export default function LostItemScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const token = await AsyncStorage.getItem("access_token");
+        const token = await getToken();
         const res = await axios.get(`${API}/gogoo/rider/bookings`, {
           headers: { Authorization: `Bearer ${token ?? ""}` },
         });
@@ -104,7 +105,7 @@ export default function LostItemScreen() {
 
     setSubmitting(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const headers = { Authorization: `Bearer ${token ?? ""}` };
 
       let photoUrl = "";

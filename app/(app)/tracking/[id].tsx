@@ -12,6 +12,7 @@ import {
 import SOSButton from "../../../components/SOSButton";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import * as Speech from "expo-speech";
 import { useTranslation } from "react-i18next";
@@ -162,7 +163,7 @@ export default function TrackingScreen() {
   // ── Data fetching ────────────────────────────────────────────────────────
   const fetchBooking = async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res   = await axios.get(`${API}/gogoo/bookings/${id}`, { headers: { Authorization: `Bearer ${token ?? ""}` } });
       if (cancelledRef.current) return;
       setBooking(res.data);
@@ -200,7 +201,8 @@ export default function TrackingScreen() {
       if (cancelledRef.current) return;
       if (e?.response?.status === 401) {
         if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
-        await AsyncStorage.multiRemove(["access_token", "rider_id", "user", "active_booking_id"]);
+        await clearToken();
+        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
         router.replace("/(auth)/login" as any);
         return;
       }
@@ -257,7 +259,7 @@ export default function TrackingScreen() {
     }
     const fetchNearby = async () => {
       try {
-        const token = await AsyncStorage.getItem("access_token");
+        const token = await getToken();
         const res = await axios.get(`${API}/gogoo/drivers/nearby-count`, {
           params: { lat: booking.pickup.lat, lng: booking.pickup.lng, category: booking.vehicle_category || "cab", radius: 5000 },
           headers: { Authorization: `Bearer ${token ?? ""}` },
@@ -295,7 +297,7 @@ export default function TrackingScreen() {
   const doCancel = async () => {
     setCancelling(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.patch(`${API}/gogoo/bookings/${id}/status`,
         { status:"cancelled", cancelled_by:"rider", cancel_reason:"Cancelled by rider" },
         { headers: { Authorization: `Bearer ${token}` } });
@@ -311,7 +313,7 @@ export default function TrackingScreen() {
   const cancelRide = async () => {
     let preview: { fee: number; free_cancel: boolean } | null = null;
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res = await axios.get(`${API}/gogoo/bookings/${id}/cancel-preview`,
         { headers: { Authorization: `Bearer ${token ?? ""}` } });
       preview = res.data;
@@ -346,7 +348,7 @@ export default function TrackingScreen() {
     if (rating === 0) { Alert.alert(t("tracking.rate.title"), t("tracking.rate.selectStars")); return; }
     setRateLoading(true);
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       await axios.post(`${API}/gogoo/bookings/${id}/rate`,
         { rater_type:"rider", rating, review },
         { headers: { Authorization: `Bearer ${token}` } });

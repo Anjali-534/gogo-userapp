@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { clearSession, getToken } from "@/services/session";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -20,7 +21,7 @@ export default function ProfileScreen() {
 
   const fetchUnread = useCallback(async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res = await axios.get(`${API}/gogoo/support/chat/my-tickets`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -38,7 +39,7 @@ export default function ProfileScreen() {
 
   const fetchRider = async () => {
     try {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getToken();
       const res   = await axios.get(`${API}/gogoo/rider/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -50,7 +51,7 @@ export default function ProfileScreen() {
     Alert.alert(t("profile.home.signOutAlert.title"), t("profile.home.signOutAlert.message"), [
       { text: t("common.cancel"), style: "cancel" },
       { text: t("profile.home.signOutAlert.confirm"), style: "destructive", onPress: async () => {
-        await AsyncStorage.multiRemove(["access_token", "user", "rider_id"]);
+        await clearSession();
         router.replace("/(auth)/login");
       }},
     ]);

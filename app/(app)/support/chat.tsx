@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { COLORS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
+const TERMINAL_STATUSES = ["resolved", "closed"];
 
 interface Message {
   id: string;
@@ -35,6 +36,7 @@ export default function SupportChatScreen() {
   const QUICK_ISSUES = t("support.chat.quickIssues", { returnObjects: true }) as string[];
   const { ticket_id, category } = useLocalSearchParams<{ ticket_id: string; category?: string }>();
   const scrollRef = useRef<ScrollView>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [ticket, setTicket] = useState<TicketInfo | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -66,6 +68,10 @@ export default function SupportChatScreen() {
       });
       setTicket(res.data.ticket || null);
       setMessages(res.data.messages || []);
+      if (TERMINAL_STATUSES.includes(res.data.ticket?.status) && pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 100);
     } catch (e: any) {
       if (e?.response?.status === 401) {
@@ -81,8 +87,10 @@ export default function SupportChatScreen() {
 
   useEffect(() => {
     fetchMessages();
-    const interval = setInterval(fetchMessages, 5000);
-    return () => clearInterval(interval);
+    pollRef.current = setInterval(fetchMessages, 5000);
+    return () => {
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+    };
   }, [fetchMessages]);
 
   const markResolved = async () => {

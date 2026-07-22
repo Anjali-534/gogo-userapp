@@ -595,11 +595,10 @@
       "preferencesHeader": "PREFERENCES",
       "pushNotifications": {
         "label": "Push notifications",
-        "sub": "Trip updates, promos, and alerts"
-      },
-      "alwaysOnLocation": {
-        "label": "Always-on location",
-        "sub": "For faster pickup detection"
+        "sub": "Trip updates, promos, and alerts",
+        "disableTitle": "Turn off notifications",
+        "disableMsg": "This app can't turn off notifications for you — open Settings to disable them for bogie.",
+        "openSettings": "Open Settings"
       },
       "accountHeader": "ACCOUNT",
       "changePassword": "Change password",

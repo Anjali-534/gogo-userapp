@@ -14,6 +14,7 @@ import { COLORS } from "@/constants/theme";
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 const POLL_MS = 4000;
 const ACTIVE_STATUSES = ["accepted", "arriving", "in_progress"];
+const TERMINAL_STATUSES = ["completed", "cancelled"];
 
 interface RideMessage {
   id: string;
@@ -49,6 +50,10 @@ export default function RideChatScreen() {
       ]);
       setMessages(msgRes.data.messages || []);
       setStatus(bookingRes.data.status || "");
+      if (TERMINAL_STATUSES.includes(bookingRes.data.status) && pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 100);
     } catch {}
     finally { setLoading(false); }

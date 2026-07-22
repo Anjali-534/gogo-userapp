@@ -1,15 +1,48 @@
-﻿import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Switch } from "react-native";
-import { useRouter } from "expo-router";
+﻿import React, { useCallback, useState } from "react";
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Switch, Alert, Linking } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
+import * as Notifications from "expo-notifications";
 import { COLORS, RADIUS } from "@/constants/theme";
 import LanguagePicker from "@/components/LanguagePicker";
+import { registerPushToken } from "@/services/notifications";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [notifications, setNotifications] = useState(true);
-  const [locationAlways, setLocationAlways] = useState(false);
+  const [notifications, setNotifications] = useState(false);
+
+  // Reflects the OS's actual permission state — re-checked every time this
+  // screen gains focus, since the user could have changed it from the
+  // system Settings app while we were away.
+  useFocusEffect(
+    useCallback(() => {
+      Notifications.getPermissionsAsync().then(({ status }) => {
+        setNotifications(status === "granted");
+      });
+    }, [])
+  );
+
+  const handleNotificationsToggle = async (value: boolean) => {
+    if (value) {
+      await registerPushToken(); // requests permission + registers the token if granted
+      const { status } = await Notifications.getPermissionsAsync();
+      setNotifications(status === "granted");
+    } else {
+      // Neither iOS nor Android lets an app revoke a permission it was
+      // already granted — the only way to turn this off is the system
+      // Settings app, so send the user there instead of faking a toggle
+      // that wouldn't actually change anything.
+      Alert.alert(
+        t("profile.settings.pushNotifications.disableTitle"),
+        t("profile.settings.pushNotifications.disableMsg"),
+        [
+          { text: t("common.cancel"), style: "cancel" },
+          { text: t("profile.settings.pushNotifications.openSettings"), onPress: () => Linking.openSettings() },
+        ]
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={s.safe}>
@@ -35,14 +68,7 @@ export default function SettingsScreen() {
               <Text style={s.switchLabel}>{t("profile.settings.pushNotifications.label")}</Text>
               <Text style={s.switchSub}>{t("profile.settings.pushNotifications.sub")}</Text>
             </View>
-            <Switch value={notifications} onValueChange={setNotifications} trackColor={{ true: COLORS.primary }} />
-          </View>
-          <View style={[s.switchRow, { borderTopWidth: 1, borderTopColor: "#F5F5F5" }]}>
-            <View style={{ flex: 1 }}>
-              <Text style={s.switchLabel}>{t("profile.settings.alwaysOnLocation.label")}</Text>
-              <Text style={s.switchSub}>{t("profile.settings.alwaysOnLocation.sub")}</Text>
-            </View>
-            <Switch value={locationAlways} onValueChange={setLocationAlways} trackColor={{ true: COLORS.primary }} />
+            <Switch value={notifications} onValueChange={handleNotificationsToggle} trackColor={{ true: COLORS.primary }} />
           </View>
         </View>
         <Text style={s.sectionLabel}>{t("profile.settings.accountHeader")}</Text>

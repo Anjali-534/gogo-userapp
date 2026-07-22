@@ -84,16 +84,23 @@ export const olaDirections = async (
       `${BASE}/routing/v1/directions?origin=${oLat},${oLng}&destination=${dLat},${dLng}&api_key=${OLA_KEY}`,
       { method: "POST" }
     );
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[olaDirections] HTTP ${res.status} ${res.statusText}: ${await res.text().catch(() => "")}`);
+      return null;
+    }
     const data = await res.json();
     const route = data?.routes?.[0];
-    if (!route) return null;
+    if (!route) {
+      console.error("[olaDirections] no route in response", data?.status, data);
+      return null;
+    }
     return {
       polyline: route?.overview_polyline || "",
       distanceKm: (route?.legs?.[0]?.distance ?? 0) / 1000,
       durationMins: Math.round((route?.legs?.[0]?.duration ?? 0) / 60),
     };
-  } catch {
+  } catch (err) {
+    console.error("[olaDirections] request failed", err);
     return null;
   }
 };

@@ -42,6 +42,7 @@ const mode = params.mode;
   const mapRef      = useRef<MapView>(null);
   const inputRef    = useRef<TextInput>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [region,          setRegion]          = useState<Region>(DEFAULT);
   const [pin,             setPin]             = useState({ lat: DEFAULT.latitude, lng: DEFAULT.longitude });
@@ -56,6 +57,28 @@ const mode = params.mode;
   const [saving,          setSaving]          = useState(false);
   const [showSaveInput,   setShowSaveInput]   = useState(false);
   const [saveLabel,       setSaveLabel]       = useState("");
+  const [mapKey,          setMapKey]          = useState(0);
+  const [mapReady,        setMapReady]        = useState(false);
+  const [mapTimedOut,     setMapTimedOut]     = useState(false);
+
+  // ── Map load watchdog: if the native map doesn't report ready within
+  // a few seconds (bad key, quota, no tiles), surface a retry banner
+  // instead of leaving the screen silently blank ─────────────────────
+  useEffect(() => {
+    setMapReady(false);
+    setMapTimedOut(false);
+    if (mapTimeoutRef.current) clearTimeout(mapTimeoutRef.current);
+    mapTimeoutRef.current = setTimeout(() => setMapTimedOut(true), 8000);
+    return () => { if (mapTimeoutRef.current) clearTimeout(mapTimeoutRef.current); };
+  }, [mapKey]);
+
+  const onMapReady = () => {
+    if (mapTimeoutRef.current) clearTimeout(mapTimeoutRef.current);
+    setMapReady(true);
+    setMapTimedOut(false);
+  };
+
+  const retryMap = () => setMapKey(k => k + 1);
 
   // ── GPS on mount + load saved places ─────────────────────────
   useEffect(() => {
@@ -281,15 +304,27 @@ const mode = params.mode;
     <View style={s.container}>
       {/* MAP */}
       <MapView
+        key={mapKey}
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={StyleSheet.absoluteFill}
         initialRegion={region}
         onRegionChangeComplete={onRegionChangeComplete}
+        onMapReady={onMapReady}
         showsUserLocation
         showsMyLocationButton={false}
         showsCompass={false}
       />
+
+      {/* MAP LOAD ERROR BANNER */}
+      {mapTimedOut && !mapReady && (
+        <View style={s.mapErrorBanner}>
+          <Text style={s.mapErrorText}>{t("common.mapLoadError")}</Text>
+          <TouchableOpacity style={[s.mapErrorBtn, { backgroundColor: accent }]} onPress={retryMap}>
+            <Text style={s.mapErrorBtnText}>{t("common.retry")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* CENTER PIN */}
       <View pointerEvents="none" style={s.pinWrap}>
@@ -455,6 +490,11 @@ const mode = params.mode;
 
 const s = StyleSheet.create({
   container:  { flex: 1 },
+
+  mapErrorBanner: { position: "absolute", top: "45%", left: 20, right: 20, backgroundColor: "#fff", borderRadius: 14, padding: 16, alignItems: "center", gap: 10, elevation: 6, shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 8 },
+  mapErrorText:   { color: "#333", fontSize: 13, textAlign: "center" },
+  mapErrorBtn:    { borderRadius: 10, paddingHorizontal: 20, paddingVertical: 9 },
+  mapErrorBtnText:{ color: "#fff", fontWeight: "800", fontSize: 13 },
 
   pinWrap:    { position: "absolute", top: "50%", left: "50%", marginLeft: -12, marginTop: -46, alignItems: "center" },
   pinCircle:  { width: 24, height: 24, borderRadius: 12, borderWidth: 3, borderColor: "#fff" },

@@ -12,6 +12,8 @@
     "cashChip": "💵 Cash",
     "couponChip": "🏷 Coupon",
     "sameAsMyNumber": "Same as my number",
+    "retry": "Retry",
+    "mapLoadError": "Map couldn't load. Check your connection and try again.",
     "categories": {
       "cab": "Cab",
       "truck": "Truck",

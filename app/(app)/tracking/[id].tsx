@@ -114,10 +114,14 @@ export default function TrackingScreen() {
   const [sheetHidden,        setSheetHidden]        = useState(false);
   const [nearbyTotal,        setNearbyTotal]        = useState<number | null>(null);
   const [nearbyGrid,         setNearbyGrid]         = useState<{lat:number;lng:number;count:number}[]>([]);
+  const [mapKey,             setMapKey]             = useState(0);
+  const [mapReady,           setMapReady]           = useState(false);
+  const [mapTimedOut,        setMapTimedOut]        = useState(false);
 
   // ── Refs ─────────────────────────────────────────────────────────────────
   const pollRef            = useRef<ReturnType<typeof setInterval>|null>(null);
   const heatmapPollRef      = useRef<ReturnType<typeof setInterval>|null>(null);
+  const mapTimeoutRef      = useRef<ReturnType<typeof setTimeout>|null>(null);
   const lastRouteKeyRef    = useRef("");
   const completionShownRef = useRef(false);
   const prevVoiceStatusRef = useRef("");
@@ -293,6 +297,25 @@ export default function TrackingScreen() {
       mapRef.current.fitToCoordinates(pts, { edgePadding: {top:100,right:70,bottom:PEEK_HEIGHT+40,left:70}, animated:true });
   }, [booking?.status]);
 
+  // ── Map load watchdog: if the native map doesn't report ready within a
+  // few seconds (bad key, quota, no tiles), surface a retry banner instead
+  // of leaving the screen silently blank ──────────────────────────────────
+  useEffect(() => {
+    setMapReady(false);
+    setMapTimedOut(false);
+    if (mapTimeoutRef.current) clearTimeout(mapTimeoutRef.current);
+    mapTimeoutRef.current = setTimeout(() => setMapTimedOut(true), 8000);
+    return () => { if (mapTimeoutRef.current) clearTimeout(mapTimeoutRef.current); };
+  }, [mapKey]);
+
+  const onMapReady = () => {
+    if (mapTimeoutRef.current) clearTimeout(mapTimeoutRef.current);
+    setMapReady(true);
+    setMapTimedOut(false);
+  };
+
+  const retryMap = () => setMapKey(k => k + 1);
+
   // ── Actions ──────────────────────────────────────────────────────────────
   const doCancel = async () => {
     setCancelling(true);
@@ -397,10 +420,12 @@ export default function TrackingScreen() {
     <View style={s.container}>
       {/* ── MAP (full screen) ──────────────────────────────────────── */}
       <MapView
+        key={mapKey}
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={StyleSheet.absoluteFill}
         initialRegion={initialReg}
+        onMapReady={onMapReady}
         showsCompass
         showsMyLocationButton={false}
       >
@@ -471,6 +496,16 @@ export default function TrackingScreen() {
           </HeatmapBoundary>
         )}
       </MapView>
+
+      {/* MAP LOAD ERROR BANNER */}
+      {mapTimedOut && !mapReady && (
+        <View style={s.mapErrorBanner}>
+          <Text style={s.mapErrorText}>{t("common.mapLoadError")}</Text>
+          <TouchableOpacity style={[s.mapErrorBtn, { backgroundColor: mapAccent }]} onPress={retryMap}>
+            <Text style={s.mapErrorBtnText}>{t("common.retry")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Back button */}
       <TouchableOpacity style={s.backBtn} onPress={() => router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
@@ -774,6 +809,11 @@ const s = StyleSheet.create({
   container:  { flex:1, backgroundColor:"#fff" },
   center:     { flex:1, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", padding:24 },
   loadTxt:    { color:"#333", fontSize:15, fontWeight:"600", textAlign:"center", marginTop:12 },
+  mapErrorBanner: { position:"absolute", top:"45%", left:20, right:20, backgroundColor:"#fff", borderRadius:14, padding:16, alignItems:"center", gap:10, elevation:6, shadowColor:"#000", shadowOpacity:0.15, shadowRadius:8 },
+  mapErrorText:   { color:"#333", fontSize:13, textAlign:"center" },
+  mapErrorBtn:    { borderRadius:10, paddingHorizontal:20, paddingVertical:9 },
+  mapErrorBtnText:{ color:"#fff", fontWeight:"800", fontSize:13 },
+
   backBtn:    { position:"absolute", top:Platform.OS==="ios"?56:40, left:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
   backTxt:    { fontSize:22, color:"#111", fontWeight:"700" },
   distPill:   { position:"absolute", top:Platform.OS==="ios"?56:40, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, elevation:5 },

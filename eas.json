@@ -13,7 +13,8 @@
       "channel": "development",
       "environment": "development",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app"
+        "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
+        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo"
       }
     },
     "preview": {
@@ -24,7 +25,8 @@
       "channel": "preview",
       "environment": "preview",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app"
+        "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
+        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo"
       }
     },
     "production": {
@@ -32,7 +34,8 @@
       "channel": "production",
       "environment": "production",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app"
+        "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
+        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo"
       }
     }
   },

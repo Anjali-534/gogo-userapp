@@ -408,7 +408,11 @@
         "truck_os_20ft": "Long distance",
         "truck_os_container": "Long distance",
         "truck_os_trailer": "Long distance",
-        "cab_2w": "Up to 20 kg parcel"
+        "cab_2w": "Up to 20 kg parcel",
+        "parcel_2w": "Up to 20 kg",
+        "truck_city_eloader": "Up to 500 kg",
+        "truck_city_eeco": "Up to 920 kg",
+        "truck_city_pickup8ft": "Up to 1000 kg"
       },
       "baseChip": "₹{{amount}} base",
       "perKmChip": "+₹{{amount}}/km",

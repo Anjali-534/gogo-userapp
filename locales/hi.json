@@ -406,7 +406,11 @@
         "truck_os_20ft": "लंबी दूरी",
         "truck_os_container": "लंबी दूरी",
         "truck_os_trailer": "लंबी दूरी",
-        "cab_2w": "20 किग्रा तक पार्सल"
+        "cab_2w": "20 किग्रा तक पार्सल",
+        "parcel_2w": "20 किग्रा तक",
+        "truck_city_eloader": "500 किग्रा तक",
+        "truck_city_eeco": "920 किग्रा तक",
+        "truck_city_pickup8ft": "1000 किग्रा तक"
       },
       "baseChip": "₹{{amount}} बेस",
       "perKmChip": "+₹{{amount}}/किमी",

@@ -30,6 +30,10 @@ const VEHICLE_ICONS: Record<string, string> = {
   truck_os_container:    "🚚",
   truck_os_trailer:      "🚚",
   cab_2w:                "🛵",
+  truck_city_eloader:    "🛺",
+  truck_city_eeco:       "🚐",
+  truck_city_pickup8ft:  "🛻",
+  parcel_2w:             "📦",
 };
 
 function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
@@ -114,7 +118,7 @@ export default function TruckVehiclesScreen() {
         const all: any[] = r.data || [];
         const filtered = all.filter(svc => {
           if (svc.category !== "truck") return false;
-          if (scope === "city")        return svc.slug?.startsWith("truck_city") || svc.slug === "cab_2w";
+          if (scope === "city")        return svc.slug?.startsWith("truck_city") || svc.slug === "cab_2w" || svc.slug === "parcel_2w";
           if (scope === "outstation")  return svc.slug?.startsWith("truck_os");
           return true;
         });

@@ -16,11 +16,12 @@ const VEHICLE_ICONS: Record<string, string> = {
   truck_os_14ft: "🚚", truck_os_20ft: "🚚", truck_os_container: "🚚", truck_os_trailer: "🚚",
   cab_2w: "🏍", cab_3w: "🛺", cab_4w: "🚗", cab_4w_suv: "🚙",
   ambulance_bls: "🚑", ambulance_als: "🚑", ambulance_transport: "🚑",
+  truck_city_eloader: "🛺", truck_city_eeco: "🚐", truck_city_pickup8ft: "🛻", parcel_2w: "📦",
 };
 
 const ALL_SERVICE_GROUPS = [
   { label: "Cab",                labelKey: "common.categories.cab",       category: "cab",       slugs: ["cab_2w", "cab_3w", "cab_4w", "cab_4w_suv"] },
-  { label: "Truck — City",       labelKey: "booking.groups.truckCity",       category: "truck",     slugs: ["truck_city_tata_ace", "truck_city_14ft", "truck_city_open", "truck_city_container"] },
+  { label: "Truck — City",       labelKey: "booking.groups.truckCity",       category: "truck",     slugs: ["truck_city_tata_ace", "truck_city_14ft", "truck_city_open", "truck_city_container", "truck_city_eloader", "truck_city_eeco", "truck_city_pickup8ft", "parcel_2w"] },
   { label: "Truck — Outstation", labelKey: "booking.groups.truckOutstation", category: "truck",     slugs: ["truck_os_14ft", "truck_os_20ft", "truck_os_container", "truck_os_trailer"] },
   { label: "Ambulance",          labelKey: "common.categories.ambulance", category: "ambulance", slugs: ["ambulance_bls", "ambulance_als", "ambulance_transport"] },
 ];

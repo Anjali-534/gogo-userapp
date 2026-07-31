@@ -406,7 +406,11 @@
         "truck_os_20ft": "ଲମ୍ବା ଦୂରତା",
         "truck_os_container": "ଲମ୍ବା ଦୂରତା",
         "truck_os_trailer": "ଲମ୍ବା ଦୂରତା",
-        "cab_2w": "20 କିଗ୍ରା ପର୍ଯ୍ୟନ୍ତ ପାର୍ସେଲ୍"
+        "cab_2w": "20 କିଗ୍ରା ପର୍ଯ୍ୟନ୍ତ ପାର୍ସେଲ୍",
+        "parcel_2w": "20 କିଗ୍ରା ପର୍ଯ୍ୟନ୍ତ",
+        "truck_city_eloader": "500 କିଗ୍ରା ପର୍ଯ୍ୟନ୍ତ",
+        "truck_city_eeco": "920 କିଗ୍ରା ପର୍ଯ୍ୟନ୍ତ",
+        "truck_city_pickup8ft": "1000 କିଗ୍ରା ପର୍ଯ୍ୟନ୍ତ"
       },
       "baseChip": "₹{{amount}} ବେସ୍",
       "perKmChip": "+₹{{amount}}/କିମି",

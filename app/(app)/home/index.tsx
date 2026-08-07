@@ -17,10 +17,10 @@ import * as Notifications from "expo-notifications";
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
 const SERVICES = [
-  { category: "truck",     icon: "🚛" },
-  { category: "parcel",    icon: "📦", accentColor: "#F59E0B" },
-  { category: "cab",       icon: "🚗" },
-  { category: "ambulance", icon: "🚑" },
+  { category: "truck",     icon: require("../../../assets/icons/services/truck.png"),     accentColor: COLORS.primary, tintColor: COLORS.primaryTint },
+  { category: "parcel",    icon: require("../../../assets/icons/services/parcel.png"),    accentColor: COLORS.warning, tintColor: COLORS.warningTint },
+  { category: "cab",       icon: require("../../../assets/icons/services/cab.png"),       accentColor: COLORS.info,    tintColor: COLORS.infoTint },
+  { category: "ambulance", icon: require("../../../assets/icons/services/ambulance.png"), accentColor: COLORS.danger,  tintColor: COLORS.dangerTint },
 ];
 
 const PLACE_ICONS: Record<string, string> = {
@@ -328,8 +328,9 @@ export default function HomeScreen() {
             <TouchableOpacity key={sv.category}
               style={[
                 s.serviceCard,
-                sv.accentColor && { borderColor: sv.accentColor },
-                sv.category === "cab" && CAB_COMING_SOON && s.serviceCardDisabled,
+                { backgroundColor: sv.tintColor, borderTopColor: sv.accentColor },
+                sv.category === "parcel" ? { borderColor: sv.accentColor } : null,
+                sv.category === "cab" && CAB_COMING_SOON ? s.serviceCardDisabled : null,
               ]}
               onPress={() => {
                 if (sv.category === "cab" && CAB_COMING_SOON) return;
@@ -350,7 +351,7 @@ export default function HomeScreen() {
                   <Text style={s.comingSoonBadgeText}>Coming Soon</Text>
                 </View>
               )}
-              <Text style={s.serviceIcon}>{sv.icon}</Text>
+              <Image source={sv.icon} style={s.serviceIconImg} resizeMode="contain" />
               <Text style={s.serviceName}>{t(`home.services.${sv.category}.name`)}</Text>
               <Text style={s.serviceDesc}>{t(`home.services.${sv.category}.desc`)}</Text>
             </TouchableOpacity>
@@ -437,9 +438,9 @@ const s = StyleSheet.create({
   addBtn:         { color: COLORS.primary, fontSize: 13, fontWeight: "700" },
 
   servicesGrid:   { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", marginBottom: 10 },
-  serviceCard:    { width: "48%", marginBottom: 10, backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 16, alignItems: "center", gap: 6 },
+  serviceCard:    { width: "48%", marginBottom: 10, backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, borderTopWidth: 3, padding: 16, alignItems: "center", gap: 6 },
   serviceCardDisabled: { opacity: 0.55 },
-  serviceIcon:    { fontSize: 32 },
+  serviceIconImg: { width: 36, height: 36 },
   serviceName:    { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },
   serviceDesc:    { color: COLORS.textFaint, fontSize: 11, textAlign: "center" },
 

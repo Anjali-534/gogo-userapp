@@ -1,5 +1,10 @@
-const OLA_KEY = process.env.EXPO_PUBLIC_OLA_MAPS_KEY || "";
+export const OLA_KEY = process.env.EXPO_PUBLIC_OLA_MAPS_KEY || "";
 const BASE = "https://api.olamaps.io";
+const STYLE_URL = `${BASE}/tiles/vector/v1/styles/default-light-standard/style.json?api_key=${OLA_KEY}`;
+
+function withApiKeyParam(url: string): string {
+  return url.includes("api_key") ? url : url + (url.includes("?") ? "&" : "?") + `api_key=${OLA_KEY}`;
+}
 
 export type OlaSuggestion = {
   description: string;
@@ -104,6 +109,51 @@ export const olaDirections = async (
     return null;
   }
 };
+
+// Mirrors bogie-tracker-panel's OlaMap.tsx fetchSanitizedStyle() — Ola's
+// hosted default-light-standard style ships layers referencing
+// source-layers that don't actually exist in the source's own TileJSON.
+// MapLibre validates layers against the source schema at style-load time
+// and treats a mismatch as fatal, so any single bad layer blanks the
+// entire map (confirmed live on the web dashboards, fixed there in
+// commit cc25c70). Fetching + sanitizing here before handing the style to
+// MapLibre Native avoids hitting the identical bug on the native maps.
+//
+// Native MapLibre also doesn't support a transformRequest hook (unlike
+// MapLibre GL JS on web), so instead of intercepting each tile/source
+// request to append api_key, the key is baked directly into every
+// source URL here, once, up front.
+export async function fetchSanitizedOlaStyle(): Promise<any> {
+  const style = await fetch(STYLE_URL).then(r => r.json());
+  const vectorSourceIds = Object.entries(style.sources || {})
+    .filter(([, s]: [string, any]) => s?.type === "vector" && typeof s.url === "string")
+    .map(([id]) => id);
+
+  const validSourceLayers = new Map<string, Set<string>>();
+  await Promise.all(vectorSourceIds.map(async (id) => {
+    try {
+      const tilejson = await fetch(withApiKeyParam(style.sources[id].url)).then(r => r.json());
+      validSourceLayers.set(id, new Set((tilejson.vector_layers || []).map((l: { id: string }) => l.id)));
+    } catch {
+      // Couldn't validate this source's TileJSON — don't drop its layers
+      // on that basis alone, only filter what we can actually disprove.
+    }
+  }));
+
+  style.layers = (style.layers || []).filter((layer: any) => {
+    if (!layer.source || !layer["source-layer"]) return true; // background/raster layers etc.
+    const known = validSourceLayers.get(layer.source);
+    if (!known) return true; // source wasn't checked — leave it alone
+    return known.has(layer["source-layer"]);
+  });
+
+  Object.values(style.sources || {}).forEach((s: any) => {
+    if (typeof s?.url === "string") s.url = withApiKeyParam(s.url);
+    if (Array.isArray(s?.tiles)) s.tiles = s.tiles.map((t: string) => withApiKeyParam(t));
+  });
+
+  return style;
+}
 
 export function decodePolyline(encoded: string): { latitude: number; longitude: number }[] {
   const poly: { latitude: number; longitude: number }[] = [];

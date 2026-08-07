@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
   StatusBar,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import OlaMapView from "../../../components/OlaMapView";
 import { PickupMarker } from "../../../components/VehicleMarkers";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
@@ -35,26 +35,7 @@ export default function TruckIndexScreen() {
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" />
 
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={StyleSheet.absoluteFillObject}
-        region={
-          location
-            ? { latitude: location.lat, longitude: location.lng, latitudeDelta: 0.04, longitudeDelta: 0.04 }
-            : { latitude: 28.6139, longitude: 77.2090, latitudeDelta: 0.04, longitudeDelta: 0.04 }
-        }
-        showsUserLocation
-        showsMyLocationButton={false}
-      >
-        {location && (
-          <Marker
-            coordinate={{ latitude: location.lat, longitude: location.lng }}
-            anchor={{ x: 0.5, y: 1 }}
-          >
-            <PickupMarker />
-          </Marker>
-        )}
-      </MapView>
+      <OlaMapView location={location} zoomLevel={14} marker={<PickupMarker />} />
 
       {/* Back button overlay */}
       <SafeAreaView style={s.topBar} pointerEvents="box-none">

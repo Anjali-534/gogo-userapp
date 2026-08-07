@@ -4,7 +4,8 @@ import {
   StatusBar, ScrollView, ActivityIndicator, Alert,
 } from "react-native";
 import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import OlaMapView from "../../../components/OlaMapView";
+import { PickupMarker } from "../../../components/VehicleMarkers";
 import * as Location from "expo-location";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -71,21 +72,7 @@ export default function CabIndexScreen() {
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" />
 
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={StyleSheet.absoluteFillObject}
-        region={
-          location
-            ? { latitude: location.lat, longitude: location.lng, latitudeDelta: 0.04, longitudeDelta: 0.04 }
-            : { latitude: 28.6139, longitude: 77.2090, latitudeDelta: 0.04, longitudeDelta: 0.04 }
-        }
-        showsUserLocation
-        showsMyLocationButton={false}
-      >
-        {location && (
-          <Marker coordinate={{ latitude: location.lat, longitude: location.lng }} title={t("cab.home.youAreHere")} />
-        )}
-      </MapView>
+      <OlaMapView location={location} zoomLevel={14} marker={<PickupMarker />} />
 
       {/* Back button */}
       <SafeAreaView style={s.topBar} pointerEvents="box-none">

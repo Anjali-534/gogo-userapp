@@ -52,5 +52,6 @@ module.exports = ({ config }) => ({
     "expo-font",
     "./plugins/withDisableAndroidBackup.js",
     "expo-secure-store",
+    "@maplibre/maplibre-react-native",
   ],
 });

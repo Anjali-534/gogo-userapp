@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
   StatusBar,
 } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import OlaMapView from "../../../components/OlaMapView";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -37,21 +37,11 @@ export default function AmbulanceIndexScreen() {
     });
   };
 
-  const region = location
-    ? { latitude: location.lat, longitude: location.lng, latitudeDelta: 0.01, longitudeDelta: 0.01 }
-    : { latitude: 28.6139, longitude: 77.2090, latitudeDelta: 0.01, longitudeDelta: 0.01 };
-
   return (
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" />
 
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={StyleSheet.absoluteFillObject}
-        region={region}
-        showsUserLocation
-        showsMyLocationButton={false}
-      />
+      <OlaMapView location={location} zoomLevel={16} />
 
       {/* Back button */}
       <SafeAreaView style={s.topBar} pointerEvents="box-none">

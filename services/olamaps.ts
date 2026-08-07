@@ -124,7 +124,12 @@ export const olaDirections = async (
 // request to append api_key, the key is baked directly into every
 // source URL here, once, up front.
 export async function fetchSanitizedOlaStyle(): Promise<any> {
-  const style = await fetch(STYLE_URL).then(r => r.json());
+  const res = await fetch(STYLE_URL);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`[fetchSanitizedOlaStyle] HTTP ${res.status} ${res.statusText}: ${body}`);
+  }
+  const style = await res.json();
   const vectorSourceIds = Object.entries(style.sources || {})
     .filter(([, s]: [string, any]) => s?.type === "vector" && typeof s.url === "string")
     .map(([id]) => id);

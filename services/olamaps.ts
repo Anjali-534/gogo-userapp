@@ -139,9 +139,10 @@ export async function fetchSanitizedOlaStyle(): Promise<any> {
     try {
       const tilejson = await fetch(withApiKeyParam(style.sources[id].url)).then(r => r.json());
       validSourceLayers.set(id, new Set((tilejson.vector_layers || []).map((l: { id: string }) => l.id)));
-    } catch {
+    } catch (err) {
       // Couldn't validate this source's TileJSON — don't drop its layers
       // on that basis alone, only filter what we can actually disprove.
+      console.error(`[fetchSanitizedOlaStyle] couldn't validate source "${id}"`, err);
     }
   }));
 
@@ -149,7 +150,9 @@ export async function fetchSanitizedOlaStyle(): Promise<any> {
     if (!layer.source || !layer["source-layer"]) return true; // background/raster layers etc.
     const known = validSourceLayers.get(layer.source);
     if (!known) return true; // source wasn't checked — leave it alone
-    return known.has(layer["source-layer"]);
+    if (known.has(layer["source-layer"])) return true;
+    console.error(`[fetchSanitizedOlaStyle] dropping style layer "${layer.id}" — source-layer "${layer["source-layer"]}" not in source "${layer.source}"`);
+    return false;
   });
 
   Object.values(style.sources || {}).forEach((s: any) => {

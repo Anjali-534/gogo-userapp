@@ -424,8 +424,8 @@ const s = StyleSheet.create({
   sectionTitle:   { color: COLORS.textPrimary, fontSize: 16, fontWeight: "800", marginBottom: 12 },
   addBtn:         { color: COLORS.primary, fontSize: 13, fontWeight: "700" },
 
-  servicesGrid:   { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20 },
-  serviceCard:    { width: "48%", backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 16, alignItems: "center", gap: 6 },
+  servicesGrid:   { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", marginBottom: 10 },
+  serviceCard:    { width: "48%", marginBottom: 10, backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 16, alignItems: "center", gap: 6 },
   serviceIcon:    { fontSize: 32 },
   serviceName:    { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },
   serviceDesc:    { color: COLORS.textFaint, fontSize: 11, textAlign: "center" },

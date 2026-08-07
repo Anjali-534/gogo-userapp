@@ -16,10 +16,10 @@ import * as Notifications from "expo-notifications";
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
 const SERVICES = [
-  { category: "cab",       icon: "🚗" },
   { category: "truck",     icon: "🚛" },
-  { category: "ambulance", icon: "🚑" },
   { category: "parcel",    icon: "📦", accentColor: "#F59E0B" },
+  { category: "cab",       icon: "🚗" },
+  { category: "ambulance", icon: "🚑" },
 ];
 
 const PLACE_ICONS: Record<string, string> = {
@@ -424,8 +424,8 @@ const s = StyleSheet.create({
   sectionTitle:   { color: COLORS.textPrimary, fontSize: 16, fontWeight: "800", marginBottom: 12 },
   addBtn:         { color: COLORS.primary, fontSize: 13, fontWeight: "700" },
 
-  servicesGrid:   { flexDirection: "row", gap: 10, marginBottom: 20 },
-  serviceCard:    { flex: 1, backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 16, alignItems: "center", gap: 6 },
+  servicesGrid:   { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20 },
+  serviceCard:    { width: "48%", backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 16, alignItems: "center", gap: 6 },
   serviceIcon:    { fontSize: 32 },
   serviceName:    { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },
   serviceDesc:    { color: COLORS.textFaint, fontSize: 11, textAlign: "center" },

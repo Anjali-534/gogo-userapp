@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import MapView, { Marker, Polyline, Circle, Heatmap, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import {
-  AmbulanceMarker, CabMarker, TruckMarker,
+  AmbulanceMarker, CabMarker, TruckMarker, ParcelMarker,
   PickupMarker, DropMarker,
 } from "../../../components/VehicleMarkers";
 import SOSButton from "../../../components/SOSButton";
@@ -402,7 +402,7 @@ export default function TrackingScreen() {
   const beforePickup = ["accepted","arriving"].includes(booking.status);
   const displayFare  = Math.round(booking.final_fare ?? booking.estimated_fare ?? 0);
   const durationMins = calcDurMins(booking.started_at, booking.completed_at);
-  const category     = booking.vehicle_category || (driver?.vehicle_type?.startsWith("truck") ? "truck" : driver?.vehicle_type?.startsWith("ambulance") ? "ambulance" : "cab");
+  const category     = booking.vehicle_category || (driver?.vehicle_type?.startsWith("truck") ? "truck" : driver?.vehicle_type?.startsWith("ambulance") ? "ambulance" : driver?.vehicle_type?.startsWith("parcel") ? "parcel" : "cab");
 
   let distLabel = "";
   if (routeDistText) distLabel = routeDistText + (routeDurText ? " · " + routeDurText : "");
@@ -456,6 +456,8 @@ export default function TrackingScreen() {
                   "small"
                 }
               />
+            ) : category === "parcel" ? (
+              <ParcelMarker />
             ) : (
               <CabMarker
                 variant={

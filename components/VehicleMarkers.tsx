@@ -63,6 +63,15 @@ export function TruckMarker({ variant = "small" }: { variant?: "small" | "large"
   );
 }
 
+// ─── PARCEL MARKER ───────────────────────────────────────────────────────────
+export function ParcelMarker() {
+  return (
+    <View style={[v.circle, { borderColor: "#F59E0B" }]}>
+      <Text style={v.emoji}>📦</Text>
+    </View>
+  );
+}
+
 // ─── PIN MARKERS ─────────────────────────────────────────────────────────────
 // Teardrop pin shape built from a circle + downward triangle, with pulse ring.
 function PinMarker({ color }: { color: string }) {

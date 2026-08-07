@@ -472,7 +472,7 @@ export const trackLogout = () =>
 export const trackSessionExpired = () => safe(() => analytics().logEvent("session_expired"));
 
 export const trackBookingStarted = (params: {
-  service: "cab" | "truck" | "ambulance"; vehicleType?: string; pickupArea?: string;
+  service: "cab" | "truck" | "ambulance" | "parcel"; vehicleType?: string; pickupArea?: string;
 }) =>
   safe(() =>
     analytics().logEvent("booking_started", {
@@ -484,7 +484,7 @@ export const trackBookingStarted = (params: {
   );
 
 export const trackServiceSelected = (params: {
-  service: "cab" | "truck" | "ambulance"; vehicleName: string; vehicleSlug: string;
+  service: "cab" | "truck" | "ambulance" | "parcel"; vehicleName: string; vehicleSlug: string;
   estimatedFare: number; distanceKm: number;
 }) =>
   safe(async () => {
@@ -504,7 +504,7 @@ export const trackServiceSelected = (params: {
   });
 
 export const trackBookingCompleted = (params: {
-  bookingId: string; service: "cab" | "truck" | "ambulance"; vehicleType: string;
+  bookingId: string; service: "cab" | "truck" | "ambulance" | "parcel"; vehicleType: string;
   fare: number; distanceKm: number; pickupArea?: string; dropArea?: string; isFreeAmbulance?: boolean;
 }) =>
   safe(async () => {

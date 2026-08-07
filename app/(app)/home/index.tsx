@@ -19,6 +19,7 @@ const SERVICES = [
   { category: "cab",       icon: "🚗" },
   { category: "truck",     icon: "🚛" },
   { category: "ambulance", icon: "🚑" },
+  { category: "parcel",    icon: "📦", accentColor: "#F59E0B" },
 ];
 
 const PLACE_ICONS: Record<string, string> = {
@@ -323,7 +324,7 @@ export default function HomeScreen() {
         <Text style={s.sectionTitle}>{t("home.services.title")}</Text>
         <View style={s.servicesGrid}>
           {SERVICES.map(sv => (
-            <TouchableOpacity key={sv.category} style={s.serviceCard}
+            <TouchableOpacity key={sv.category} style={[s.serviceCard, sv.accentColor && { borderColor: sv.accentColor }]}
               onPress={() => {
                 if (sv.category === "truck") {
                   router.push("/(app)/truck" as any);
@@ -331,6 +332,8 @@ export default function HomeScreen() {
                   router.push("/(app)/ambulance" as any);
                 } else if (sv.category === "cab") {
                   router.push("/(app)/cab" as any);
+                } else if (sv.category === "parcel") {
+                  router.push("/(app)/parcel" as any);
                 } else {
                   router.push({ pathname: "/(app)/booking", params: { category: sv.category } });
                 }

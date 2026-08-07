@@ -17,7 +17,8 @@
     "categories": {
       "cab": "कैब",
       "truck": "ट्रक",
-      "ambulance": "एम्बुलेंस"
+      "ambulance": "एम्बुलेंस",
+      "parcel": "पार्सल"
     },
     "tabs": {
       "home": "होम",
@@ -99,6 +100,10 @@
       "ambulance": {
         "name": "एम्बुलेंस",
         "desc": "BLS / ALS"
+      },
+      "parcel": {
+        "name": "पार्सल",
+        "desc": "तेज़ 2-व्हीलर डिलीवरी"
       }
     },
     "savedPlaces": {
@@ -360,6 +365,28 @@
         "label": "प्राइम SUV",
         "desc": "स्पेशियस और प्रीमियम"
       }
+    }
+  },
+  "parcel": {
+    "home": {
+      "whereTo": "पार्सल कहां भेजना है?",
+      "youAreHere": "आप यहां हैं",
+      "placeFallback": "स्थान",
+      "restorePill": "↑ पार्सल कहां भेजना है?"
+    },
+    "booking": {
+      "setYourTrip": "पिकअप और ड्रॉप सेट करें",
+      "restorePill": "↑ पिकअप और ड्रॉप सेट करें"
+    },
+    "vehicles": {
+      "title": "पार्सल — 2 व्हीलर",
+      "approxKm": "~{{km}} किमी",
+      "capacity": "{{kg}} किग्रा तक",
+      "confirmButton": "पार्सल कन्फर्म करें",
+      "noneAvailable": "पार्सल डिलीवरी उपलब्ध नहीं है"
+    },
+    "review": {
+      "serviceFallback": "पार्सल"
     }
   },
   "truck": {

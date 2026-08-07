@@ -17,7 +17,8 @@
     "categories": {
       "cab": "କ୍ୟାବ୍",
       "truck": "ଟ୍ରକ୍",
-      "ambulance": "ଆମ୍ବୁଲାନ୍ସ"
+      "ambulance": "ଆମ୍ବୁଲାନ୍ସ",
+      "parcel": "ପାର୍ସଲ୍"
     },
     "tabs": {
       "home": "ହୋମ୍",
@@ -99,6 +100,10 @@
       "ambulance": {
         "name": "ଆମ୍ବୁଲାନ୍ସ",
         "desc": "BLS / ALS"
+      },
+      "parcel": {
+        "name": "ପାର୍ସଲ୍",
+        "desc": "ଦ୍ରୁତ 2-ହୁଇଲର ଡେଲିଭରୀ"
       }
     },
     "savedPlaces": {
@@ -360,6 +365,28 @@
         "label": "ପ୍ରାଇମ୍ SUV",
         "desc": "ଚଉଡ଼ା ଏବଂ ପ୍ରିମିୟମ୍"
       }
+    }
+  },
+  "parcel": {
+    "home": {
+      "whereTo": "ପାର୍ସଲ୍ କେଉଁଠାକୁ ଯିବ?",
+      "youAreHere": "ଆପଣ ଏଠାରେ ଅଛନ୍ତି",
+      "placeFallback": "ସ୍ଥାନ",
+      "restorePill": "↑ ପାର୍ସଲ୍ କେଉଁଠାକୁ ଯିବ?"
+    },
+    "booking": {
+      "setYourTrip": "ପିକଅପ୍ ଏବଂ ଡ୍ରପ୍ ସେଟ୍ କରନ୍ତୁ",
+      "restorePill": "↑ ପିକଅପ୍ ଏବଂ ଡ୍ରପ୍ ସେଟ୍ କରନ୍ତୁ"
+    },
+    "vehicles": {
+      "title": "ପାର୍ସଲ୍ — 2 ହୁଇଲର",
+      "approxKm": "~{{km}} କିମି",
+      "capacity": "{{kg}} କେଜି ପର୍ଯ୍ୟନ୍ତ",
+      "confirmButton": "ପାର୍ସଲ୍ କନଫର୍ମ କରନ୍ତୁ",
+      "noneAvailable": "ପାର୍ସଲ୍ ଡେଲିଭରି ଉପଲବ୍ଧ ନାହିଁ"
+    },
+    "review": {
+      "serviceFallback": "ପାର୍ସଲ୍"
     }
   },
   "truck": {

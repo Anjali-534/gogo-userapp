@@ -17,7 +17,8 @@
     "categories": {
       "cab": "Cab",
       "truck": "Truck",
-      "ambulance": "Ambulance"
+      "ambulance": "Ambulance",
+      "parcel": "Parcel"
     },
     "tabs": {
       "home": "Home",
@@ -99,6 +100,10 @@
       "ambulance": {
         "name": "Ambulance",
         "desc": "BLS / ALS"
+      },
+      "parcel": {
+        "name": "Parcel",
+        "desc": "Quick 2-wheeler delivery"
       }
     },
     "savedPlaces": {
@@ -362,6 +367,28 @@
         "label": "Prime SUV",
         "desc": "Spacious & premium"
       }
+    }
+  },
+  "parcel": {
+    "home": {
+      "whereTo": "Where's the parcel going?",
+      "youAreHere": "You are here",
+      "placeFallback": "Place",
+      "restorePill": "↑ Where's the parcel going?"
+    },
+    "booking": {
+      "setYourTrip": "Set pickup & drop",
+      "restorePill": "↑ Set pickup & drop"
+    },
+    "vehicles": {
+      "title": "Parcel — 2 Wheeler",
+      "approxKm": "~{{km}} km",
+      "capacity": "Up to {{kg}} kg",
+      "confirmButton": "Confirm parcel",
+      "noneAvailable": "No parcel delivery available"
+    },
+    "review": {
+      "serviceFallback": "Parcel"
     }
   },
   "truck": {

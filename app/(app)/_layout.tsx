@@ -78,6 +78,10 @@ export default function AppLayout() {
       <Tabs.Screen name="cab/coupons"            options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="cab/review"             options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="cab/rentals"            options={{ href: null, tabBarStyle: { display: "none" } }} />
+      <Tabs.Screen name="parcel/index"           options={{ href: null, tabBarStyle: { display: "none" } }} />
+      <Tabs.Screen name="parcel/booking"         options={{ href: null, tabBarStyle: { display: "none" } }} />
+      <Tabs.Screen name="parcel/vehicles"        options={{ href: null, tabBarStyle: { display: "none" } }} />
+      <Tabs.Screen name="parcel/review"          options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="support/index"          options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="support/chat"           options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="support/new"            options={{ href: null, tabBarStyle: { display: "none" } }} />

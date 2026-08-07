@@ -10,6 +10,7 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { COLORS, RADIUS } from "@/constants/theme";
+import { CAB_COMING_SOON } from "@/constants/featureFlags";
 import { registerPushToken } from "@/services/notifications";
 import * as Notifications from "expo-notifications";
 
@@ -324,8 +325,14 @@ export default function HomeScreen() {
         <Text style={s.sectionTitle}>{t("home.services.title")}</Text>
         <View style={s.servicesGrid}>
           {SERVICES.map(sv => (
-            <TouchableOpacity key={sv.category} style={[s.serviceCard, sv.accentColor && { borderColor: sv.accentColor }]}
+            <TouchableOpacity key={sv.category}
+              style={[
+                s.serviceCard,
+                sv.accentColor && { borderColor: sv.accentColor },
+                sv.category === "cab" && CAB_COMING_SOON && s.serviceCardDisabled,
+              ]}
               onPress={() => {
+                if (sv.category === "cab" && CAB_COMING_SOON) return;
                 if (sv.category === "truck") {
                   router.push("/(app)/truck" as any);
                 } else if (sv.category === "ambulance") {
@@ -338,6 +345,11 @@ export default function HomeScreen() {
                   router.push({ pathname: "/(app)/booking", params: { category: sv.category } });
                 }
               }}>
+              {sv.category === "cab" && CAB_COMING_SOON && (
+                <View style={s.comingSoonBadge}>
+                  <Text style={s.comingSoonBadgeText}>Coming Soon</Text>
+                </View>
+              )}
               <Text style={s.serviceIcon}>{sv.icon}</Text>
               <Text style={s.serviceName}>{t(`home.services.${sv.category}.name`)}</Text>
               <Text style={s.serviceDesc}>{t(`home.services.${sv.category}.desc`)}</Text>
@@ -426,9 +438,17 @@ const s = StyleSheet.create({
 
   servicesGrid:   { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", marginBottom: 10 },
   serviceCard:    { width: "48%", marginBottom: 10, backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 16, alignItems: "center", gap: 6 },
+  serviceCardDisabled: { opacity: 0.55 },
   serviceIcon:    { fontSize: 32 },
   serviceName:    { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },
   serviceDesc:    { color: COLORS.textFaint, fontSize: 11, textAlign: "center" },
+
+  comingSoonBadge:     {
+    position: "absolute", top: 8, right: 8,
+    backgroundColor: COLORS.textStrong, borderRadius: RADIUS.chip,
+    paddingHorizontal: 7, paddingVertical: 3,
+  },
+  comingSoonBadgeText: { color: COLORS.white, fontSize: 9, fontWeight: "700" },
 
   emptyPlaces:    { backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, padding: 24, alignItems: "center", gap: 8, marginBottom: 24 },
   emptyIcon:      { fontSize: 32 },

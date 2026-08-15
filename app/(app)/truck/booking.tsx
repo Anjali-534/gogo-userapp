@@ -2,16 +2,22 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   ScrollView, TextInput, ActivityIndicator, Switch, KeyboardAvoidingView, Platform,
+  Image,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
+import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
 
+// Still needed by reverseGeocode()'s Google Geocoding fallback below (a
+// different Google API, out of scope for the backend-proxy port — Ola stays
+// primary there and this client-exposed key is its only fallback path).
 const GOOGLE_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY || "";
-const PLACES_BASE = "https://places.googleapis.com/v1";
 
 type PlaceSuggestion = { text: string; placeId: string; lat: number | null; lng: number | null; provider: "ola" | "google" };
 type LocationPoint = { address: string; lat: number; lng: number };
@@ -21,41 +27,14 @@ async function autocompletePlaces(
   userLat: number,
   userLng: number
 ): Promise<PlaceSuggestion[]> {
-  const olaResults = await olaAutocomplete(input, userLat, userLng);
-  if (olaResults.length) {
+  try {
+    const googleResults = await googleAutocomplete(input, userLat, userLng);
+    logMapsProvider("google", "autocomplete");
+    return googleResults.map((p) => ({ text: p.description, placeId: p.place_id, lat: p.lat, lng: p.lng, provider: "google" as const }));
+  } catch {
+    const olaResults = await olaAutocomplete(input, userLat, userLng);
     logMapsProvider("ola", "autocomplete");
     return olaResults.map((p) => ({ text: p.description, placeId: p.place_id, lat: p.lat, lng: p.lng, provider: "ola" as const }));
-  }
-  try {
-    const res = await fetch(`${PLACES_BASE}/places:autocomplete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": GOOGLE_KEY,
-        "X-Goog-FieldMask":
-          "suggestions.placePrediction.text,suggestions.placePrediction.place",
-      },
-      body: JSON.stringify({
-        input,
-        locationBias: {
-          circle: {
-            center: { latitude: userLat || 28.6139, longitude: userLng || 77.2090 },
-            radius: 50000.0,
-          },
-        },
-      }),
-    });
-    const data = await res.json();
-    logMapsProvider("google", "autocomplete");
-    return (data.suggestions || []).map((s: any) => ({
-      text: s.placePrediction?.text?.text || "",
-      placeId: (s.placePrediction?.place || "").split("/").pop() || "",
-      lat: null,
-      lng: null,
-      provider: "google" as const,
-    }));
-  } catch {
-    return [];
   }
 }
 
@@ -70,22 +49,12 @@ async function fetchPlaceDetails(sg: PlaceSuggestion): Promise<LocationPoint | n
       logMapsProvider("ola", "place-details");
       return { lat: details.lat, lng: details.lng, address: sg.text };
     }
-  }
-  try {
-    const res = await fetch(
-      `${PLACES_BASE}/places/${sg.placeId}?fields=location,formattedAddress&key=${GOOGLE_KEY}`
-    );
-    const data = await res.json();
-    if (!data.location) return null;
-    logMapsProvider("google", "place-details");
-    return {
-      lat: data.location.latitude,
-      lng: data.location.longitude,
-      address: data.formattedAddress || "",
-    };
-  } catch {
     return null;
   }
+  const details = await googlePlaceDetails(sg.placeId);
+  if (!details) return null;
+  logMapsProvider("google", "place-details");
+  return { lat: details.lat, lng: details.lng, address: sg.text };
 }
 
 async function reverseGeocode(lat: number, lng: number): Promise<string> {
@@ -181,6 +150,18 @@ function LocationInput({
           ))}
         </View>
       )}
+    </View>
+  );
+}
+
+// ─── Section label with icon badge ───────────────────────────────────────────
+function SectionLabel({ icon, text, style }: { icon: keyof typeof Ionicons.glyphMap; text: string; style?: any }) {
+  return (
+    <View style={[s.sectionLabelRow, style]}>
+      <View style={s.sectionBadge}>
+        <Ionicons name={icon} size={13} color={COLORS.primary} />
+      </View>
+      <Text style={s.sectionLabelText}>{text}</Text>
     </View>
   );
 }
@@ -311,16 +292,30 @@ export default function TruckBookingScreen() {
     <SafeAreaView style={s.safe}>
       <StatusBar barStyle="dark-content" />
 
-      {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.title}>{t("truck.booking.title")}</Text>
-          <Text style={s.subtitle}>{t("truck.booking.deliveryLabel", { scope: scopeLabel })}</Text>
+      {/* Header — same full-bleed gradient treatment as the home screen hero:
+          no card/box, truck illustration absolutely positioned and bled to
+          the edge (not confined to a flex-row cell) so it sits directly on
+          the gradient instead of being boxed in next to the title. */}
+      <LinearGradient
+        colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+        locations={[0, 0.6, 1]}
+        style={s.header}
+      >
+        <View style={s.headerRow}>
+          <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+            <Text style={s.backTxt}>←</Text>
+          </TouchableOpacity>
+          <View style={s.headerTextCol}>
+            <Text style={s.title} numberOfLines={1}>{t("truck.booking.title")}</Text>
+            <Text style={s.subtitle}>{t("truck.booking.deliveryLabel", { scope: scopeLabel })}</Text>
+          </View>
         </View>
-      </View>
+        <Image
+          source={require("../../../assets/illustrations/truck.png")}
+          style={s.headerTruckImg}
+          resizeMode="contain"
+        />
+      </LinearGradient>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -333,7 +328,7 @@ export default function TruckBookingScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Pickup */}
-        <Text style={s.sectionLabel}>{t("truck.booking.pickupLocationLabel")}</Text>
+        <SectionLabel icon="location" text={t("truck.booking.pickupLocationLabel")} />
         <TouchableOpacity
           style={s.locInputRow}
           onPress={() => {
@@ -385,7 +380,7 @@ export default function TruckBookingScreen() {
         </TouchableOpacity>
 
         {/* Drop */}
-        <Text style={[s.sectionLabel, { marginTop: 16 }]}>{t("truck.booking.dropLocationLabel")}</Text>
+        <SectionLabel icon="location" text={t("truck.booking.dropLocationLabel")} style={{ marginTop: 16 }} />
         <LocationInput
           label={t("locationPicker.searchDropPlaceholder")}
           value={drop}
@@ -396,20 +391,23 @@ export default function TruckBookingScreen() {
         />
 
         {/* Receiver */}
-        <Text style={[s.sectionLabel, { marginTop: 16 }]}>{t("booking.review.receiverDetails")}</Text>
-        <View style={s.detailsCard}>
+        <SectionLabel icon="person" text={t("booking.review.receiverDetails")} style={{ marginTop: 16 }} />
+
+        <View style={s.fieldPill}>
+          <Ionicons name="person-outline" size={18} color={COLORS.textMuted} style={s.fieldIcon} />
           <TextInput
-            style={s.fieldInput}
+            style={s.fieldPillInput}
             placeholder={t("truck.booking.receiverNamePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
             value={receiverName}
             onChangeText={setReceiverName}
           />
+        </View>
 
-          <View style={s.divider} />
-
+        <View style={[s.fieldPill, { marginTop: 10 }]}>
+          <Ionicons name="call-outline" size={18} color={COLORS.textMuted} style={s.fieldIcon} />
           <TextInput
-            style={s.fieldInput}
+            style={s.fieldPillInput}
             placeholder={t("truck.booking.receiverPhonePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
             value={receiverPhone}
@@ -418,20 +416,28 @@ export default function TruckBookingScreen() {
             maxLength={10}
             editable={!sameAsMe}
           />
+        </View>
 
-          <View style={s.divider} />
+        <TouchableOpacity style={[s.checkRow, { marginTop: 10 }]} onPress={toggleSameAsMe} activeOpacity={0.7}>
+          <View style={[s.checkbox, sameAsMe && s.checkboxOn]}>
+            {sameAsMe && <Text style={s.checkIcon}>✓</Text>}
+          </View>
+          <Text style={s.checkLabel}>{t("common.sameAsMyNumber")}</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity style={s.checkRow} onPress={toggleSameAsMe} activeOpacity={0.7}>
-            <View style={[s.checkbox, sameAsMe && s.checkboxOn]}>
-              {sameAsMe && <Text style={s.checkIcon}>✓</Text>}
-            </View>
-            <Text style={s.checkLabel}>{t("common.sameAsMyNumber")}</Text>
-          </TouchableOpacity>
+        {/* Trust banner */}
+        <View style={s.trustBanner}>
+          <View style={s.trustIconBadge}>
+            <Ionicons name="shield-checkmark" size={18} color={COLORS.primary} />
+          </View>
+          <Text style={s.trustText}>{t("truck.index.trustBanner")}</Text>
+          <Ionicons name="cube-outline" size={26} color={COLORS.primary} style={{ opacity: 0.55 }} />
         </View>
 
         {/* Validation hints */}
         {!locLoading && (!pickup || !drop) && (
           <View style={s.hint}>
+            <Ionicons name="location" size={16} color={COLORS.primary} style={{ marginRight: 8 }} />
             <Text style={s.hintText}>
               {!pickup ? t("truck.booking.hintSetPickup") : t("truck.booking.hintSetDrop")}
             </Text>
@@ -448,6 +454,7 @@ export default function TruckBookingScreen() {
           activeOpacity={0.85}
         >
           <Text style={s.proceedText}>{t("truck.booking.confirmProceed")}</Text>
+          <Ionicons name="arrow-forward" size={18} color={COLORS.white} style={{ marginLeft: 8 }} />
         </TouchableOpacity>
       </View>
       </KeyboardAvoidingView>
@@ -521,7 +528,7 @@ const li = StyleSheet.create({
   wrap:         { marginBottom: 4, zIndex: 10 },
   inputRow: {
     flexDirection: "row", alignItems: "center",
-    backgroundColor: COLORS.bgAlt, borderRadius: 14,
+    backgroundColor: COLORS.bgAlt, borderRadius: 999,
     borderWidth: 1.5, borderColor: COLORS.border,
     paddingHorizontal: 16, paddingVertical: 14, gap: 12,
   },
@@ -547,12 +554,12 @@ const s = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: COLORS.bgAlt },
   scroll: { flex: 1, paddingHorizontal: 20 },
 
-  header: {
-    flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 20, paddingVertical: 16,
-    borderBottomWidth: 1, borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bgAlt,
-  },
+  header:        { paddingHorizontal: 20, paddingVertical: 32, minHeight: 170, justifyContent: "center" },
+  headerRow:     { flexDirection: "row", alignItems: "center", gap: 14 },
+  headerTextCol: { flex: 1, maxWidth: "62%" },
+  // truck.png is a transparent cutout — bled past the header's own padding
+  // to the true edge, same treatment as home hero's heroTruckImg.
+  headerTruckImg: { position: "absolute", right: -16, bottom: -8, width: 180, height: 130 },
   backBtn: {
     width: 42, height: 42, borderRadius: 21,
     backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center",
@@ -563,26 +570,32 @@ const s = StyleSheet.create({
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
 
-  sectionLabel: {
+  sectionLabelRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10, marginTop: 20 },
+  sectionBadge: {
+    width: 22, height: 22, borderRadius: 11,
+    backgroundColor: COLORS.primaryTint,
+    alignItems: "center", justifyContent: "center",
+  },
+  sectionLabelText: {
     fontSize: 11, fontWeight: "700", letterSpacing: 1.2,
     color: COLORS.primary, textTransform: "uppercase",
-    marginBottom: 10, marginTop: 20,
   },
 
-  detailsCard: {
-    backgroundColor: COLORS.white, borderRadius: RADIUS.card,
-    borderWidth: 1.5, borderColor: COLORS.border, overflow: "hidden",
+  fieldPill: {
+    flexDirection: "row", alignItems: "center",
+    backgroundColor: COLORS.white, borderRadius: 999,
+    borderWidth: 1.5, borderColor: COLORS.border,
+    paddingHorizontal: 16,
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
   },
-  fieldInput: {
-    paddingHorizontal: 16, paddingVertical: 15,
-    color: COLORS.textStrong, fontSize: 15, fontWeight: "500",
-  },
-  divider: { height: 1, backgroundColor: COLORS.border },
+  fieldIcon:      { marginRight: 10 },
+  fieldPillInput: { flex: 1, paddingVertical: 14, color: COLORS.textStrong, fontSize: 15, fontWeight: "500" },
 
   checkRow: {
     flexDirection: "row", alignItems: "center", gap: 12,
+    backgroundColor: COLORS.white, borderRadius: 999,
+    borderWidth: 1.5, borderColor: COLORS.border,
     paddingHorizontal: 16, paddingVertical: 14,
   },
   checkbox: {
@@ -594,12 +607,26 @@ const s = StyleSheet.create({
   checkIcon:  { color: "#fff", fontSize: 12, fontWeight: "900" },
   checkLabel: { color: COLORS.textSecondary, fontSize: 14 },
 
+  trustBanner: {
+    flexDirection: "row", alignItems: "center", gap: 12,
+    backgroundColor: COLORS.primaryTint2, borderRadius: RADIUS.card,
+    borderWidth: 1, borderColor: "#FFE4D6",
+    paddingHorizontal: 16, paddingVertical: 14, marginTop: 20,
+  },
+  trustIconBadge: {
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: COLORS.primaryTint,
+    alignItems: "center", justifyContent: "center", flexShrink: 0,
+  },
+  trustText: { flex: 1, color: COLORS.textSecondary, fontSize: 13, fontWeight: "600" },
+
   hint: {
+    flexDirection: "row", alignItems: "center",
     marginTop: 12, backgroundColor: COLORS.primaryTint2,
-    borderRadius: RADIUS.input, paddingHorizontal: 14, paddingVertical: 12,
+    borderRadius: 20, paddingHorizontal: 14, paddingVertical: 12,
     borderWidth: 1, borderColor: "#FFE4D6",
   },
-  hintText: { color: COLORS.primary, fontSize: 13, fontWeight: "600" },
+  hintText: { flex: 1, color: COLORS.primary, fontSize: 13, fontWeight: "600" },
 
   bottomBar: {
     position: "absolute", bottom: 0, left: 0, right: 0,
@@ -607,8 +634,9 @@ const s = StyleSheet.create({
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   proceedBtn: {
-    backgroundColor: COLORS.primary, borderRadius: RADIUS.card,
-    paddingVertical: 18, alignItems: "center",
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    backgroundColor: COLORS.primary, borderRadius: 999,
+    paddingVertical: 18,
     shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
   },
@@ -617,7 +645,7 @@ const s = StyleSheet.create({
 
   locInputRow: {
     flexDirection: "row", alignItems: "center",
-    backgroundColor: COLORS.bgAlt, borderRadius: 14,
+    backgroundColor: COLORS.bgAlt, borderRadius: 999,
     borderWidth: 1.5, borderColor: COLORS.border,
     paddingHorizontal: 16, paddingVertical: 14, gap: 12,
   },

@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, StatusBar, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import axios from "axios";
@@ -72,20 +73,36 @@ export default function HistoryScreen() {
   };
 
   return (
-    <SafeAreaView style={s.safe}>
+    <View style={s.safe}>
+      <StatusBar barStyle="dark-content" />
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
 
-        <Image source={require("../../../assets/logo.png")} style={s.logo} resizeMode="contain" />
-
-        <View style={s.header}>
+        {/* Hero — full-bleed section (no border radius, no horizontal inset,
+            no card/box), starting from the very top of the screen behind the
+            status bar — same treatment as the other full-bleed heroes
+            (BookingHero.tsx, home screen). Title/badge are stacked and
+            left-aligned so they stay clear of the illustration, which is
+            bled to the right/bottom edge. */}
+        <LinearGradient
+          colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+          locations={[0, 0.6, 1]}
+          style={s.hero}
+        >
           <Text style={s.title}>{t("history.title")}</Text>
           {!loading && rides.length > 0 && (
             <View style={s.countPill}>
               <Text style={s.countPillText}>{t("history.tripsCount", { count: rides.length })}</Text>
             </View>
           )}
-        </View>
 
+          <Image
+            source={require("../../../assets/illustrations/parcel.png")}
+            style={s.heroImg}
+            resizeMode="contain"
+          />
+        </LinearGradient>
+
+        <View style={s.contentPad}>
         {loading ? (
           <View style={s.center}>
             <ActivityIndicator color={COLORS.primary} size="large" />
@@ -166,21 +183,32 @@ export default function HistoryScreen() {
             })}
           </View>
         )}
+        </View>
 
         <View style={{ height: 32 }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const s = StyleSheet.create({
   safe:         { flex: 1, backgroundColor: COLORS.bgAlt },
-  scroll:       { flex: 1, paddingHorizontal: 20, paddingBottom: 80 },
-  logo:         { width: 180, height: 64, marginLeft: -52, marginTop: 32, marginBottom: 4 },
-  header:       { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
-  title:        { color: COLORS.textStrong, fontSize: 22, fontWeight: "800", letterSpacing: -0.3 },
+  scroll:       { flex: 1, paddingBottom: 80 },
+  contentPad:   { paddingHorizontal: 20 },
+
+  // Hero — full-bleed section (no border radius, no horizontal inset), soft
+  // cream/peach gradient fading into the page background, starting behind
+  // the status bar (no SafeAreaView wrapping it — paddingTop clears the
+  // status bar manually instead, same technique as BookingHero.tsx).
+  hero:         { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 20, minHeight: 200 },
+  // parcel.png (scooter/delivery scene) bled to the true screen edge (right:
+  // -20 cancels the hero's own horizontal padding), same technique as
+  // home's heroTruckImg. Title/badge are left-aligned and stacked (not a
+  // space-between row) so they never share horizontal space with this.
+  heroImg:      { position: "absolute", right: -20, bottom: 8, width: 180, height: 112 },
+  title:        { color: COLORS.textStrong, fontSize: 22, fontWeight: "800", letterSpacing: -0.3, marginBottom: 10 },
   count:        { color: COLORS.textMuted, fontSize: 13 },
-  countPill:    { backgroundColor: "#FFF3EE", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5 },
+  countPill:    { backgroundColor: "#FFF3EE", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5, alignSelf: "flex-start" },
   countPillText:{ color: COLORS.primary, fontWeight: "700", fontSize: 12 },
   center:       { paddingTop: 60, alignItems: "center" },
   loadingText:  { color: COLORS.textMuted, fontSize: 14, marginTop: 12 },
@@ -204,7 +232,7 @@ const s = StyleSheet.create({
   routeBox:     { backgroundColor: COLORS.bgAlt, borderRadius: RADIUS.input, padding: 14, marginBottom: 10 },
   routeRow:     { flexDirection: "row", alignItems: "center" },
   dot:          { width: 8, height: 8, borderRadius: 4, marginRight: 10 },
-  routeLine:    { width: 1, height: 10, backgroundColor: COLORS.borderStrong, marginLeft: 3.5, marginVertical: 3 },
+  routeLine:    { width: 0, height: 10, borderLeftWidth: 1, borderStyle: "dotted", borderLeftColor: COLORS.borderStrong, marginLeft: 3.5, marginVertical: 3 },
   routeText:    { flex: 1, color: COLORS.textSecondary, fontSize: 13 },
   footer:       { flexDirection: "row", justifyContent: "space-between", paddingTop: 10, borderTopWidth: 1, borderTopColor: COLORS.border },
   footerText:   { color: COLORS.textMuted, fontSize: 12 },

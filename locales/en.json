@@ -4,6 +4,7 @@
     "save": "Save",
     "done": "Done",
     "back": "Back",
+    "continue": "Continue",
     "loading": "Loading…",
     "error": "Error",
     "ok": "OK",
@@ -115,7 +116,7 @@
     "promo": {
       "title": "First ride free!",
       "desc": "Use code BOGIE100 for ₹100 off",
-      "claim": "Claim"
+      "claim": "Claim Now"
     }
   },
   "booking": {
@@ -397,7 +398,8 @@
       "chooseDeliveryType": "Choose your delivery type",
       "localDelivery": "Local delivery",
       "interstateTransport": "Interstate transport",
-      "collapsedBookTruck": "↑ Book a Truck"
+      "collapsedBookTruck": "↑ Book a Truck",
+      "trustBanner": "Safe. Reliable. On-time."
     },
     "booking": {
       "title": "Booking Details",
@@ -1200,9 +1202,13 @@
       "title": "bogie SUPPORT",
       "subtitle": "🤖 AI Assistant available 24/7",
       "lostItem": "Lost an Item?",
+      "lostItemSub": "Report and get help",
+      "chatSub": "Start a conversation",
       "recentConversations": "RECENT CONVERSATIONS",
       "emptyTitle": "No conversations yet",
       "emptySub": "Tap \"Start New Chat\" to get help from our AI + human support team.",
+      "startNewChat": "Start New Chat",
+      "startNewChatSub": "We're here to help!",
       "resolved": "✅ Resolved",
       "noMessagesYet": "No messages yet",
       "timeAgo": {

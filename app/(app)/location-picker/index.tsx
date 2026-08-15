@@ -11,7 +11,11 @@ import { getToken } from "@/services/session";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
+import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 
+// Still needed by reverseGeocode()'s Google Geocoding fallback below (a
+// different Google API, out of scope for the backend-proxy port — Ola stays
+// primary there and this client-exposed key is its only fallback path).
 const GMAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY || "";
 const API       = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
@@ -141,35 +145,25 @@ const mode = params.mode;
     if (text.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
     setSugLoading(true);
     try {
-      const olaResults = await olaAutocomplete(text, pin.lat, pin.lng);
-      if (olaResults.length) {
-        logMapsProvider("ola", "autocomplete");
-        setSuggestions(olaResults.slice(0, 6).map((p) => ({
+      let results: { place_id: string; description: string; lat: number | null; lng: number | null }[];
+      let provider: "ola" | "google";
+      try {
+        results = await googleAutocomplete(text, pin.lat, pin.lng);
+        provider = "google";
+      } catch {
+        results = await olaAutocomplete(text, pin.lat, pin.lng);
+        provider = "ola";
+      }
+      logMapsProvider(provider, "autocomplete");
+      if (results.length) {
+        setSuggestions(results.slice(0, 6).map((p) => ({
           place_id:       p.place_id,
           description:    p.description,
           main_text:      p.description,
           secondary_text: "",
           lat:            p.lat,
           lng:            p.lng,
-          provider:       "ola" as const,
-        })));
-        setShowSuggestions(true);
-        return;
-      }
-      const bias = `circle:50000@${pin.lat},${pin.lng}`;
-      const url  = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&locationbias=${bias}&components=country:in&language=en&key=${GMAPS_KEY}`;
-      const res  = await fetch(url);
-      const json = await res.json();
-      if (json.predictions?.length) {
-        logMapsProvider("google", "autocomplete");
-        setSuggestions(json.predictions.slice(0, 6).map((p: any) => ({
-          place_id:       p.place_id,
-          description:    p.description,
-          main_text:      p.structured_formatting?.main_text      || p.description,
-          secondary_text: p.structured_formatting?.secondary_text || "",
-          lat:            null,
-          lng:            null,
-          provider:       "google" as const,
+          provider,
         })));
         setShowSuggestions(true);
       } else {
@@ -211,16 +205,13 @@ const mode = params.mode;
           return;
         }
       }
-      const url  = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${item.place_id}&fields=geometry,formatted_address&key=${GMAPS_KEY}`;
-      const res  = await fetch(url);
-      const json = await res.json();
-      if (json.status === "OK") {
+      const details = await googlePlaceDetails(item.place_id);
+      if (details) {
         logMapsProvider("google", "place-details");
-        const loc = json.result.geometry.location;
-        const newRegion: Region = { latitude: loc.lat, longitude: loc.lng, latitudeDelta: 0.01, longitudeDelta: 0.01 };
-        setPin({ lat: loc.lat, lng: loc.lng });
+        const newRegion: Region = { latitude: details.lat, longitude: details.lng, latitudeDelta: 0.01, longitudeDelta: 0.01 };
+        setPin({ lat: details.lat, lng: details.lng });
         setRegion(newRegion);
-        setAddress(json.result.formatted_address || item.description);
+        setAddress(item.description);
         mapRef.current?.animateToRegion(newRegion, 600);
       }
     } catch {}

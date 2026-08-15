@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
+  View, Text, StyleSheet, TouchableOpacity, StatusBar,
   ScrollView, ActivityIndicator, Modal, Dimensions, Animated, PanResponder,
 } from "react-native";
 
 import { VEHICLE_INFO } from "../../../components/VehicleInfo";
 import { trackServiceSelected, trackScreenView, trackRentalsViewed } from "@/services/analytics";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
+import BookingHero from "../../../components/BookingHero";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
@@ -201,12 +200,6 @@ export default function CabVehiclesScreen() {
     });
   };
 
-  const mapCenter = pLat && dLat
-    ? { latitude: (pLat + dLat) / 2, longitude: (pLng + dLng) / 2,
-        latitudeDelta: Math.abs(pLat - dLat) * 2.2 + 0.04,
-        longitudeDelta: Math.abs(pLng - dLng) * 2.2 + 0.04 }
-    : { latitude: 28.6139, longitude: 77.2090, latitudeDelta: 0.04, longitudeDelta: 0.04 };
-
   const isCollapsed = currentSnap === SNAPS.COLLAPSED;
   const isFull      = currentSnap === SNAPS.FULL;
 
@@ -214,40 +207,10 @@ export default function CabVehiclesScreen() {
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" />
 
-      {/* Map — full screen */}
-      <View style={StyleSheet.absoluteFillObject} pointerEvents={isCollapsed ? "auto" : "none"}>
-        <MapView
-          provider={PROVIDER_GOOGLE}
-          style={StyleSheet.absoluteFillObject}
-          region={mapCenter}
-          showsUserLocation={false}
-          showsMyLocationButton={false}
-        >
-          {pLat !== 0 && (
-            <Marker coordinate={{ latitude: pLat, longitude: pLng }} anchor={{ x: 0.5, y: 1 }}>
-              <PickupMarker />
-            </Marker>
-          )}
-          {dLat !== 0 && (
-            <Marker coordinate={{ latitude: dLat, longitude: dLng }} anchor={{ x: 0.5, y: 1 }}>
-              <DropMarker />
-            </Marker>
-          )}
-          {pLat !== 0 && dLat !== 0 && (
-            <Polyline
-              coordinates={[{ latitude: pLat, longitude: pLng }, { latitude: dLat, longitude: dLng }]}
-              strokeColor={COLORS.primary} strokeWidth={3} lineDashPattern={[8, 4]}
-            />
-          )}
-        </MapView>
-      </View>
-
-      {/* Back button — always on top */}
-      <SafeAreaView style={s.topOverlay} pointerEvents="box-none">
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
+      <BookingHero
+        illustration={require("../../../assets/illustrations/cab.png")}
+        onBack={() => router.back()}
+      />
 
       {/* Animated sheet — full height, no overflow:hidden */}
       <Animated.View style={[s.sheet, { transform: [{ translateY }] }]}>
@@ -458,18 +421,6 @@ export default function CabVehiclesScreen() {
 }
 
 const s = StyleSheet.create({
-  topOverlay: {
-    position: "absolute", top: 0, left: 0, right: 0,
-    paddingHorizontal: 16, paddingTop: 8, zIndex: 100,
-  },
-  backBtn: {
-    width: 42, height: 42, borderRadius: 21,
-    backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12, shadowRadius: 8, elevation: 6,
-  },
-  backTxt: { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
-
   // Sheet — NO overflow:hidden, full height so white extends to screen bottom
   sheet: {
     position: "absolute", left: 0, right: 0, top: 0, height: SCREEN_H,

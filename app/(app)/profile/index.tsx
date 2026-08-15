@@ -1,8 +1,9 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Alert,
+  TouchableOpacity, Alert, Image,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import axios from "axios";
@@ -76,21 +77,43 @@ export default function ProfileScreen() {
 
   const supportItem = { icon: "💬", route: "/(app)/support" };
 
+  const quickActions = [
+    { key: "help",   route: "/(app)/profile/help",    icon: "🆘", badgeBg: COLORS.dangerTint,  badgeColor: COLORS.danger },
+    { key: "wallet", route: "/(app)/profile/wallet",  icon: "💳", badgeBg: COLORS.warningTint, badgeColor: COLORS.warning },
+    { key: "safety", route: "/(app)/profile/safety",  icon: "🛡", badgeBg: COLORS.primaryTint, badgeColor: COLORS.primary },
+    { key: "inbox",  route: "/(app)/profile/inbox",   icon: "📩", badgeBg: COLORS.infoTint,    badgeColor: COLORS.info },
+  ];
+
   return (
     <SafeAreaView style={[s.safe, { position: "relative" }]}>
 
       {/* ── FIXED HEADER — does not scroll ── */}
-      <View style={s.fixedHeader}>
-        <View style={{ flex: 1 }}>
-          <Text style={s.userName}>{user?.name || "Rider"}</Text>
-          <View style={s.ratingRow}>
-            <Text style={s.ratingText}>⭐ {Number(rider?.rating || 5).toFixed(1)}</Text>
+      {/* Hero — gradient background with a skyline/road illustration bled
+          along the base, logo top-left, name/rating + avatar row below.
+          Illustration renders first so it sits behind the logo/text. */}
+      <LinearGradient
+        colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+        locations={[0, 0.6, 1]}
+        style={s.hero}
+      >
+        <Image
+          source={require("../../../assets/illustrations/hero-truck.png")}
+          style={s.heroBackdrop}
+          resizeMode="contain"
+        />
+        <Image source={require("../../../assets/logo.png")} style={s.logo} resizeMode="contain" />
+        <View style={s.fixedHeader}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.userName}>{user?.name || "Rider"}</Text>
+            <View style={s.ratingRow}>
+              <Text style={s.ratingText}>⭐ {Number(rider?.rating || 5).toFixed(1)}</Text>
+            </View>
+          </View>
+          <View style={s.avatar}>
+            <Text style={s.avatarText}>{initial}</Text>
           </View>
         </View>
-        <View style={s.avatar}>
-          <Text style={s.avatarText}>{initial}</Text>
-        </View>
-      </View>
+      </LinearGradient>
 
       {/* ── SCROLLABLE CONTENT ── */}
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
@@ -114,24 +137,23 @@ export default function ProfileScreen() {
           <Text style={s.chevron}>›</Text>
         </TouchableOpacity>
 
-        {/* Quick action cards */}
+        {/* Quick action cards — 2x2 grid, colored icon badge per action */}
         <View style={s.quickGrid}>
-          <TouchableOpacity style={s.quickCard} onPress={() => router.push("/(app)/profile/help" as any)}>
-            <Text style={s.quickIcon}>🆘</Text>
-            <Text style={s.quickLabel}>{t("profile.home.menu.help.label")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.quickCard} onPress={() => router.push("/(app)/profile/wallet" as any)}>
-            <Text style={s.quickIcon}>💳</Text>
-            <Text style={s.quickLabel}>{t("profile.home.menu.wallet.label")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.quickCard} onPress={() => router.push("/(app)/profile/safety" as any)}>
-            <Text style={s.quickIcon}>🛡</Text>
-            <Text style={s.quickLabel}>{t("profile.home.menu.safety.label")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.quickCard} onPress={() => router.push("/(app)/profile/inbox" as any)}>
-            <Text style={s.quickIcon}>📩</Text>
-            <Text style={s.quickLabel}>{t("profile.home.menu.inbox.label")}</Text>
-          </TouchableOpacity>
+          {quickActions.map(qa => {
+            const sub = t(`profile.home.menu.${qa.key}.sub`, { defaultValue: "" });
+            return (
+              <TouchableOpacity key={qa.key} style={s.quickCard} onPress={() => router.push(qa.route as any)}>
+                <View style={[s.quickBadge, { backgroundColor: qa.badgeBg }]}>
+                  <Text style={[s.quickIcon, { color: qa.badgeColor }]}>{qa.icon}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.quickLabel}>{t(`profile.home.menu.${qa.key}.label`)}</Text>
+                  {sub ? <Text style={s.quickSub} numberOfLines={1}>{sub}</Text> : null}
+                </View>
+                <Text style={s.chevron}>›</Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Promo banner */}
@@ -152,7 +174,9 @@ export default function ProfileScreen() {
               style={[s.menuItem, i < menuItems.length - 1 && s.menuDivider]}
               onPress={() => router.push(item.route as any)}
             >
-              <Text style={s.menuItemIcon}>{item.icon}</Text>
+              <View style={s.menuItemBadge}>
+                <Text style={s.menuItemIcon}>{item.icon}</Text>
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.menuLabel}>{t(`profile.home.menu.${item.key}.label`)}</Text>
                 {t(`profile.home.menu.${item.key}.sub`, { defaultValue: "" })
@@ -180,19 +204,31 @@ export default function ProfileScreen() {
 const s = StyleSheet.create({
   safe:        { flex: 1, backgroundColor: COLORS.bg },
 
-  fixedHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 20, paddingTop: 52, paddingBottom: 16, backgroundColor: COLORS.bg },
+  // Hero — compact full-bleed section (same proportions as the other
+  // full-bleed heroes in the app), gradient edge-to-edge with no inset.
+  // Illustration renders first (background), sized as a proper corner
+  // scene bled to the true screen edge — the avatar circle deliberately
+  // sits on top of it (solid badge over art is fine); the name/rating text
+  // column is left-aligned and bounded by the avatar in the row, so it
+  // stays clear of the illustration's dense (non-transparent) area.
+  hero:          { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 20, minHeight: 190, overflow: "hidden" },
+  heroBackdrop:  { position: "absolute", right: -20, bottom: -10, width: 220, height: 137 },
+  logo:          { width: 140, height: 50, marginLeft: -34, marginBottom: 4 },
+  fixedHeader: { flexDirection: "row", alignItems: "center", paddingBottom: 12 },
   userName:    { color: COLORS.textPrimary, fontSize: 28, fontWeight: "900" },
   ratingRow:   { marginTop: 6, backgroundColor: COLORS.border, alignSelf: "flex-start", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   ratingText:  { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },
-  avatar:      { width: 72, height: 72, borderRadius: 36, backgroundColor: "#E5E5E5", alignItems: "center", justifyContent: "center" },
-  avatarText:  { color: "#777", fontSize: 28, fontWeight: "700" },
+  avatar:      { width: 72, height: 72, borderRadius: 36, backgroundColor: COLORS.primaryTint, borderWidth: 1.5, borderColor: COLORS.primaryBorder, alignItems: "center", justifyContent: "center" },
+  avatarText:  { color: COLORS.primary, fontSize: 28, fontWeight: "700" },
 
   scroll:      { flex: 1, paddingHorizontal: 20, paddingBottom: 80 },
 
   quickGrid:   { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20, marginTop: 4 },
-  quickCard:   { width: "48%", backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, paddingVertical: 20, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 12 },
-  quickIcon:   { fontSize: 22 },
-  quickLabel:  { color: COLORS.textPrimary, fontSize: 15, fontWeight: "700" },
+  quickCard:   { width: "48%", backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, paddingVertical: 16, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 10 },
+  quickBadge:  { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
+  quickIcon:   { fontSize: 18 },
+  quickLabel:  { color: COLORS.textPrimary, fontSize: 14, fontWeight: "700" },
+  quickSub:    { color: "#999", fontSize: 10, marginTop: 1 },
 
   promoBanner:     { backgroundColor: COLORS.primaryTint, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.primaryBorder, padding: 16, flexDirection: "row", alignItems: "center", marginBottom: 20 },
   promoTitle:      { color: COLORS.textPrimary, fontWeight: "800", fontSize: 14 },
@@ -202,7 +238,8 @@ const s = StyleSheet.create({
   menuCard:    { backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, overflow: "hidden", marginBottom: 20 },
   menuItem:    { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 16, gap: 14 },
   menuDivider: { borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
-  menuItemIcon:{ fontSize: 20, width: 28, textAlign: "center" },
+  menuItemBadge:{ width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.bgSubtle, alignItems: "center", justifyContent: "center" },
+  menuItemIcon:{ fontSize: 17 },
   menuLabel:   { color: COLORS.textPrimary, fontSize: 15, fontWeight: "600" },
   menuSub:     { color: "#999", fontSize: 12, marginTop: 2 },
   chevron:     { color: "#CCC", fontSize: 20 },

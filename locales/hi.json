@@ -1179,9 +1179,13 @@
       "title": "bogie सपोर्ट",
       "subtitle": "🤖 AI असिस्टेंट 24/7 उपलब्ध है",
       "lostItem": "कुछ खो गया?",
+      "lostItemSub": "रिपोर्ट करें और मदद पाएं",
+      "chatSub": "बातचीत शुरू करें",
       "recentConversations": "हाल की बातचीत",
       "emptyTitle": "अभी कोई बातचीत नहीं",
       "emptySub": "हमारी AI + ह्यूमन सपोर्ट टीम से मदद पाने के लिए \"Start New Chat\" पर टैप करें।",
+      "startNewChat": "नई चैट शुरू करें",
+      "startNewChatSub": "हम मदद के लिए यहां हैं!",
       "resolved": "✅ हल हो गया",
       "noMessagesYet": "अभी कोई मैसेज नहीं",
       "timeAgo": {

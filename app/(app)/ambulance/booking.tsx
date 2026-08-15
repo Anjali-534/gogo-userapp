@@ -8,10 +8,13 @@ import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
+import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
 
+// Still needed by reverseGeocode()'s Google Geocoding fallback below (a
+// different Google API, out of scope for the backend-proxy port — Ola stays
+// primary there and this client-exposed key is its only fallback path).
 const GOOGLE_KEY  = process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY || "";
-const PLACES_BASE = "https://places.googleapis.com/v1";
 const BACKEND     = "https://gogobackend-production.up.railway.app";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -36,41 +39,17 @@ const PURPOSES: { key: string; icon: string }[] = [
   { key: "dead_body",        icon: "⚰️" },
 ];
 
-// ─── Places helpers (Ola Maps, Google fallback) ───────────────────────────────
+// ─── Places helpers (Ola Maps, Google fallback via backend proxy) ────────────
 async function autocompletePlaces(input: string, lat: number, lng: number): Promise<PlaceSuggestion[]> {
-  const olaResults = await olaAutocomplete(input, lat, lng);
-  if (olaResults.length) {
+  try {
+    const googleResults = await googleAutocomplete(input, lat, lng);
+    logMapsProvider("google", "autocomplete");
+    return googleResults.map((p) => ({ text: p.description, placeId: p.place_id, lat: p.lat, lng: p.lng, provider: "google" as const }));
+  } catch {
+    const olaResults = await olaAutocomplete(input, lat, lng);
     logMapsProvider("ola", "autocomplete");
     return olaResults.map((p) => ({ text: p.description, placeId: p.place_id, lat: p.lat, lng: p.lng, provider: "ola" as const }));
   }
-  try {
-    const res = await fetch(`${PLACES_BASE}/places:autocomplete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": GOOGLE_KEY,
-        "X-Goog-FieldMask": "suggestions.placePrediction.text,suggestions.placePrediction.place",
-      },
-      body: JSON.stringify({
-        input,
-        locationBias: {
-          circle: {
-            center: { latitude: lat || 28.6139, longitude: lng || 77.2090 },
-            radius: 50000.0,
-          },
-        },
-      }),
-    });
-    const data = await res.json();
-    logMapsProvider("google", "autocomplete");
-    return (data.suggestions || []).map((s: any) => ({
-      text:    s.placePrediction?.text?.text || "",
-      placeId: (s.placePrediction?.place || "").split("/").pop() || "",
-      lat:     null,
-      lng:     null,
-      provider: "google" as const,
-    }));
-  } catch { return []; }
 }
 
 async function fetchPlaceDetails(sg: PlaceSuggestion): Promise<LocationPoint | null> {
@@ -84,14 +63,12 @@ async function fetchPlaceDetails(sg: PlaceSuggestion): Promise<LocationPoint | n
       logMapsProvider("ola", "place-details");
       return { lat: details.lat, lng: details.lng, address: sg.text };
     }
+    return null;
   }
-  try {
-    const res  = await fetch(`${PLACES_BASE}/places/${sg.placeId}?fields=location,formattedAddress&key=${GOOGLE_KEY}`);
-    const data = await res.json();
-    if (!data.location) return null;
-    logMapsProvider("google", "place-details");
-    return { lat: data.location.latitude, lng: data.location.longitude, address: data.formattedAddress || "" };
-  } catch { return null; }
+  const details = await googlePlaceDetails(sg.placeId);
+  if (!details) return null;
+  logMapsProvider("google", "place-details");
+  return { lat: details.lat, lng: details.lng, address: sg.text };
 }
 
 async function reverseGeocode(lat: number, lng: number): Promise<string> {

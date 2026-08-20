@@ -246,6 +246,12 @@
       "applyCouponOrOffer": "କୁପନ୍ କିମ୍ବା ଅଫର୍ ଲାଗୁ କରନ୍ତୁ"
     }
   },
+  "savedPlaceAdd": {
+    "title": "ସେଭ୍ କରାଯାଇଥିବା ସ୍ଥାନ ଯୋଡ଼ନ୍ତୁ",
+    "searchPlaceholder": "ଠିକଣା ଖୋଜନ୍ତୁ...",
+    "labelPrompt": "ଏହି ଠିକଣାକୁ ଏହିପରି ସେଭ୍ କରନ୍ତୁ",
+    "other": "ଅନ୍ୟ"
+  },
   "locationPicker": {
     "searchPickupPlaceholder": "ପିକଅପ୍ ଲୋକେସନ୍ ଖୋଜନ୍ତୁ...",
     "searchDropPlaceholder": "ଡ୍ରପ୍ ଲୋକେସନ୍ ଖୋଜନ୍ତୁ...",

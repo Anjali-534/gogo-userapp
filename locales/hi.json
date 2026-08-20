@@ -246,6 +246,12 @@
       "applyCouponOrOffer": "कूपन या ऑफ़र लागू करें"
     }
   },
+  "savedPlaceAdd": {
+    "title": "सेव की गई जगह जोड़ें",
+    "searchPlaceholder": "पता खोजें...",
+    "labelPrompt": "इस पते को इस रूप में सेव करें",
+    "other": "अन्य"
+  },
   "locationPicker": {
     "searchPickupPlaceholder": "पिकअप लोकेशन खोजें...",
     "searchDropPlaceholder": "ड्रॉप लोकेशन खोजें...",

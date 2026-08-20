@@ -249,6 +249,12 @@
       "applyCouponOrOffer": "Apply Coupon or Offer"
     }
   },
+  "savedPlaceAdd": {
+    "title": "Add saved place",
+    "searchPlaceholder": "Search for an address...",
+    "labelPrompt": "Save this address as",
+    "other": "Other"
+  },
   "locationPicker": {
     "searchPickupPlaceholder": "Search pickup location...",
     "searchDropPlaceholder": "Search drop location...",

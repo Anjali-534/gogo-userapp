@@ -59,6 +59,7 @@ export default function AppLayout() {
       <Tabs.Screen name="notifications/index"    options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="booking/index"          options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="location-picker/index"  options={{ href: null, tabBarStyle: { display: "none" } }} />
+      <Tabs.Screen name="saved-places/add"       options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="tracking/[id]"          options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="tracking/chat"          options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen name="truck/index"            options={{ href: null, tabBarStyle: { display: "none" } }} />

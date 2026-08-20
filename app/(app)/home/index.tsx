@@ -96,6 +96,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchActiveBooking();
+      fetchSavedPlaces();
     }, [])
   );
 
@@ -403,7 +404,7 @@ export default function HomeScreen() {
         {/* Saved places */}
         <View style={s.sectionHeader}>
           <Text style={s.sectionTitle}>{t("home.savedPlaces.title")}</Text>
-          <TouchableOpacity onPress={() => router.push("/(app)/booking")} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <TouchableOpacity onPress={() => router.push("/(app)/saved-places/add" as any)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={s.addBtn}>{t("home.savedPlaces.add")}</Text>
           </TouchableOpacity>
         </View>

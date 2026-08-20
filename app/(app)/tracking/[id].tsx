@@ -660,7 +660,7 @@ export default function TrackingScreen() {
       )}
 
       {/* Back button */}
-      <TouchableOpacity style={s.backBtn} onPress={() => router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+      <TouchableOpacity style={s.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
         <Text style={s.backTxt}>←</Text>
       </TouchableOpacity>
 

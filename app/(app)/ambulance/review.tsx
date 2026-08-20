@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  ScrollView, ActivityIndicator, Alert, Animated,
+  ScrollView, ActivityIndicator, Alert, Animated, Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -50,6 +52,7 @@ const fr = StyleSheet.create({
 export default function AmbulanceReviewScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
   const BOOKING_NOTES = t("ambulance.review.rules", { returnObjects: true }) as string[];
 
@@ -230,11 +233,13 @@ export default function AmbulanceReviewScreen() {
       ? t("ambulance.review.btn.emergency")
       : t("ambulance.review.btn.paid", { hospital: hospitalName || t("ambulance.review.hospitalFallback") });
 
+  const btnIcon: keyof typeof Ionicons.glyphMap = isEmergency ? "alert-circle-outline" : "medical-outline";
+
   return (
     <SafeAreaView style={s.safe}>
       <StatusBar barStyle="dark-content" />
 
-      <View style={s.header}>
+      <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
           <Text style={s.backTxt}>←</Text>
         </TouchableOpacity>
@@ -254,12 +259,14 @@ export default function AmbulanceReviewScreen() {
       >
         {/* Zero commission banner — always show */}
         <View style={s.noCommBanner}>
+          <Ionicons name="medical-outline" size={16} color="#065F46" />
           <Text style={s.noCommText}>{t("ambulance.review.zeroCommissionBanner")}</Text>
         </View>
 
         {/* Emergency banner */}
         {isEmergency && (
           <View style={s.emergencyBanner}>
+            <Ionicons name="alert-circle-outline" size={16} color="#DC2626" style={{ marginTop: 1 }} />
             <Text style={s.emergencyBannerText}>
               {t("ambulance.review.emergencyBannerText")}
             </Text>
@@ -287,7 +294,10 @@ export default function AmbulanceReviewScreen() {
         ) : null}
 
         {/* Booking summary */}
-        <Text style={s.sectionLabel}>{t("ambulance.review.summary.title")}</Text>
+        <View style={s.sectionLabelRow}>
+          <Ionicons name="clipboard-outline" size={13} color={COLORS.primary} />
+          <Text style={[s.sectionLabel, { marginTop: 0, marginBottom: 0 }]}>{t("ambulance.review.summary.title")}</Text>
+        </View>
         <View style={s.summaryCard}>
           <SummaryRow
             label={t("ambulance.review.summary.type")}
@@ -388,6 +398,7 @@ export default function AmbulanceReviewScreen() {
               onPress={handleBook}
               activeOpacity={0.88}
             >
+              <Ionicons name={btnIcon} size={18} color="#fff" style={{ marginRight: 8 }} />
               <Text style={s.bookBtnText}>{btnText}</Text>
             </TouchableOpacity>
           </Animated.View>
@@ -400,7 +411,12 @@ export default function AmbulanceReviewScreen() {
           >
             {booking
               ? <ActivityIndicator color={COLORS.white} />
-              : <Text style={s.bookBtnText}>{btnText}</Text>
+              : (
+                <>
+                  <Ionicons name={btnIcon} size={18} color="#fff" style={{ marginRight: 8 }} />
+                  <Text style={s.bookBtnText}>{btnText}</Text>
+                </>
+              )
             }
           </TouchableOpacity>
         )}
@@ -415,7 +431,7 @@ const s = StyleSheet.create({
 
   header: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 20, paddingVertical: 16,
+    paddingHorizontal: 20, paddingBottom: 16,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bgAlt,
   },
@@ -432,18 +448,19 @@ const s = StyleSheet.create({
   urgentBadgeText: { color: "#fff", fontWeight: "900", fontSize: 11, letterSpacing: 1 },
 
   noCommBanner: {
+    flexDirection: "row", alignItems: "center", gap: 8,
     backgroundColor: COLORS.successTint2, borderRadius: RADIUS.input,
     padding: 12, marginTop: 16,
     borderWidth: 1, borderColor: "#A7F3D0",
-    alignItems: "center",
   },
-  noCommText: { color: "#065F46", fontWeight: "700", fontSize: 13 },
+  noCommText: { flex: 1, color: "#065F46", fontWeight: "700", fontSize: 13 },
 
   emergencyBanner: {
+    flexDirection: "row", alignItems: "flex-start", gap: 8,
     backgroundColor: COLORS.dangerTint, borderRadius: RADIUS.input,
     borderWidth: 1, borderColor: "#FCA5A5", padding: 14, marginTop: 12,
   },
-  emergencyBannerText: { color: "#DC2626", fontWeight: "700", fontSize: 13, lineHeight: 20 },
+  emergencyBannerText: { flex: 1, color: "#DC2626", fontWeight: "700", fontSize: 13, lineHeight: 20 },
 
   freeDisclaimer: {
     backgroundColor: COLORS.warningTint, borderRadius: RADIUS.input,
@@ -460,6 +477,10 @@ const s = StyleSheet.create({
   hospitalCardName:  { color: COLORS.textStrong, fontSize: 16, fontWeight: "700" },
   hospitalCardPhone: { color: COLORS.textSecondary, fontSize: 13, marginTop: 4 },
 
+  sectionLabelRow: {
+    flexDirection: "row", alignItems: "center", gap: 6,
+    marginTop: 22, marginBottom: 10,
+  },
   sectionLabel: {
     fontSize: 11, fontWeight: "700", letterSpacing: 1.2,
     color: COLORS.primary, textTransform: "uppercase",
@@ -526,6 +547,7 @@ const s = StyleSheet.create({
   },
   walletNoteText: { color: "#fff", fontSize: 13, fontWeight: "700" },
   bookBtn: {
+    flexDirection: "row", justifyContent: "center",
     borderRadius: RADIUS.card, paddingVertical: 18, alignItems: "center",
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
   },

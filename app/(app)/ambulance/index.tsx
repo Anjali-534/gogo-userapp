@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, Text, StyleSheet, TouchableOpacity, StatusBar,
+  View, Text, StyleSheet, TouchableOpacity, StatusBar, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -61,9 +61,11 @@ export default function AmbulanceIndexScreen() {
               onPress={() => navigate("free")}
             >
               <View style={s.freeBadge}>
-                <Text style={s.freeBadgeText}>{t("ambulance.index.freeBadge")}</Text>
+                <View style={s.freeBadgePill}>
+                  <Text style={s.freeBadgeText}>{t("ambulance.index.freeBadge")}</Text>
+                </View>
               </View>
-              <Text style={s.cardIcon}>🆓🚑</Text>
+              <Image source={require("../../../assets/icons/services/ambulance.png")} style={s.cardIcon} resizeMode="contain" />
               <Text style={s.cardTitle}>{t("ambulance.index.freeTitle")}</Text>
               <Text style={s.cardSub}>{t("ambulance.index.freeSub")}</Text>
             </TouchableOpacity>
@@ -74,7 +76,7 @@ export default function AmbulanceIndexScreen() {
               activeOpacity={0.8}
               onPress={() => navigate("paid")}
             >
-              <Text style={s.cardIcon}>🚑</Text>
+              <Image source={require("../../../assets/icons/services/ambulance.png")} style={s.cardIcon} resizeMode="contain" />
               <Text style={s.cardTitle}>{t("ambulance.index.paidTitle")}</Text>
               <Text style={s.cardSub}>{t("ambulance.index.paidSub")}</Text>
             </TouchableOpacity>
@@ -111,15 +113,23 @@ const s = StyleSheet.create({
   card: {
     flex: 1, backgroundColor: COLORS.white, borderRadius: RADIUS.card,
     borderWidth: 1.5, borderColor: COLORS.border,
-    paddingVertical: 24, alignItems: "center", gap: 8,
+    position: "relative",
+    // Extra top room (vs. a plain paddingVertical) reserves space for the
+    // absolutely-positioned freeBadge below, so both cards' icon/title/sub
+    // column starts at the same y — the paid card just has blank space
+    // there instead of a pill.
+    paddingTop: 40, paddingBottom: 24, alignItems: "center", gap: 8,
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 12, elevation: 3,
   },
-  cardIcon:  { fontSize: 36, marginBottom: 4 },
+  cardIcon:  { width: 52, height: 52, marginBottom: 4 },
   cardTitle: { color: COLORS.textStrong, fontSize: 16, fontWeight: "700" },
   cardSub:   { color: COLORS.textSecondary, fontSize: 12, fontWeight: "500", textAlign: "center", paddingHorizontal: 4 },
 
   freeBadge: {
+    position: "absolute", top: 12, left: 0, right: 0, alignItems: "center",
+  },
+  freeBadgePill: {
     backgroundColor: COLORS.successTint, borderRadius: 20,
     paddingHorizontal: 10, paddingVertical: 4,
   },

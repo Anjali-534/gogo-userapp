@@ -61,9 +61,7 @@ export default function ProfileScreen() {
   const initial = (user?.name || "R")[0].toUpperCase();
 
   const menuItems = [
-    { icon: "👨‍👩‍👧", key: "family",       route: "/(app)/profile/family"        },
     { icon: "⚙️",   key: "settings",     route: "/(app)/profile/settings"      },
-    { icon: "📍",   key: "addresses",    route: "/(app)/profile/addresses"     },
     { icon: "💳",   key: "wallet",       route: "/(app)/profile/wallet"        },
     { icon: "🎁",   key: "refer",        route: "/(app)/profile/refer"         },
     { icon: "🏷",   key: "promos",       route: "/(app)/profile/promos"        },

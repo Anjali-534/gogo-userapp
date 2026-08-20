@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  ScrollView, TextInput, ActivityIndicator, Modal, KeyboardAvoidingView, Platform,
+  ScrollView, TextInput, ActivityIndicator, Modal, KeyboardAvoidingView, Platform, Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -34,10 +35,10 @@ type NearbyHospital = {
   is_verified: boolean;
 };
 
-const PURPOSES: { key: string; icon: string }[] = [
-  { key: "patient_transfer", icon: "🏥" },
-  { key: "emergency",        icon: "🚨" },
-  { key: "dead_body",        icon: "⚰️" },
+const PURPOSES: { key: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { key: "patient_transfer", icon: "medical-outline" },
+  { key: "emergency",        icon: "alert-circle-outline" },
+  { key: "dead_body",        icon: "flower-outline" },
 ];
 
 // ─── Places helpers (Ola Maps, Google fallback via backend proxy) ────────────
@@ -344,7 +345,7 @@ export default function AmbulanceBookingScreen() {
       />
 
       {/* Header */}
-      <View style={s.header}>
+      <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
           <Text style={s.backTxt}>←</Text>
         </TouchableOpacity>
@@ -356,6 +357,11 @@ export default function AmbulanceBookingScreen() {
 
       {/* Type banner */}
       <View style={[s.banner, isFree ? s.bannerFree : s.bannerPaid]}>
+        <Ionicons
+          name={isFree ? "pricetag-outline" : "medical-outline"}
+          size={16}
+          color={isFree ? "#15803D" : "#C2410C"}
+        />
         <Text style={[s.bannerText, { color: isFree ? "#15803D" : "#C2410C" }]}>
           {isFree
             ? t("ambulance.booking.bannerFree")
@@ -390,7 +396,9 @@ export default function AmbulanceBookingScreen() {
                 onPress={() => selectPurpose(p.key)}
                 activeOpacity={0.8}
               >
-                <Text style={s.purposeIcon}>{p.icon}</Text>
+                <View style={s.purposeIconWrap}>
+                  <Ionicons name={p.icon} size={20} color={COLORS.primary} />
+                </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[s.purposeLabel, isSelected && s.purposeLabelActive]}>
                     {t(`ambulance.purposes.${p.key}`)}
@@ -410,6 +418,7 @@ export default function AmbulanceBookingScreen() {
         {/* URGENT banner for emergency */}
         {purpose === "emergency" && (
           <View style={s.urgentBanner}>
+            <Ionicons name="alert-circle-outline" size={16} color={COLORS.dangerStrong} />
             <Text style={s.urgentText}>{t("ambulance.booking.urgentBanner")}</Text>
           </View>
         )}
@@ -424,7 +433,7 @@ export default function AmbulanceBookingScreen() {
                 onPress={() => setAmbulanceSubType("bls")}
                 activeOpacity={0.8}
               >
-                <Text style={s.subTypeEmoji}>🚑</Text>
+                <Image source={require("../../../assets/icons/services/ambulance.png")} style={s.subTypeIcon} resizeMode="contain" />
                 <Text style={s.subTypeName}>{t("ambulance.subTypes.blsShort")}</Text>
                 <Text style={s.subTypeDesc}>{t("ambulance.subTypes.blsDesc")}</Text>
                 {ambulanceSubType === "bls" && (
@@ -436,7 +445,7 @@ export default function AmbulanceBookingScreen() {
                 onPress={() => setAmbulanceSubType("als")}
                 activeOpacity={0.8}
               >
-                <Text style={s.subTypeEmoji}>🚑</Text>
+                <Image source={require("../../../assets/icons/services/ambulance.png")} style={s.subTypeIcon} resizeMode="contain" />
                 <Text style={s.subTypeName}>{t("ambulance.subTypes.alsShort")}</Text>
                 <Text style={s.subTypeDesc}>{t("ambulance.subTypes.alsDesc")}</Text>
                 {ambulanceSubType === "als" && (
@@ -494,7 +503,7 @@ export default function AmbulanceBookingScreen() {
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               onPress={getCurrentLocation}
             >
-              <Text style={s.gpsBtnTxt}>📍</Text>
+              <Ionicons name="locate-outline" size={16} color={COLORS.primary} />
             </TouchableOpacity>
           ))}
         </TouchableOpacity>
@@ -621,7 +630,7 @@ export default function AmbulanceBookingScreen() {
                   await getCurrentLocation();
                 }}
               >
-                <Text style={s.currentLocIcon}>📍</Text>
+                <Ionicons name="locate-outline" size={20} color={COLORS.primary} />
                 <View>
                   <Text style={s.currentLocTitle}>{t("booking.overlay.useCurrentLocation")}</Text>
                   <Text style={s.currentLocSub}>{t("booking.overlay.autoDetect")}</Text>
@@ -635,7 +644,7 @@ export default function AmbulanceBookingScreen() {
                   activeOpacity={0.7}
                 >
                   <View style={ov.pinWrap}>
-                    <Text style={ov.pin}>📍</Text>
+                    <Ionicons name="location-outline" size={16} color={COLORS.primary} />
                   </View>
                   <Text style={ov.text} numberOfLines={2}>{sg.text}</Text>
                 </TouchableOpacity>
@@ -678,7 +687,8 @@ export default function AmbulanceBookingScreen() {
               {/* Section A — Nearby Hospitals */}
               {filteredDropHospitals.length > 0 && (
                 <>
-                  <View style={ov.sectionHeader}>
+                  <View style={[ov.sectionHeader, ov.sectionHeaderRow]}>
+                    <Ionicons name="medical-outline" size={13} color={COLORS.textSecondary} />
                     <Text style={ov.sectionTitle}>{t("ambulance.booking.nearbyHospitalsSection")}</Text>
                   </View>
                   {filteredDropHospitals.map((h, i) => (
@@ -689,7 +699,7 @@ export default function AmbulanceBookingScreen() {
                       activeOpacity={0.7}
                     >
                       <View style={ov.hospIconWrap}>
-                        <Text style={ov.hospIcon}>🏥</Text>
+                        <Ionicons name="medical-outline" size={16} color={COLORS.successStrong} />
                       </View>
                       <View style={{ flex: 1 }}>
                         <View style={ov.hospNameRow}>
@@ -713,7 +723,8 @@ export default function AmbulanceBookingScreen() {
               {/* Section B — Google Places results */}
               {dropSuggestions.length > 0 && (
                 <>
-                  <View style={[ov.sectionHeader, filteredDropHospitals.length > 0 && { marginTop: 8 }]}>
+                  <View style={[ov.sectionHeader, ov.sectionHeaderRow, filteredDropHospitals.length > 0 && { marginTop: 8 }]}>
+                    <Ionicons name="location-outline" size={13} color={COLORS.textSecondary} />
                     <Text style={ov.sectionTitle}>{t("ambulance.booking.searchResultsSection")}</Text>
                   </View>
                   {dropSuggestions.map((sg, i) => (
@@ -724,7 +735,7 @@ export default function AmbulanceBookingScreen() {
                       activeOpacity={0.7}
                     >
                       <View style={ov.pinWrap}>
-                        <Text style={ov.pin}>📍</Text>
+                        <Ionicons name="location-outline" size={16} color={COLORS.primary} />
                       </View>
                       <Text style={ov.text} numberOfLines={2}>{sg.text}</Text>
                     </TouchableOpacity>
@@ -768,7 +779,7 @@ const s = StyleSheet.create({
 
   header: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 20, paddingVertical: 16,
+    paddingHorizontal: 20, paddingBottom: 16,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bgAlt,
   },
@@ -782,10 +793,10 @@ const s = StyleSheet.create({
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
 
-  banner:     { paddingHorizontal: 20, paddingVertical: 12 },
+  banner:     { flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 20, paddingVertical: 12 },
   bannerFree: { backgroundColor: "#F0FDF4" },
   bannerPaid: { backgroundColor: COLORS.primaryTint2 },
-  bannerText: { fontSize: 13, fontWeight: "700", lineHeight: 18 },
+  bannerText: { flex: 1, fontSize: 13, fontWeight: "700", lineHeight: 18 },
 
   sectionLabel: {
     fontSize: 11, fontWeight: "700", letterSpacing: 1.2,
@@ -803,7 +814,10 @@ const s = StyleSheet.create({
   },
   purposePillActive:    { borderColor: COLORS.primary, backgroundColor: COLORS.primaryTint2 },
   purposePillEmergency: { borderColor: COLORS.danger, backgroundColor: "#FFF5F5" },
-  purposeIcon:          { fontSize: 26 },
+  purposeIconWrap: {
+    width: 44, height: 44, borderRadius: 22,
+    backgroundColor: COLORS.primaryTint2, alignItems: "center", justifyContent: "center",
+  },
   purposeLabel:         { color: COLORS.textSecondary, fontSize: 15, fontWeight: "600" },
   purposeLabelActive:   { color: COLORS.primary },
   purposeSub:           { color: COLORS.textMuted, fontSize: 12, marginTop: 2 },
@@ -814,6 +828,7 @@ const s = StyleSheet.create({
   purposeCheckTxt: { color: COLORS.white, fontSize: 12, fontWeight: "900" },
 
   urgentBanner: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
     backgroundColor: COLORS.dangerTint, borderRadius: RADIUS.input,
     padding: 14, borderWidth: 1.5, borderColor: COLORS.danger, marginBottom: 4,
   },
@@ -831,7 +846,7 @@ const s = StyleSheet.create({
     alignItems: "center", position: "relative",
   },
   subTypeCardActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primaryTint2 },
-  subTypeEmoji: { fontSize: 24, marginBottom: 6 },
+  subTypeIcon: { width: 34, height: 34, marginBottom: 6 },
   subTypeName: { fontSize: 12, fontWeight: "700", color: COLORS.textStrong, textAlign: "center", marginBottom: 4 },
   subTypeDesc: { fontSize: 10, color: COLORS.textMuted, textAlign: "center", lineHeight: 14 },
   subTypeCheck: {
@@ -888,7 +903,6 @@ const s = StyleSheet.create({
   clearBtn:     { width: 24, height: 24, borderRadius: RADIUS.input, backgroundColor: COLORS.borderStrong, alignItems: "center", justifyContent: "center", flexShrink: 0 },
   clearBtnTxt:  { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
   gpsBtn:       { width: 24, height: 24, borderRadius: RADIUS.input, alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  gpsBtnTxt:    { fontSize: 15 },
   dropCheck:    { width: 22, height: 22, borderRadius: 11, backgroundColor: COLORS.danger, alignItems: "center", justifyContent: "center" },
   dropCheckTxt: { color: COLORS.white, fontSize: 11, fontWeight: "900" },
 
@@ -912,7 +926,6 @@ const s = StyleSheet.create({
     paddingVertical: 14, paddingHorizontal: 16,
     borderBottomWidth: 1, borderBottomColor: COLORS.border, gap: 12,
   },
-  currentLocIcon:  { fontSize: 20 },
   currentLocTitle: { fontSize: 15, fontWeight: "600", color: COLORS.primary },
   currentLocSub:   { fontSize: 12, color: COLORS.textMuted, marginTop: 2 },
 });
@@ -921,15 +934,14 @@ const ov = StyleSheet.create({
   row:       { flexDirection: "row", alignItems: "flex-start", gap: 12, paddingHorizontal: 20, paddingVertical: 14 },
   rowBorder: { borderTopWidth: 1, borderTopColor: "#F5F5F5" },
   pinWrap:   { width: 32, height: 32, borderRadius: 16, backgroundColor: COLORS.primaryTint2, alignItems: "center", justifyContent: "center", marginTop: -2 },
-  pin:       { fontSize: 14 },
   text:      { flex: 1, color: COLORS.textStrong, fontSize: 14, lineHeight: 20, fontWeight: "500" },
 
-  sectionHeader: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 6 },
-  sectionTitle:  { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary, textTransform: "uppercase", letterSpacing: 1 },
+  sectionHeader:    { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 6 },
+  sectionHeaderRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  sectionTitle:     { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary, textTransform: "uppercase", letterSpacing: 1 },
 
   hospRow:     { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 13 },
   hospIconWrap:{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#F0FDF4", alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  hospIcon:    { fontSize: 16 },
   hospNameRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 },
   hospName:    { fontSize: 14, fontWeight: "700", color: COLORS.textStrong, flex: 1 },
   hospSub:     { fontSize: 12, color: COLORS.textSecondary },

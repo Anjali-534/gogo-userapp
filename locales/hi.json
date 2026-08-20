@@ -498,10 +498,10 @@
       "title": "एम्बुलेंस विवरण",
       "freeService": "फ्री सेवा",
       "paidService": "पेड सेवा",
-      "bannerFree": "🆓 फ्री सेवा — कोई शुल्क नहीं लगेगा",
-      "bannerPaid": "🚑 पेड सेवा — सेवा के प्रकार अनुसार शुल्क",
+      "bannerFree": "फ्री सेवा — कोई शुल्क नहीं लगेगा",
+      "bannerPaid": "पेड सेवा — सेवा के प्रकार अनुसार शुल्क",
       "purposeSectionTitle": "एम्बुलेंस का उद्देश्य *",
-      "urgentBanner": "🚨 इमरजेंसी मोड — प्राथमिकता के आधार पर भेजा जा रहा है",
+      "urgentBanner": "इमरजेंसी मोड — प्राथमिकता के आधार पर भेजा जा रहा है",
       "ambulanceTypeRequired": "आवश्यक एम्बुलेंस प्रकार *",
       "pickupLocationLabel": "पिकअप लोकेशन *",
       "dropLocationLabel": "ड्रॉप लोकेशन *",
@@ -515,8 +515,8 @@
       "confirmRequestFree": "कन्फर्म करें और फ्री रिक्वेस्ट करें →",
       "confirmChooseHospital": "कन्फर्म करें और अस्पताल चुनें →",
       "dropSearchPlaceholder": "अस्पताल या कोई पता खोजें...",
-      "nearbyHospitalsSection": "🏥 आस-पास के अस्पताल",
-      "searchResultsSection": "📍 खोज परिणाम",
+      "nearbyHospitalsSection": "आस-पास के अस्पताल",
+      "searchResultsSection": "खोज परिणाम",
       "noResults": "कोई परिणाम नहीं मिला। दूसरी खोज करें।",
       "deadBodyModal": {
         "title": "सम्मानजनक परिवहन सेवा",
@@ -583,8 +583,8 @@
       "freeAmbulance": "फ्री एम्बुलेंस",
       "paidAmbulance": "पेड एम्बुलेंस",
       "urgent": "अर्जेंट",
-      "zeroCommissionBanner": "🏥 एम्बुलेंस सेवाओं पर ज़ीरो प्लेटफ़ॉर्म कमीशन",
-      "emergencyBannerText": "🚨 यह एक इमरजेंसी बुकिंग है। हम तुरंत सबसे नज़दीकी उपलब्ध एम्बुलेंस भेजेंगे।",
+      "zeroCommissionBanner": "एम्बुलेंस सेवाओं पर ज़ीरो प्लेटफ़ॉर्म कमीशन",
+      "emergencyBannerText": "यह एक इमरजेंसी बुकिंग है। हम तुरंत सबसे नज़दीकी उपलब्ध एम्बुलेंस भेजेंगे।",
       "freeDisclaimer": "⚠️ फ्री एम्बुलेंस की उपलब्धता आपके क्षेत्र में सरकारी/NGO संसाधनों पर निर्भर करती है।",
       "selectedHospital": "चुना गया अस्पताल",
       "summary": {
@@ -620,9 +620,9 @@
         "bogie एम्बुलेंस सेवाओं पर ज़ीरो कमीशन लेता है।"
       ],
       "btn": {
-        "free": "फ्री एम्बुलेंस के लिए रिक्वेस्ट करें 🚑",
-        "emergency": "इमरजेंसी रिक्वेस्ट 🚨",
-        "paid": "{{hospital}} बुक करें 🚑"
+        "free": "फ्री एम्बुलेंस के लिए रिक्वेस्ट करें",
+        "emergency": "इमरजेंसी रिक्वेस्ट",
+        "paid": "{{hospital}} बुक करें"
       },
       "hospitalFallback": "एम्बुलेंस",
       "hospitalFallbackLower": "अस्पताल",

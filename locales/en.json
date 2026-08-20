@@ -502,10 +502,10 @@
       "title": "Ambulance Details",
       "freeService": "Free Service",
       "paidService": "Paid Service",
-      "bannerFree": "🆓 Free Service — No charges will be applied",
-      "bannerPaid": "🚑 Paid Service — Charges based on service type",
+      "bannerFree": "Free Service — No charges will be applied",
+      "bannerPaid": "Paid Service — Charges based on service type",
       "purposeSectionTitle": "Purpose of Ambulance *",
-      "urgentBanner": "🚨 EMERGENCY MODE — Priority dispatch activated",
+      "urgentBanner": "EMERGENCY MODE — Priority dispatch activated",
       "ambulanceTypeRequired": "Ambulance Type Required *",
       "pickupLocationLabel": "Pickup Location *",
       "dropLocationLabel": "Drop Location *",
@@ -519,8 +519,8 @@
       "confirmRequestFree": "Confirm & Request Free →",
       "confirmChooseHospital": "Confirm & Choose Hospital →",
       "dropSearchPlaceholder": "Search hospitals or any address...",
-      "nearbyHospitalsSection": "🏥 Nearby Hospitals",
-      "searchResultsSection": "📍 Search Results",
+      "nearbyHospitalsSection": "Nearby Hospitals",
+      "searchResultsSection": "Search Results",
       "noResults": "No results found. Try a different search.",
       "deadBodyModal": {
         "title": "Respectful Transfer Service",
@@ -587,8 +587,8 @@
       "freeAmbulance": "Free Ambulance",
       "paidAmbulance": "Paid Ambulance",
       "urgent": "URGENT",
-      "zeroCommissionBanner": "🏥 Zero Platform Commission on Ambulance Services",
-      "emergencyBannerText": "🚨 This is an emergency booking. We will dispatch the nearest available ambulance immediately.",
+      "zeroCommissionBanner": "Zero Platform Commission on Ambulance Services",
+      "emergencyBannerText": "This is an emergency booking. We will dispatch the nearest available ambulance immediately.",
       "freeDisclaimer": "⚠️ Free ambulance availability depends on government/NGO resources in your area.",
       "selectedHospital": "Selected Hospital",
       "summary": {
@@ -624,9 +624,9 @@
         "bogie charges ZERO commission on ambulance services."
       ],
       "btn": {
-        "free": "Request Free Ambulance 🚑",
-        "emergency": "EMERGENCY REQUEST 🚨",
-        "paid": "Book {{hospital}} 🚑"
+        "free": "Request Free Ambulance",
+        "emergency": "EMERGENCY REQUEST",
+        "paid": "Book {{hospital}}"
       },
       "hospitalFallback": "Ambulance",
       "hospitalFallbackLower": "hospital",

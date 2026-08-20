@@ -498,10 +498,10 @@
       "title": "ଆମ୍ବୁଲାନ୍ସ ବିବରଣୀ",
       "freeService": "ମାଗଣା ସେବା",
       "paidService": "ପେଡ୍ ସେବା",
-      "bannerFree": "🆓 ମାଗଣା ସେବା — କୌଣସି ଚାର୍ଜ ଲାଗିବ ନାହିଁ",
-      "bannerPaid": "🚑 ପେଡ୍ ସେବା — ସେବା ପ୍ରକାର ଅନୁସାରେ ଚାର୍ଜ",
+      "bannerFree": "ମାଗଣା ସେବା — କୌଣସି ଚାର୍ଜ ଲାଗିବ ନାହିଁ",
+      "bannerPaid": "ପେଡ୍ ସେବା — ସେବା ପ୍ରକାର ଅନୁସାରେ ଚାର୍ଜ",
       "purposeSectionTitle": "ଆମ୍ବୁଲାନ୍ସର ଉଦ୍ଦେଶ୍ୟ *",
-      "urgentBanner": "🚨 ଜରୁରୀକାଳୀନ ମୋଡ୍ — ପ୍ରାଥମିକତାରେ ପଠାଯାଉଛି",
+      "urgentBanner": "ଜରୁରୀକାଳୀନ ମୋଡ୍ — ପ୍ରାଥମିକତାରେ ପଠାଯାଉଛି",
       "ambulanceTypeRequired": "ଆବଶ୍ୟକ ଆମ୍ବୁଲାନ୍ସ ପ୍ରକାର *",
       "pickupLocationLabel": "ପିକଅପ୍ ଲୋକେସନ୍ *",
       "dropLocationLabel": "ଡ୍ରପ୍ ଲୋକେସନ୍ *",
@@ -515,8 +515,8 @@
       "confirmRequestFree": "କନ୍ଫର୍ମ କରନ୍ତୁ ଏବଂ ମାଗଣା ରିକୱେଷ୍ଟ କରନ୍ତୁ →",
       "confirmChooseHospital": "କନ୍ଫର୍ମ କରନ୍ତୁ ଏବଂ ଡାକ୍ତରଖାନା ବାଛନ୍ତୁ →",
       "dropSearchPlaceholder": "ଡାକ୍ତରଖାନା କିମ୍ବା କୌଣସି ଠିକଣା ଖୋଜନ୍ତୁ...",
-      "nearbyHospitalsSection": "🏥 ନିକଟସ୍ଥ ଡାକ୍ତରଖାନା",
-      "searchResultsSection": "📍 ଖୋଜ ଫଳାଫଳ",
+      "nearbyHospitalsSection": "ନିକଟସ୍ଥ ଡାକ୍ତରଖାନା",
+      "searchResultsSection": "ଖୋଜ ଫଳାଫଳ",
       "noResults": "କୌଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ। ଅନ୍ୟ ଖୋଜ କରନ୍ତୁ।",
       "deadBodyModal": {
         "title": "ସମ୍ମାନଜନକ ପରିବହନ ସେବା",
@@ -583,8 +583,8 @@
       "freeAmbulance": "ମାଗଣା ଆମ୍ବୁଲାନ୍ସ",
       "paidAmbulance": "ପେଡ୍ ଆମ୍ବୁଲାନ୍ସ",
       "urgent": "ଜରୁରୀ",
-      "zeroCommissionBanner": "🏥 ଆମ୍ବୁଲାନ୍ସ ସେବାରେ ଜିରୋ ପ୍ଲାଟଫର୍ମ କମିଶନ୍",
-      "emergencyBannerText": "🚨 ଏହା ଏକ ଜରୁରୀକାଳୀନ ବୁକିଂ। ଆମେ ତୁରନ୍ତ ନିକଟସ୍ଥ ଉପଲବ୍ଧ ଆମ୍ବୁଲାନ୍ସ ପଠାଇବୁ।",
+      "zeroCommissionBanner": "ଆମ୍ବୁଲାନ୍ସ ସେବାରେ ଜିରୋ ପ୍ଲାଟଫର୍ମ କମିଶନ୍",
+      "emergencyBannerText": "ଏହା ଏକ ଜରୁରୀକାଳୀନ ବୁକିଂ। ଆମେ ତୁରନ୍ତ ନିକଟସ୍ଥ ଉପଲବ୍ଧ ଆମ୍ବୁଲାନ୍ସ ପଠାଇବୁ।",
       "freeDisclaimer": "⚠️ ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ଉପଲବ୍ଧତା ଆପଣଙ୍କ ଅଞ୍ଚଳରେ ସରକାରୀ/NGO ସମ୍ବଳ ଉପରେ ନିର୍ଭର କରେ।",
       "selectedHospital": "ବଚ୍ଛିତ ଡାକ୍ତରଖାନା",
       "summary": {
@@ -620,9 +620,9 @@
         "bogie ଆମ୍ବୁଲାନ୍ସ ସେବାରେ ଜିରୋ କମିଶନ୍ ନିଏ।"
       ],
       "btn": {
-        "free": "ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ପାଇଁ ରିକୱେଷ୍ଟ କରନ୍ତୁ 🚑",
-        "emergency": "ଜରୁରୀକାଳୀନ ରିକୱେଷ୍ଟ 🚨",
-        "paid": "{{hospital}} ବୁକ୍ କରନ୍ତୁ 🚑"
+        "free": "ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ପାଇଁ ରିକୱେଷ୍ଟ କରନ୍ତୁ",
+        "emergency": "ଜରୁରୀକାଳୀନ ରିକୱେଷ୍ଟ",
+        "paid": "{{hospital}} ବୁକ୍ କରନ୍ତୁ"
       },
       "hospitalFallback": "ଆମ୍ବୁଲାନ୍ସ",
       "hospitalFallbackLower": "ଡାକ୍ତରଖାନା",

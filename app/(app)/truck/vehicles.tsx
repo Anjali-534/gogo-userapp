@@ -7,13 +7,14 @@ import BookingHero from "../../../components/BookingHero";
 import axios from "axios";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const { height: SCREEN_H } = Dimensions.get("window");
 
 const SNAPS = {
   FULL:      Math.round(SCREEN_H * 0.08),
-  PEEK:      Math.round(SCREEN_H * 0.45),
+  PEEK:      Math.round(SCREEN_H * 0.25),
   COLLAPSED: Math.round(SCREEN_H * 0.82),
 };
 
@@ -50,13 +51,15 @@ function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
 export default function TruckVehiclesScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
   const { scope, pickupLat, pickupLng, dropLat, dropLng } = params;
 
-  const [services,    setServices]    = useState<any[]>([]);
-  const [loading,     setLoading]     = useState(true);
-  const [selected,    setSelected]    = useState<any>(null);
-  const [currentSnap, setCurrentSnap] = useState(SNAPS.PEEK);
+  const [services,     setServices]     = useState<any[]>([]);
+  const [loading,      setLoading]      = useState(true);
+  const [selected,     setSelected]     = useState<any>(null);
+  const [currentSnap,  setCurrentSnap]  = useState(SNAPS.PEEK);
+  const [footerHeight, setFooterHeight] = useState(140);
 
   const pLat  = parseFloat(pickupLat || "0");
   const pLng  = parseFloat(pickupLng || "0");
@@ -85,6 +88,8 @@ export default function TruckVehiclesScreen() {
   const buildPan = () => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder:  (_, g) => Math.abs(g.dy) > 4,
+    onPanResponderTerminationRequest: () => true,
+    onShouldBlockNativeResponder: () => false,
     onPanResponderGrant: () => { startY.current = currentY.current; },
     onPanResponderMove:  (_, g) => {
       const clamped = Math.max(SNAPS.FULL, Math.min(SNAPS.COLLAPSED, startY.current + g.dy));
@@ -149,7 +154,6 @@ export default function TruckVehiclesScreen() {
   };
 
   const isCollapsed = currentSnap === SNAPS.COLLAPSED;
-  const isFull      = currentSnap === SNAPS.FULL;
 
   return (
     <View style={{ flex: 1 }}>
@@ -182,9 +186,9 @@ export default function TruckVehiclesScreen() {
           </View>
         ) : (
           <ScrollView
+            style={{ flex: 1 }}
             showsVerticalScrollIndicator={false}
-            scrollEnabled={isFull}
-            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120, paddingTop: 4 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: footerHeight + 170, paddingTop: 4 }}
           >
             {services.map(svc => {
               const fare       = estimatedFare(svc);
@@ -232,7 +236,10 @@ export default function TruckVehiclesScreen() {
 
       {/* Proceed footer — outside sheet, always at screen bottom */}
       {!loading && services.length > 0 && !isCollapsed && (
-        <View style={s.footer}>
+        <View
+          style={[s.footer, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+          onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+        >
           <TouchableOpacity
             style={[s.proceedBtn, !selected && s.proceedDisabled]}
             onPress={proceed}
@@ -308,7 +315,7 @@ const s = StyleSheet.create({
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
     shadowColor: "#000", shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 12,

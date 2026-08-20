@@ -201,6 +201,7 @@
       "title": "ବୁକିଂ ରିଭ୍ୟୁ କରନ୍ତୁ",
       "route": "ରୁଟ୍",
       "fareBreakdown": "ଭଡ଼ା ବିବରଣୀ",
+      "paymentAndTiming": "ପେମେଣ୍ଟ ଓ ସମୟ",
       "totalCharges": "ମୋଟ ଚାର୍ଜ",
       "estimatedFare": "ଆକଳିତ ଭଡ଼ା",
       "baseFare": "ବେସ୍ ଭଡ଼ା",
@@ -416,7 +417,13 @@
       "unloadingServiceSub": "ହେଲ୍ପରମାନେ ଗନ୍ତବ୍ୟସ୍ଥାନରେ ସାମଗ୍ରୀ ଖୋଲିବେ",
       "estimatedTotalTitle": "ଆକଳିତ ମୋଟ",
       "addonServicesLine": "ଏଡ୍-ଅନ୍ ସେବାଗୁଡ଼ିକ",
-      "proceedToReview": "ରିଭ୍ୟୁ ପାଇଁ ଆଗକୁ ବଢ଼ନ୍ତୁ →"
+      "proceedToReview": "ରିଭ୍ୟୁ ପାଇଁ ଆଗକୁ ବଢ଼ନ୍ତୁ →",
+      "trust": {
+        "secure": { "title": "ସୁରକ୍ଷିତ ବୁକିଂ", "sub": "100% ସୁରକ୍ଷିତ" },
+        "verifiedDrivers": { "title": "ଯାଞ୍ଚିତ ଡ୍ରାଇଭର", "sub": "ବିଶ୍ୱସନୀୟ ପାର୍ଟନର" },
+        "onTimeDelivery": { "title": "ସମୟସୀମା ମଧ୍ୟରେ ଡେଲିଭରି", "sub": "ନିର୍ଭରଯୋଗ୍ୟ ପିକଅପ୍" },
+        "support": { "title": "24x7 ସହାୟତା", "sub": "ଆମେ ଏଠାରେ ଅଛୁ" }
+      }
     },
     "vehicles": {
       "title": "ଗାଡ଼ି ବାଛନ୍ତୁ",
@@ -1129,6 +1136,14 @@
     "fareEstimateTitle": "ଭଡ଼ା ଆକଳନ",
     "tripFare": "ଯାତ୍ରା ଭଡ଼ା",
     "distanceLabel": "ଦୂରତା",
+    "viewOnMap": "ମାନଚିତ୍ରରେ ଦେଖନ୍ତୁ",
+    "payButton": "₹{{amount}} ପେମେଣ୍ଟ କରନ୍ତୁ",
+    "trust": {
+      "secure": { "title": "ସୁରକ୍ଷିତ ଯାତ୍ରା", "sub": "100% ସୁରକ୍ଷିତ" },
+      "verifiedDriver": { "title": "ଯାଞ୍ଚିତ ଡ୍ରାଇଭର", "sub": "ବିଶ୍ୱସନୀୟ ପାର୍ଟନର" },
+      "liveTracking": { "title": "ରିଅଲ-ଟାଇମ ଟ୍ରାକିଂ", "sub": "ଲାଇଭ ଲୋକେସନ" },
+      "support": { "title": "24x7 ସହାୟତା", "sub": "ଆମେ ଏଠାରେ ଅଛୁ" }
+    },
     "restorePillPrefix": "↑ {{title}}",
     "cancelDialog": {
       "title": "ରାଇଡ୍ ବାତିଲ୍ କରନ୍ତୁ",

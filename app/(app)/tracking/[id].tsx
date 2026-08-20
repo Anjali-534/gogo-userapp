@@ -2,13 +2,10 @@
 import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator,
   Linking, Platform, TextInput, Alert, Modal, ScrollView,
-  Animated, PanResponder, Dimensions, KeyboardAvoidingView,
+  Animated, PanResponder, Dimensions, KeyboardAvoidingView, Image,
 } from "react-native";
 import MapView, { Marker, Polyline, Circle, Heatmap, PROVIDER_GOOGLE, Region } from "react-native-maps";
-import {
-  AmbulanceMarker, CabMarker, TruckMarker, ParcelMarker,
-  PickupMarker, DropMarker,
-} from "../../../components/VehicleMarkers";
+import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
 import SOSButton from "../../../components/SOSButton";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,6 +26,10 @@ const PEEK_HEIGHT  = 290;
 const FULL_HEIGHT  = Math.round(SCREEN_H * 0.72);
 const SHEET_OFFSET = FULL_HEIGHT - PEEK_HEIGHT;
 const HIDDEN_OFFSET = FULL_HEIGHT; // fully off-screen — full map to watch the driver
+// Zoom-floor/follow-zoom values carried over unchanged from this session's
+// OlaMapView tuning (its MIN_FIT_ZOOM / followZoom={14}).
+const MIN_FIT_ZOOM = 13;
+const FOLLOW_ZOOM   = 14;
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
@@ -74,11 +75,104 @@ function calcDurMins(start?: string|null, end?: string|null) {
 
 const KNOWN_STATUSES = ["scheduled", "searching", "accepted", "arriving", "in_progress", "completed", "cancelled"];
 
+// Deterministic pseudo-random in [0,1) — used to scatter nearby-driver icons
+// around a grid cell's center without them jumping position on every React
+// re-render (only changes when the underlying seed, i.e. the poll data,
+// changes), and without pulling in a random-number dependency.
+function pseudoRandom(seed: number) {
+  const x = Math.sin(seed) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+const MAX_ICONS_PER_CELL = 5;
+const METERS_PER_DEG_LAT = 111320;
+
+// Turns a coarse {lat,lng,count} density cell (see GetNearbyDriverCount —
+// rounded to ~1.1km, never exact driver coordinates) into up to
+// MAX_ICONS_PER_CELL jittered points within ~80-300m of the cell center, so
+// the map can show individual scattered icons (Uber/Ola-style) without
+// claiming to know any driver's real position.
+function jitterCell(cell: { lat: number; lng: number; count: number }, cellIndex: number) {
+  const n = Math.min(cell.count, MAX_ICONS_PER_CELL);
+  const points: { lat: number; lng: number }[] = [];
+  for (let j = 0; j < n; j++) {
+    const seed = cellIndex * 97 + j * 31 + cell.lat * 1000 + cell.lng * 733;
+    const angle   = pseudoRandom(seed) * Math.PI * 2;
+    const radiusM = 80 + pseudoRandom(seed + 0.5) * 220;
+    const dLat = (radiusM * Math.cos(angle)) / METERS_PER_DEG_LAT;
+    const dLng = (radiusM * Math.sin(angle)) / (METERS_PER_DEG_LAT * Math.cos(cell.lat * Math.PI / 180));
+    points.push({ lat: cell.lat + dLat, lng: cell.lng + dLng });
+  }
+  return points;
+}
+
 function fmtScheduledAt(iso?: string) {
   if (!iso) return "";
   const d = new Date(iso);
   return d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
 }
+
+// Service-specific vehicle icon shown on the "searching" map — keyed by the
+// same `category` string already derived from booking.vehicle_category /
+// driver.vehicle_type elsewhere in this screen.
+const SEARCH_VEHICLE_ICONS: Record<string, any> = {
+  truck:     require("../../../assets/icons/services/truck.png"),
+  cab:       require("../../../assets/icons/services/cab.png"),
+  parcel:    require("../../../assets/icons/services/parcel.png"),
+  ambulance: require("../../../assets/icons/services/ambulance.png"),
+};
+
+// Vehicle-icon Marker children (search-vehicle midpoint icon, driver icon,
+// nearby-driver scatter icons) — react-native-maps' Marker snapshots a
+// custom child View into a native bitmap via its own `tracksViewChanges`
+// mechanism (default true), a separate, more mature system than MapLibre's
+// PointAnnotation that this app's own pre-existing pickup/drop/driver
+// markers below already rely on successfully, so no onReady/refresh-style
+// workaround is needed here.
+function VehicleIconImage({ category, sizePx }: { category: string; sizePx: number }) {
+  return (
+    <Image
+      source={SEARCH_VEHICLE_ICONS[category] || SEARCH_VEHICLE_ICONS.cab}
+      style={{ width: sizePx, height: sizePx }}
+      resizeMode="contain"
+    />
+  );
+}
+const SEARCH_ICON_PX = 34;
+const DRIVER_ICON_PX = 42;
+const NEARBY_ICON_PX = 18;
+
+// Floating address label card stacked above a pickup/drop pin — searching
+// and active-ride maps only (the pre-existing scheduled/completed/cancelled
+// branch below renders bare PickupMarker/DropMarker with no card, unchanged).
+function SearchPinCard({
+  pin, label, address, name,
+}: { pin: React.ReactElement; label: string; address?: string; name?: string }) {
+  return (
+    <View style={spc.wrap}>
+      {address ? (
+        <View style={spc.card}>
+          <Text style={spc.cardLabel}>{label}</Text>
+          {name ? <Text style={spc.cardName} numberOfLines={1}>{name}</Text> : null}
+          <Text style={spc.cardAddr} numberOfLines={2}>{address}</Text>
+        </View>
+      ) : null}
+      {pin}
+    </View>
+  );
+}
+
+const spc = StyleSheet.create({
+  wrap: { alignItems: "center", width: 160 },
+  card: {
+    backgroundColor: "#fff", borderRadius: 12, paddingHorizontal: 10, paddingVertical: 8,
+    marginBottom: 6, width: 160,
+    elevation: 5, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 6,
+  },
+  cardLabel: { color: COLORS.textMuted, fontSize: 10, fontWeight: "700", textTransform: "uppercase", letterSpacing: 0.5 },
+  cardName:  { color: COLORS.textStrong, fontSize: 12, fontWeight: "800", marginTop: 2 },
+  cardAddr:  { color: COLORS.textSecondary, fontSize: 11, marginTop: 2, lineHeight: 15 },
+});
 
 // Guards against the Heatmap native view failing on a build that hasn't
 // picked up react-native-maps' bundled Heatmap module yet — degrades to
@@ -117,6 +211,11 @@ export default function TrackingScreen() {
   const [mapKey,             setMapKey]             = useState(0);
   const [mapReady,           setMapReady]           = useState(false);
   const [mapTimedOut,        setMapTimedOut]        = useState(false);
+  // Active-ride map camera mode toggle — "follow" (default, preserves the
+  // existing tight driver-centered/rotated camera unchanged for short
+  // trips) vs "overview" (bounds-fit showing driver+pickup+drop, same
+  // fitTo/fitZoomForBounds math already used by the searching screen).
+  const [mapViewMode,        setMapViewMode]        = useState<"follow" | "overview">("follow");
 
   // ── Refs ─────────────────────────────────────────────────────────────────
   const pollRef            = useRef<ReturnType<typeof setInterval>|null>(null);
@@ -277,25 +376,50 @@ export default function TrackingScreen() {
     return stopHeatmapPoll;
   }, [booking?.status, booking?.pickup?.lat, booking?.pickup?.lng]);
 
-  // ── Camera auto-follow driver ────────────────────────────────────────────
+  // ── Active-ride camera follow (driver-centered, rotated to heading) ──────
+  // Deliberately reads `booking.*` directly rather than the `isActiveRide`/
+  // `driver`/etc. consts derived further down (after the loading/error early
+  // returns) — those consts don't exist yet on a render that returns early,
+  // and this effect (like every hook) must run unconditionally on every
+  // render, so it can't close over a binding from code path never reached.
   useEffect(() => {
-    if (!booking?.driver?.lat || !mapRef.current) return;
+    const active = !!booking && ["accepted", "arriving", "in_progress"].includes(booking.status);
+    const overview = active && mapViewMode === "overview";
+    if (!booking?.driver?.lat || !mapRef.current || overview) return;
     mapRef.current.animateCamera({
       center: { latitude: booking.driver.lat, longitude: booking.driver.lng },
       heading: booking.driver.heading ?? 0,
-      zoom: 16,
+      zoom: FOLLOW_ZOOM,
     }, { duration: 1000 });
-  }, [booking?.driver?.lat, booking?.driver?.lng]);
+  }, [booking?.driver?.lat, booking?.driver?.lng, booking?.driver?.heading, booking?.status, mapViewMode]);
 
-  // ── Map fit (initial + on status change) ─────────────────────────────────
+  // ── Bounds-fit camera (pickup/drop, +driver when overview mode is on) ────
+  // z13 floor (MIN_FIT_ZOOM) so pickup/drop very close together don't zoom in
+  // uncomfortably tight — same floor value OlaMapView used this session,
+  // ported from a raw zoom level to a MapView `region` delta since
+  // react-native-maps has no direct zoom-level API for fitting bounds.
   useEffect(() => {
-    if (!booking || !mapRef.current || booking.driver?.lat) return; // skip if auto-follow is active
-    const pts: {latitude:number;longitude:number}[] = [];
-    if (booking.pickup)      pts.push({ latitude: booking.pickup.lat, longitude: booking.pickup.lng });
-    if (booking.drop)        pts.push({ latitude: booking.drop.lat,   longitude: booking.drop.lng });
-    if (pts.length >= 2)
-      mapRef.current.fitToCoordinates(pts, { edgePadding: {top:100,right:70,bottom:PEEK_HEIGHT+40,left:70}, animated:true });
-  }, [booking?.status]);
+    if (!booking || !mapRef.current) return;
+    const active = ["accepted", "arriving", "in_progress"].includes(booking.status);
+    const overview = active && mapViewMode === "overview";
+    if (booking.driver?.lat && !overview) return; // the follow effect above owns this case
+    const pts: { lat: number; lng: number }[] = [];
+    if (overview && booking.driver?.lat) pts.push({ lat: booking.driver.lat, lng: booking.driver.lng });
+    if (booking.pickup) pts.push({ lat: booking.pickup.lat, lng: booking.pickup.lng });
+    if (booking.drop)   pts.push({ lat: booking.drop.lat,   lng: booking.drop.lng });
+    if (pts.length < 2) return;
+    const lats = pts.map(p => p.lat), lngs = pts.map(p => p.lng);
+    const ne = { lat: Math.max(...lats), lng: Math.max(...lngs) };
+    const sw = { lat: Math.min(...lats), lng: Math.min(...lngs) };
+    const PAD = 1.5; // headroom so the fitted points don't sit flush against the edge
+    const maxDelta = 360 / Math.pow(2, MIN_FIT_ZOOM);
+    mapRef.current.animateToRegion({
+      latitude:  (ne.lat + sw.lat) / 2,
+      longitude: (ne.lng + sw.lng) / 2,
+      latitudeDelta:  Math.min(Math.max((ne.lat - sw.lat) * PAD, 0.01), maxDelta),
+      longitudeDelta: Math.min(Math.max((ne.lng - sw.lng) * PAD, 0.01), maxDelta),
+    }, 600);
+  }, [booking?.status, booking?.pickup?.lat, booking?.pickup?.lng, booking?.drop?.lat, booking?.drop?.lng, booking?.driver?.lat, booking?.driver?.lng, mapViewMode]);
 
   // ── Map load watchdog: if the native map doesn't report ready within a
   // few seconds (bad key, quota, no tiles), surface a retry banner instead
@@ -415,10 +539,26 @@ export default function TrackingScreen() {
   const mapAccent  = beforePickup ? COLORS.success : COLORS.primary;
   const initialReg: Region = { latitude: pickup?.lat??28.6139, longitude: pickup?.lng??77.2090, latitudeDelta:0.05, longitudeDelta:0.05 };
 
+  const isSearching  = booking.status === "searching";
+  const isActiveRide = ["accepted", "arriving", "in_progress"].includes(booking.status);
+  const isOnTheWay   = booking.status === "in_progress";
+  // Address-label card only shows on the searching/active-ride maps — the
+  // scheduled/completed/cancelled case below renders bare pins, unchanged
+  // from before this round.
+  const showPinCard = isSearching || isActiveRide;
+  // Search-vehicle icon (static, at the route midpoint) + one small icon per
+  // jittered nearby-driver point (see jitterCell above) — searching phase
+  // only, alongside the density circles, not a replacement.
+  const nearbyIconPoints = isSearching
+    ? nearbyGrid.flatMap((cell, i) => jitterCell(cell, i).map((pt, j) => ({ markerId: `nearby-${i}-${j}`, pt })))
+    : [];
+
   // ════════════════════════════════════════════════════════════════════════
   return (
     <View style={s.container}>
-      {/* ── MAP (full screen) ──────────────────────────────────────── */}
+      {/* ── MAP (full screen) — single react-native-maps instance for every
+          booking status, matching this app's pre-Ola-migration architecture.
+      ──────────────────────────────────────────────────────────────── */}
       <MapView
         key={mapKey}
         ref={mapRef}
@@ -428,17 +568,48 @@ export default function TrackingScreen() {
         onMapReady={onMapReady}
         showsCompass
         showsMyLocationButton={false}
+        showsUserLocation={isSearching}
       >
         {pickup && (
           <Marker coordinate={{ latitude: pickup.lat, longitude: pickup.lng }} anchor={{ x: 0.5, y: 1 }}>
-            <PickupMarker />
+            {showPinCard ? (
+              <SearchPinCard
+                pin={<PickupMarker />}
+                label={t("booking.overlay.pickupLocationTitle")}
+                address={pickup.address}
+              />
+            ) : (
+              <PickupMarker />
+            )}
           </Marker>
         )}
         {drop && (
           <Marker coordinate={{ latitude: drop.lat, longitude: drop.lng }} anchor={{ x: 0.5, y: 1 }}>
-            <DropMarker />
+            {showPinCard ? (
+              <SearchPinCard
+                pin={<DropMarker />}
+                label={t("booking.overlay.dropLocationTitle")}
+                address={drop.address}
+                name={booking.receiver_name}
+              />
+            ) : (
+              <DropMarker />
+            )}
           </Marker>
         )}
+        {isSearching && pickup && drop && (
+          <Marker
+            coordinate={{ latitude: (pickup.lat + drop.lat) / 2, longitude: (pickup.lng + drop.lng) / 2 }}
+            anchor={{ x: 0.5, y: 0.5 }}
+          >
+            <VehicleIconImage category={category} sizePx={SEARCH_ICON_PX} />
+          </Marker>
+        )}
+        {nearbyIconPoints.map(({ markerId, pt }) => (
+          <Marker key={markerId} coordinate={{ latitude: pt.lat, longitude: pt.lng }} anchor={{ x: 0.5, y: 0.5 }}>
+            <VehicleIconImage category={category} sizePx={NEARBY_ICON_PX} />
+          </Marker>
+        ))}
         {driver?.lat && (
           <Marker
             coordinate={{ latitude: driver.lat, longitude: driver.lng }}
@@ -446,32 +617,11 @@ export default function TrackingScreen() {
             anchor={{ x: 0.5, y: 0.5 }}
             rotation={driver.heading ?? 0}
           >
-            {category === "ambulance" ? (
-              <AmbulanceMarker />
-            ) : category === "truck" ? (
-              <TruckMarker
-                variant={
-                  (driver.vehicle_type || "").includes("container") ? "container" :
-                  (driver.vehicle_type || "").includes("14ft") || (driver.vehicle_type || "").includes("open") ? "large" :
-                  "small"
-                }
-              />
-            ) : category === "parcel" ? (
-              <ParcelMarker />
-            ) : (
-              <CabMarker
-                variant={
-                  (driver.vehicle_type || "").includes("2w") ? "2w" :
-                  (driver.vehicle_type || "").includes("3w") ? "3w" :
-                  (driver.vehicle_type || "").includes("suv") ? "suv" :
-                  "4w"
-                }
-              />
-            )}
+            <VehicleIconImage category={category} sizePx={DRIVER_ICON_PX} />
           </Marker>
         )}
         {routeCoords.length >= 2 && (
-          <Polyline coordinates={routeCoords} strokeColor={mapAccent} strokeWidth={4} lineDashPattern={beforePickup ? [8,4] : undefined} />
+          <Polyline coordinates={routeCoords} strokeColor={isSearching ? COLORS.borderStrong : mapAccent} strokeWidth={4} />
         )}
         {booking.status === "searching" && nearbyGrid.length > 0 && (
           <HeatmapBoundary
@@ -513,6 +663,20 @@ export default function TrackingScreen() {
       <TouchableOpacity style={s.backBtn} onPress={() => router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
         <Text style={s.backTxt}>←</Text>
       </TouchableOpacity>
+
+      {/* Map view mode toggle — active-ride only. Icon shows what tapping
+          switches TO, not the current mode: a route/map glyph while
+          following (tap to see the full route), a locate/target glyph
+          while in overview (tap to snap back to the driver). */}
+      {isActiveRide && (
+        <TouchableOpacity
+          style={s.mapModeBtn}
+          onPress={() => setMapViewMode(m => (m === "follow" ? "overview" : "follow"))}
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+        >
+          <Text style={s.mapModeBtnTxt}>{mapViewMode === "follow" ? "🗺️" : "🎯"}</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Nearby driver density overlay — searching screen only */}
       {booking.status === "searching" && (
@@ -664,7 +828,12 @@ export default function TrackingScreen() {
 
           {/* Fare */}
           <View style={s.fareRow}>
-            <Text style={s.fareLabel}>{booking.status === "completed" ? t("tracking.farePaid") : t("tracking.fareEstimated")}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={s.fareLabel}>{booking.status === "completed" ? t("tracking.farePaid") : t("tracking.fareEstimated")}</Text>
+              {booking.distance_km > 0 && (
+                <Text style={s.fareDistText}>{t("tracking.distKm", { km: Number(booking.distance_km).toFixed(1) })}</Text>
+              )}
+            </View>
             <Text style={s.fareValue}>Rs.{displayFare}</Text>
           </View>
 
@@ -710,7 +879,18 @@ export default function TrackingScreen() {
         {/* ── EXPANDED CONTENT ── */}
         <ScrollView style={s.expandedSection} showsVerticalScrollIndicator={false}>
           <View style={s.routeCard}>
-            <Text style={s.routeCardTitle}>{t("booking.review.route")}</Text>
+            <View style={s.routeCardHeader}>
+              <Text style={s.routeCardTitle}>{t("booking.review.route")}</Text>
+              {isOnTheWay && (
+                <TouchableOpacity
+                  style={s.viewMapPill}
+                  onPress={collapseSheet}
+                  hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                >
+                  <Text style={s.viewMapPillTxt}>{t("tracking.viewOnMap")}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
             <View style={s.routeRow}>
               <View style={[s.dot, { backgroundColor: COLORS.success }]} />
               <Text style={s.routeAddr} numberOfLines={2}>{pickup?.address || t("history.pickupFallback")}</Text>
@@ -728,9 +908,33 @@ export default function TrackingScreen() {
             {booking.distance_km > 0 && <View style={s.fareBreakRow}><Text style={s.fareBreakLabel}>{t("tracking.distanceLabel")}</Text><Text style={s.fareBreakVal}>{t("tracking.distKm", { km: Number(booking.distance_km).toFixed(1) })}</Text></View>}
           </View>
 
-          <TouchableOpacity style={s.collapseBtn} onPress={collapseSheet}>
-            <Text style={s.collapseBtnTxt}>{t("tracking.collapseHint")}</Text>
-          </TouchableOpacity>
+          {isOnTheWay && (
+            <View style={s.trustRow}>
+              {[
+                { icon: "🛡️", title: t("tracking.trust.secure.title"),         sub: t("tracking.trust.secure.sub") },
+                { icon: "✅", title: t("tracking.trust.verifiedDriver.title"),  sub: t("tracking.trust.verifiedDriver.sub") },
+                { icon: "📍", title: t("tracking.trust.liveTracking.title"),    sub: t("tracking.trust.liveTracking.sub") },
+                { icon: "🎧", title: t("tracking.trust.support.title"),         sub: t("tracking.trust.support.sub") },
+              ].map((item, idx) => (
+                <View key={idx} style={s.trustItem}>
+                  <Text style={s.trustIcon}>{item.icon}</Text>
+                  <Text style={s.trustTitle}>{item.title}</Text>
+                  <Text style={s.trustSub}>{item.sub}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {isOnTheWay ? (
+            <TouchableOpacity style={s.payBtn} onPress={() => {}}>
+              <Text style={s.payBtnTxt}>{t("tracking.payButton", { amount: displayFare })}</Text>
+              <Text style={s.payBtnArrow}>→</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={s.collapseBtn} onPress={collapseSheet}>
+              <Text style={s.collapseBtnTxt}>{t("tracking.collapseHint")}</Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
       </Animated.View>
 
@@ -818,6 +1022,8 @@ const s = StyleSheet.create({
 
   backBtn:    { position:"absolute", top:Platform.OS==="ios"?56:40, left:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
   backTxt:    { fontSize:22, color:"#111", fontWeight:"700" },
+  mapModeBtn: { position:"absolute", top:Platform.OS==="ios"?56:40, right:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
+  mapModeBtnTxt: { fontSize:19 },
   distPill:   { position:"absolute", top:Platform.OS==="ios"?56:40, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, elevation:5 },
   distPillTxt:{ color:"#fff", fontWeight:"800", fontSize:13 },
   nearbyPill:   { position:"absolute", top:Platform.OS==="ios"?104:88, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, backgroundColor:"rgba(17,17,17,0.75)", elevation:5 },
@@ -856,6 +1062,7 @@ const s = StyleSheet.create({
 
   fareRow:    { flexDirection:"row", justifyContent:"space-between", alignItems:"center", borderTopWidth:1, borderTopColor:"#EEE", paddingTop:12, marginBottom:10 },
   fareLabel:  { color:"#777", fontSize:13 },
+  fareDistText:{ color:"#999", fontSize:11, marginTop:2 },
   fareValue:  { color:"#111", fontSize:22, fontWeight:"800" },
 
   cancelBtn:  { borderWidth:1.5, borderColor: COLORS.danger, borderRadius:14, paddingVertical:13, alignItems:"center", marginBottom:4 },
@@ -877,7 +1084,10 @@ const s = StyleSheet.create({
   collapseBtnTxt:{ color:"#BBB", fontSize:12, fontWeight:"600" },
 
   routeCard:      { backgroundColor:"#F9FAFB", borderRadius:16, padding:16, marginBottom:12 },
-  routeCardTitle: { color:"#111", fontWeight:"700", fontSize:14, marginBottom:12 },
+  routeCardHeader:{ flexDirection:"row", justifyContent:"space-between", alignItems:"center", marginBottom:12 },
+  routeCardTitle: { color:"#111", fontWeight:"700", fontSize:14 },
+  viewMapPill:    { flexDirection:"row", alignItems:"center", borderWidth:1.5, borderColor: COLORS.primary, borderRadius:20, paddingHorizontal:10, paddingVertical:5 },
+  viewMapPillTxt: { color: COLORS.primary, fontSize:11, fontWeight:"700" },
   routeRow:       { flexDirection:"row", alignItems:"center", gap:10 },
   dot:            { width:9, height:9, borderRadius:5, flexShrink:0 },
   routeAddr:      { flex:1, color:"#444", fontSize:13 },
@@ -888,6 +1098,16 @@ const s = StyleSheet.create({
   fareBreakRow:   { flexDirection:"row", justifyContent:"space-between", marginBottom:6 },
   fareBreakLabel: { color:"#777", fontSize:13 },
   fareBreakVal:   { color:"#111", fontSize:13, fontWeight:"700" },
+
+  trustRow:       { flexDirection:"row", justifyContent:"space-between", marginBottom:18 },
+  trustItem:      { flex:1, alignItems:"center", paddingHorizontal:2 },
+  trustIcon:      { fontSize:20, marginBottom:5 },
+  trustTitle:     { color:"#111", fontSize:11, fontWeight:"700", textAlign:"center" },
+  trustSub:       { color:"#999", fontSize:10, textAlign:"center", marginTop:1 },
+
+  payBtn:         { flexDirection:"row", backgroundColor: COLORS.primary, borderRadius:16, paddingVertical:16, alignItems:"center", justifyContent:"center", gap:8, marginBottom:16 },
+  payBtnTxt:      { color:"#fff", fontWeight:"800", fontSize:16 },
+  payBtnArrow:    { color:"#fff", fontWeight:"800", fontSize:16 },
 
   // Ambulance info
   ambulanceInfoBlock: { marginBottom: 10 },

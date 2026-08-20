@@ -201,6 +201,7 @@
       "title": "बुकिंग रिव्यू करें",
       "route": "रूट",
       "fareBreakdown": "किराए का ब्यौरा",
+      "paymentAndTiming": "भुगतान और समय",
       "totalCharges": "कुल शुल्क",
       "estimatedFare": "अनुमानित किराया",
       "baseFare": "बेस किराया",
@@ -416,7 +417,13 @@
       "unloadingServiceSub": "हेल्पर्स डेस्टिनेशन पर सामान उतारेंगे",
       "estimatedTotalTitle": "अनुमानित कुल राशि",
       "addonServicesLine": "ऐड-ऑन सर्विसेज़",
-      "proceedToReview": "रिव्यू के लिए आगे बढ़ें →"
+      "proceedToReview": "रिव्यू के लिए आगे बढ़ें →",
+      "trust": {
+        "secure": { "title": "सुरक्षित बुकिंग", "sub": "100% सुरक्षित" },
+        "verifiedDrivers": { "title": "सत्यापित ड्राइवर", "sub": "विश्वसनीय पार्टनर" },
+        "onTimeDelivery": { "title": "समय पर डिलीवरी", "sub": "भरोसेमंद पिकअप" },
+        "support": { "title": "24x7 सहायता", "sub": "हम यहाँ हैं" }
+      }
     },
     "vehicles": {
       "title": "वाहन चुनें",
@@ -1129,6 +1136,14 @@
     "fareEstimateTitle": "किराया अनुमान",
     "tripFare": "ट्रिप किराया",
     "distanceLabel": "दूरी",
+    "viewOnMap": "मैप पर देखें",
+    "payButton": "₹{{amount}} भुगतान करें",
+    "trust": {
+      "secure": { "title": "सुरक्षित सवारी", "sub": "100% सुरक्षित" },
+      "verifiedDriver": { "title": "सत्यापित ड्राइवर", "sub": "विश्वसनीय पार्टनर" },
+      "liveTracking": { "title": "रीयल-टाइम ट्रैकिंग", "sub": "लाइव लोकेशन" },
+      "support": { "title": "24x7 सहायता", "sub": "हम यहाँ हैं" }
+    },
     "restorePillPrefix": "↑ {{title}}",
     "cancelDialog": {
       "title": "राइड रद्द करें",

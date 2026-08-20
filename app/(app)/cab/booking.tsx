@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  TextInput, ScrollView, ActivityIndicator,
+  TextInput, ScrollView, ActivityIndicator, Platform,
 } from "react-native";
 import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
@@ -9,6 +9,7 @@ import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
 import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
 import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -69,6 +70,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
 export default function CabBookingScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
   const [userLat, setUserLat] = useState(0);
@@ -275,7 +277,7 @@ export default function CabBookingScreen() {
       {activeField && (
         <View style={s.overlay}>
           <SafeAreaView style={{ flex: 1 }}>
-            <View style={s.overlayHeader}>
+            <View style={[s.overlayHeader, { paddingTop: 14 + (Platform.OS === "android" ? insets.top : 0) }]}>
               <TouchableOpacity
                 style={s.backBtn}
                 onPress={() => { setActiveField(null); setSuggestions([]); setSearchText(""); }}
@@ -375,7 +377,7 @@ const s = StyleSheet.create({
   },
   overlayHeader: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 16, paddingVertical: 14,
+    paddingHorizontal: 16, paddingBottom: 14,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
   },
   overlayTitle: { color: COLORS.textStrong, fontSize: 17, fontWeight: "700" },

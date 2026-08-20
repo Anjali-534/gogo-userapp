@@ -202,6 +202,7 @@
       "title": "Review Booking",
       "route": "Route",
       "fareBreakdown": "Fare Breakdown",
+      "paymentAndTiming": "Payment & Timing",
       "totalCharges": "Total Charges",
       "estimatedFare": "Estimated Fare",
       "baseFare": "Base Fare",
@@ -420,7 +421,13 @@
       "unloadingServiceSub": "Helpers will unload at destination",
       "estimatedTotalTitle": "Estimated Total",
       "addonServicesLine": "Add-on services",
-      "proceedToReview": "Proceed to Review →"
+      "proceedToReview": "Proceed to Review →",
+      "trust": {
+        "secure": { "title": "Secure Booking", "sub": "100% Safe" },
+        "verifiedDrivers": { "title": "Verified Drivers", "sub": "Trusted partners" },
+        "onTimeDelivery": { "title": "On-time Delivery", "sub": "Reliable pickup" },
+        "support": { "title": "24x7 Support", "sub": "We're here" }
+      }
     },
     "vehicles": {
       "title": "Choose Vehicle",
@@ -1152,6 +1159,14 @@
     "fareEstimateTitle": "Fare estimate",
     "tripFare": "Trip fare",
     "distanceLabel": "Distance",
+    "viewOnMap": "View on map",
+    "payButton": "Pay ₹{{amount}}",
+    "trust": {
+      "secure": { "title": "Secure Ride", "sub": "100% Safe" },
+      "verifiedDriver": { "title": "Verified Driver", "sub": "Trusted partner" },
+      "liveTracking": { "title": "Real-time Tracking", "sub": "Live location" },
+      "support": { "title": "24x7 Support", "sub": "We're here" }
+    },
     "restorePillPrefix": "↑ {{title}}",
     "cancelDialog": {
       "title": "Cancel Ride",

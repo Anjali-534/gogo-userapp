@@ -12,6 +12,13 @@ export const SNAP = {
   COLLAPSED: Math.round(SCREEN_H * 0.75),
 } as const;
 
+// Distance from the screen's bottom edge to the sheet's top (handle) when
+// collapsed, plus a fixed clearance gap — for positioning the "restore" pill
+// that floats above the collapsed sheet so it never overlaps the drag handle,
+// regardless of device screen height.
+const COLLAPSED_SHEET_TOP = (SCREEN_H - SHEET_H) + SNAP.COLLAPSED;
+export const COLLAPSED_PILL_BOTTOM = Math.round(SCREEN_H - COLLAPSED_SHEET_TOP) + 20;
+
 type SnapKey = keyof typeof SNAP;
 
 export interface BottomSheetHandle {

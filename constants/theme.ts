@@ -49,6 +49,7 @@ export const COLORS = {
   infoTint:       "#EFF6FF",
   infoStrong:     "#1E40AF",
   purple:         "#7C3AED",
+  navy:           "#1E3A8A",  // dark navy pill (e.g. Cab "Coming Soon" badge)
 } as const;
 
 // 4px-based spacing scale — use these instead of raw numbers.

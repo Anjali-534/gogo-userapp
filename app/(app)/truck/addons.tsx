@@ -1,16 +1,18 @@
 import React, { useCallback, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  ScrollView, Switch,
+  ScrollView, Switch, Image, Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 export default function TruckAddonsScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
   const { serviceName, estimatedFare } = params;
@@ -69,13 +71,16 @@ export default function TruckAddonsScreen() {
     <SafeAreaView style={s.safe}>
       <StatusBar barStyle="dark-content" />
 
-      <View style={s.header}>
+      <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
           <Text style={s.backTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("truck.addons.title")}</Text>
-          <Text style={s.subtitle}>{serviceName || t("truck.serviceFallback")}</Text>
+          <View style={s.subtitleRow}>
+            <Image source={require("../../../assets/icons/services/truck.png")} style={s.subtitleIcon} resizeMode="contain" />
+            <Text style={s.subtitle}>{serviceName || t("truck.serviceFallback")}</Text>
+          </View>
         </View>
       </View>
 
@@ -88,6 +93,7 @@ export default function TruckAddonsScreen() {
         <Text style={s.sectionLabel}>{t("truck.addons.addonServicesTitle")}</Text>
         <View style={s.card}>
           <View style={s.toggleRow}>
+            <View style={s.svcIconBox}><Text style={s.svcIcon}>📥</Text></View>
             <View style={{ flex: 1 }}>
               <Text style={s.toggleLabel}>{t("booking.review.loadingService")}</Text>
               <Text style={s.toggleSub}>{t("truck.addons.loadingServiceSub")}</Text>
@@ -107,6 +113,7 @@ export default function TruckAddonsScreen() {
           <View style={s.divider} />
 
           <View style={s.toggleRow}>
+            <View style={s.svcIconBox}><Text style={s.svcIcon}>📤</Text></View>
             <View style={{ flex: 1 }}>
               <Text style={s.toggleLabel}>{t("booking.review.unloadingService")}</Text>
               <Text style={s.toggleSub}>{t("truck.addons.unloadingServiceSub")}</Text>
@@ -168,6 +175,22 @@ export default function TruckAddonsScreen() {
             <Text style={s.totalBoldVal}>₹{Math.max(0, total)}</Text>
           </View>
         </View>
+
+        {/* Trust badges */}
+        <View style={s.trustRow}>
+          {[
+            { icon: "🛡️", title: t("truck.addons.trust.secure.title"),          sub: t("truck.addons.trust.secure.sub") },
+            { icon: "✅", title: t("truck.addons.trust.verifiedDrivers.title"),  sub: t("truck.addons.trust.verifiedDrivers.sub") },
+            { icon: "⏱️", title: t("truck.addons.trust.onTimeDelivery.title"),   sub: t("truck.addons.trust.onTimeDelivery.sub") },
+            { icon: "🎧", title: t("truck.addons.trust.support.title"),          sub: t("truck.addons.trust.support.sub") },
+          ].map((item, idx) => (
+            <View key={idx} style={s.trustItem}>
+              <Text style={s.trustIcon}>{item.icon}</Text>
+              <Text style={s.trustTitle}>{item.title}</Text>
+              <Text style={s.trustSub}>{item.sub}</Text>
+            </View>
+          ))}
+        </View>
       </ScrollView>
 
       <View style={s.footer}>
@@ -185,7 +208,7 @@ const s = StyleSheet.create({
 
   header: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 20, paddingVertical: 16,
+    paddingHorizontal: 20, paddingBottom: 16,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bgAlt,
   },
@@ -197,7 +220,9 @@ const s = StyleSheet.create({
   },
   backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
-  subtitle: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
+  subtitleRow:  { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 3 },
+  subtitleIcon: { width: 14, height: 14 },
+  subtitle: { color: COLORS.textSecondary, fontSize: 12 },
 
   sectionLabel: {
     fontSize: 11, fontWeight: "700", letterSpacing: 1.2,
@@ -216,6 +241,8 @@ const s = StyleSheet.create({
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: 16, paddingVertical: 16, gap: 12,
   },
+  svcIconBox:  { width: 44, height: 44, borderRadius: 12, backgroundColor: COLORS.bgAlt, alignItems: "center", justifyContent: "center" },
+  svcIcon:     { fontSize: 20 },
   toggleLabel: { color: COLORS.textStrong, fontSize: 15, fontWeight: "700", marginBottom: 3 },
   toggleSub:   { color: COLORS.textMuted, fontSize: 12 },
   toggleRight: { flexDirection: "row", alignItems: "center", gap: 10 },
@@ -224,9 +251,9 @@ const s = StyleSheet.create({
 
   couponBtn: {
     flexDirection: "row", alignItems: "center", gap: 10,
-    borderWidth: 1.5, borderColor: COLORS.primary, borderRadius: 14,
+    borderWidth: 1.5, borderColor: COLORS.primary, borderRadius: 28,
     paddingHorizontal: 16, paddingVertical: 14,
-    backgroundColor: COLORS.primaryTint2,
+    backgroundColor: COLORS.white,
   },
   couponIcon:      { fontSize: 18 },
   couponBtnText:   { flex: 1, color: COLORS.primary, fontWeight: "700", fontSize: 14 },
@@ -244,9 +271,15 @@ const s = StyleSheet.create({
   totalLine:      { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   totalLabel:     { color: COLORS.textSecondary, fontSize: 14 },
   totalVal:       { color: COLORS.textSecondary, fontSize: 14, fontWeight: "600" },
-  totalDivider:   { height: 1, backgroundColor: COLORS.border, marginVertical: 4 },
+  totalDivider:   { borderTopWidth: 1, borderStyle: "dashed", borderTopColor: COLORS.borderStrong, marginVertical: 4 },
   totalBoldLabel: { color: COLORS.textStrong, fontSize: 16, fontWeight: "800" },
   totalBoldVal:   { color: COLORS.primary, fontSize: 24, fontWeight: "900" },
+
+  trustRow:   { flexDirection: "row", justifyContent: "space-between", marginTop: 24 },
+  trustItem:  { flex: 1, alignItems: "center", paddingHorizontal: 2 },
+  trustIcon:  { fontSize: 20, marginBottom: 5 },
+  trustTitle: { color: COLORS.textStrong, fontSize: 11, fontWeight: "700", textAlign: "center" },
+  trustSub:   { color: COLORS.textMuted, fontSize: 10, textAlign: "center", marginTop: 1 },
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,

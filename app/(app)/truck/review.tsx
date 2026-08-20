@@ -1,13 +1,14 @@
 ﻿import React, { useEffect, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  ScrollView, ActivityIndicator, Alert, Animated,
+  ScrollView, ActivityIndicator, Alert, Animated, Image, Platform,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SchedulePicker from "../../../components/SchedulePicker";
 import PaymentMethodToggle from "../../../components/PaymentMethodToggle";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -37,6 +38,7 @@ const fr = StyleSheet.create({
 export default function TruckReviewScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
   const BOOKING_RULES = t("booking.rules.truck", { returnObjects: true }) as string[];
 
@@ -255,13 +257,16 @@ export default function TruckReviewScreen() {
     <SafeAreaView style={s.safe}>
       <StatusBar barStyle="dark-content" />
 
-      <View style={s.header}>
+      <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
           <Text style={s.backTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("booking.review.title")}</Text>
-          <Text style={s.subtitle}>{serviceName || t("truck.serviceFallback")}</Text>
+          <View style={s.subtitleRow}>
+            <Image source={require("../../../assets/icons/services/truck.png")} style={s.subtitleIcon} resizeMode="contain" />
+            <Text style={s.subtitle}>{serviceName || t("truck.serviceFallback")}</Text>
+          </View>
         </View>
       </View>
 
@@ -276,11 +281,17 @@ export default function TruckReviewScreen() {
           <View style={s.routeRow}>
             <View style={[s.dot, { backgroundColor: COLORS.success }]} />
             <Text style={s.routeText} numberOfLines={2}>{pickupAddress}</Text>
+            <View style={[s.routeTag, { backgroundColor: COLORS.successTint }]}>
+              <Text style={[s.routeTagTxt, { color: COLORS.successStrong }]}>{t("history.pickupFallback")}</Text>
+            </View>
           </View>
           <View style={s.routeLine} />
           <View style={s.routeRow}>
             <View style={[s.dot, { backgroundColor: COLORS.primary }]} />
             <Text style={s.routeText} numberOfLines={2}>{dropAddress}</Text>
+            <View style={[s.routeTag, { backgroundColor: COLORS.primaryTint2 }]}>
+              <Text style={[s.routeTagTxt, { color: COLORS.primary }]}>{t("history.dropFallback")}</Text>
+            </View>
           </View>
         </View>
 
@@ -291,15 +302,21 @@ export default function TruckReviewScreen() {
             <View style={s.infoCard}>
               {receiverName && (
                 <View style={s.infoRow}>
-                  <Text style={s.infoLabel}>{t("booking.review.name")}</Text>
-                  <Text style={s.infoVal}>{receiverName}</Text>
+                  <View style={s.infoIconBox}><Text style={s.infoIcon}>👤</Text></View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.infoLabel}>{t("booking.review.name")}</Text>
+                    <Text style={s.infoVal}>{receiverName}</Text>
+                  </View>
                 </View>
               )}
               {receiverName && receiverPhone && <View style={s.infoDivider} />}
               {receiverPhone && (
                 <View style={s.infoRow}>
-                  <Text style={s.infoLabel}>{t("booking.review.mobile")}</Text>
-                  <Text style={s.infoVal}>{receiverPhone}</Text>
+                  <View style={s.infoIconBox}><Text style={s.infoIcon}>📞</Text></View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.infoLabel}>{t("booking.review.mobile")}</Text>
+                    <Text style={s.infoVal}>{receiverPhone}</Text>
+                  </View>
                 </View>
               )}
             </View>
@@ -367,42 +384,62 @@ export default function TruckReviewScreen() {
           </View>
         </View>
 
+        {/* Payment & Timing — 2x2 grid: Cash/Wallet (PaymentMethodToggle) + Pay Now/Schedule */}
+        <Text style={s.sectionLabel}>{t("booking.review.paymentAndTiming")}</Text>
+        <View style={s.grid2x2Card}>
+          <PaymentMethodToggle
+            value={paymentMethod}
+            onChange={setPaymentMethod}
+            walletBalance={walletBalance}
+            paymentsAvailable={paymentsAvailable}
+            fare={displayTotal}
+          />
+          <View style={s.modeRow}>
+            <TouchableOpacity
+              style={[s.modeChip, scheduleMode === "now" && s.modeChipActive]}
+              onPress={() => setScheduleMode("now")}
+              hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+            >
+              <Text style={[s.modeChipText, scheduleMode === "now" && s.modeChipTextActive]} numberOfLines={1}>{t("booking.schedule.nowChip")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.modeChip, scheduleMode === "schedule" && s.modeChipActive]}
+              onPress={() => { setScheduleMode("schedule"); setShowPicker(true); }}
+              hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+            >
+              <Text
+                style={[s.modeChipText, scheduleMode === "schedule" && s.modeChipTextActive]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {scheduledDate ? t("booking.schedule.chip", { date: scheduledChipLabel(scheduledDate) }) : t("booking.schedule.chipPlaceholder")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <View style={{ alignItems: "center", marginTop: 14 }}>
           <Text style={s.payNote}>{t("booking.review.paymentAfterDelivery")}</Text>
+        </View>
+
+        {/* Trust badges — reused from truck/addons.tsx */}
+        <View style={s.trustRow}>
+          {[
+            { icon: "🛡️", title: t("truck.addons.trust.secure.title"),          sub: t("truck.addons.trust.secure.sub") },
+            { icon: "✅", title: t("truck.addons.trust.verifiedDrivers.title"),  sub: t("truck.addons.trust.verifiedDrivers.sub") },
+            { icon: "⏱️", title: t("truck.addons.trust.onTimeDelivery.title"),   sub: t("truck.addons.trust.onTimeDelivery.sub") },
+            { icon: "🎧", title: t("truck.addons.trust.support.title"),          sub: t("truck.addons.trust.support.sub") },
+          ].map((item, idx) => (
+            <View key={idx} style={s.trustItem}>
+              <Text style={s.trustIcon}>{item.icon}</Text>
+              <Text style={s.trustTitle}>{item.title}</Text>
+              <Text style={s.trustSub}>{item.sub}</Text>
+            </View>
+          ))}
         </View>
       </ScrollView>
 
       <View style={s.footer}>
-        <PaymentMethodToggle
-          value={paymentMethod}
-          onChange={setPaymentMethod}
-          walletBalance={walletBalance}
-          paymentsAvailable={paymentsAvailable}
-          fare={displayTotal}
-        />
-        <View style={s.modeRow}>
-          <TouchableOpacity
-            style={[s.modeChip, scheduleMode === "now" && s.modeChipActive]}
-            onPress={() => setScheduleMode("now")}
-            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
-          >
-            <Text style={[s.modeChipText, scheduleMode === "now" && s.modeChipTextActive]} numberOfLines={1}>{t("booking.schedule.nowChip")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[s.modeChip, scheduleMode === "schedule" && s.modeChipActive]}
-            onPress={() => { setScheduleMode("schedule"); setShowPicker(true); }}
-            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
-          >
-            <Text
-              style={[s.modeChipText, scheduleMode === "schedule" && s.modeChipTextActive]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {scheduledDate ? t("booking.schedule.chip", { date: scheduledChipLabel(scheduledDate) }) : t("booking.schedule.chipPlaceholder")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity
           style={[s.bookBtn, booking && { opacity: 0.6 }]}
           onPress={handleBook}
@@ -441,7 +478,7 @@ const s = StyleSheet.create({
 
   header: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 20, paddingVertical: 16,
+    paddingHorizontal: 20, paddingBottom: 16,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bgAlt,
   },
@@ -453,7 +490,9 @@ const s = StyleSheet.create({
   },
   backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
-  subtitle: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
+  subtitleRow:  { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 3 },
+  subtitleIcon: { width: 14, height: 14 },
+  subtitle: { color: COLORS.textSecondary, fontSize: 12 },
 
   sectionLabel: {
     fontSize: 11, fontWeight: "700", letterSpacing: 1.2,
@@ -469,10 +508,12 @@ const s = StyleSheet.create({
     shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
   },
 
-  routeRow:  { flexDirection: "row", alignItems: "flex-start", gap: 12, paddingVertical: 8 },
-  dot:       { width: 10, height: 10, borderRadius: 5, marginTop: 4, flexShrink: 0 },
+  routeRow:  { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 8 },
+  dot:       { width: 10, height: 10, borderRadius: 5, flexShrink: 0 },
   routeText: { flex: 1, color: COLORS.textStrong, fontSize: 14, lineHeight: 20 },
   routeLine: { width: 2, height: 18, backgroundColor: COLORS.borderStrong, marginLeft: 4, marginVertical: 2 },
+  routeTag:    { borderRadius: RADIUS.chip, paddingHorizontal: 8, paddingVertical: 3 },
+  routeTagTxt: { fontSize: 10, fontWeight: "800", letterSpacing: 0.5, textTransform: "uppercase" },
 
   infoCard: {
     backgroundColor: COLORS.white, borderRadius: RADIUS.card,
@@ -481,9 +522,11 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
   },
-  infoRow:     { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 16, paddingVertical: 14 },
+  infoRow:     { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 14 },
+  infoIconBox: { width: 38, height: 38, borderRadius: 10, backgroundColor: COLORS.bgAlt, alignItems: "center", justifyContent: "center" },
+  infoIcon:    { fontSize: 17 },
   infoLabel:   { color: COLORS.textMuted, fontSize: 13 },
-  infoVal:     { color: COLORS.textStrong, fontSize: 14, fontWeight: "700" },
+  infoVal:     { color: COLORS.textStrong, fontSize: 14, fontWeight: "700", marginTop: 1 },
   infoDivider: { height: 1, backgroundColor: COLORS.border },
 
   rulesHeader: {
@@ -511,6 +554,20 @@ const s = StyleSheet.create({
   fareTotalVal:   { color: COLORS.primary, fontSize: 28, fontWeight: "900" },
 
   payNote: { color: COLORS.textMuted, fontSize: 12 },
+
+  grid2x2Card: {
+    backgroundColor: COLORS.white, borderRadius: RADIUS.card,
+    borderWidth: 1, borderColor: COLORS.border,
+    padding: 16,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+  },
+
+  trustRow:   { flexDirection: "row", justifyContent: "space-between", marginTop: 24 },
+  trustItem:  { flex: 1, alignItems: "center", paddingHorizontal: 2 },
+  trustIcon:  { fontSize: 20, marginBottom: 5 },
+  trustTitle: { color: COLORS.textStrong, fontSize: 11, fontWeight: "700", textAlign: "center" },
+  trustSub:   { color: COLORS.textMuted, fontSize: 10, textAlign: "center", marginTop: 1 },
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,

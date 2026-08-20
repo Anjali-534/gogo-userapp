@@ -1,32 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
-  StatusBar,
+  View, Text, StyleSheet, TouchableOpacity, StatusBar,
 } from "react-native";
-import OlaMapView from "../../../components/OlaMapView";
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
+import BookingHero from "../../../components/BookingHero";
+import BottomSheet, { BottomSheetHandle, COLLAPSED_PILL_BOTTOM } from "../../../components/BottomSheet";
 import { trackScreenView, trackAmbulanceTypeSelected } from "@/services/analytics";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 
 export default function AmbulanceIndexScreen() {
   const router   = useRouter();
   const { t } = useTranslation();
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [sheetSnap, setSheetSnap] = useState<"FULL" | "HALF" | "PEEK" | "COLLAPSED">("PEEK");
   const sheetRef = useRef<BottomSheetHandle>(null);
 
   useEffect(() => {
     trackScreenView("AmbulanceHome");
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      }
-    })();
   }, []);
 
   const navigate = (type: "free" | "paid") => {
@@ -41,14 +31,10 @@ export default function AmbulanceIndexScreen() {
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" />
 
-      <OlaMapView location={location} zoomLevel={16} />
-
-      {/* Back button */}
-      <SafeAreaView style={s.topBar} pointerEvents="box-none">
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
+      <BookingHero
+        illustration={require("../../../assets/illustrations/ambulance.png")}
+        onBack={() => router.back()}
+      />
 
       {/* Collapsible bottom sheet */}
       <BottomSheet ref={sheetRef} initialSnap="PEEK" onSnapChange={setSheetSnap}>
@@ -103,9 +89,9 @@ export default function AmbulanceIndexScreen() {
         </View>
       </BottomSheet>
 
-      {/* Restore pill — shown when the sheet is dragged down to see the full map */}
+      {/* Restore pill — shown when the sheet is dragged down to see the full hero */}
       {sheetSnap === "COLLAPSED" && (
-        <View style={s.collapsedWrap}>
+        <View style={s.collapsedWrap} pointerEvents="box-none">
           <TouchableOpacity style={s.collapsedPill} onPress={() => sheetRef.current?.snapTo("PEEK")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.collapsedText}>{t("ambulance.index.collapsedBookAmbulance")}</Text>
           </TouchableOpacity>
@@ -116,19 +102,6 @@ export default function AmbulanceIndexScreen() {
 }
 
 const s = StyleSheet.create({
-  topBar: {
-    position: "absolute", top: 0, left: 0, right: 0,
-    paddingHorizontal: 16, paddingTop: 52,
-  },
-  backBtn: {
-    width: 42, height: 42, borderRadius: 21,
-    backgroundColor: COLORS.white,
-    alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12, shadowRadius: 8, elevation: 6,
-  },
-  backTxt: { fontSize: 20, color: COLORS.textStrong, fontWeight: "700", lineHeight: 24 },
-
   content: { paddingHorizontal: SPACING.xl, paddingBottom: 48 },
 
   title:    { color: COLORS.textStrong, fontSize: 22, fontWeight: "700", letterSpacing: -0.3, marginBottom: 4 },
@@ -169,7 +142,7 @@ const s = StyleSheet.create({
   },
   disclaimerText: { color: COLORS.warningStrong, fontSize: 12, lineHeight: 18 },
 
-  collapsedWrap: { position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center" },
+  collapsedWrap: { position: "absolute", bottom: COLLAPSED_PILL_BOTTOM, left: 0, right: 0, alignItems: "center" },
   collapsedPill: {
     backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet,
     shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10,

@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  TextInput, ScrollView, ActivityIndicator,
+  TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
+  Image,
 } from "react-native";
-import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
 import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -66,9 +67,22 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
   } catch { return `${lat.toFixed(4)}, ${lng.toFixed(4)}`; }
 }
 
+// ─── Section label with icon badge ───────────────────────────────────────────
+function SectionLabel({ icon, text, style }: { icon: keyof typeof Ionicons.glyphMap; text: string; style?: any }) {
+  return (
+    <View style={[s.sectionLabelRow, style]}>
+      <View style={s.sectionBadge}>
+        <Ionicons name={icon} size={13} color={COLORS.primary} />
+      </View>
+      <Text style={s.sectionLabelText}>{text}</Text>
+    </View>
+  );
+}
+
 export default function ParcelBookingScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
   const [userLat, setUserLat] = useState(0);
@@ -83,8 +97,6 @@ export default function ParcelBookingScreen() {
   const [searchLoading, setSearchLoading] = useState(false);
   const searchTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchInputRef = useRef<TextInput>(null);
-  const [sheetSnap, setSheetSnap] = useState<"FULL" | "HALF" | "PEEK" | "COLLAPSED">("PEEK");
-  const sheetRef = useRef<BottomSheetHandle>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -165,117 +177,105 @@ export default function ParcelBookingScreen() {
     }
   };
 
-  const mapRegion = pickup
-    ? { latitude: pickup.lat, longitude: pickup.lng, latitudeDelta: 0.04, longitudeDelta: 0.04 }
-    : { latitude: 28.6139, longitude: 77.2090, latitudeDelta: 0.04, longitudeDelta: 0.04 };
-
   return (
-    <View style={{ flex: 1, backgroundColor: "#F8F9FA" }}>
+    <SafeAreaView style={s.safe}>
       <StatusBar barStyle="dark-content" />
 
-      {/* Map — top half */}
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={s.map}
-        region={mapRegion}
-        showsUserLocation
-        showsMyLocationButton={false}
+      {/* Header — same full-bleed gradient hero treatment as Truck's booking
+          screen, with the parcel illustration bled to the edge instead of
+          the map that used to fill this screen. */}
+      <LinearGradient
+        colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+        locations={[0, 0.6, 1]}
+        style={s.header}
       >
-        {pickup && (
-          <Marker coordinate={{ latitude: pickup.lat, longitude: pickup.lng }} anchor={{ x: 0.5, y: 1 }}>
-            <PickupMarker />
-          </Marker>
-        )}
-        {drop && (
-          <Marker coordinate={{ latitude: drop.lat, longitude: drop.lng }} anchor={{ x: 0.5, y: 1 }}>
-            <DropMarker />
-          </Marker>
-        )}
-      </MapView>
-
-      {/* Back button over map */}
-      <View style={s.topOverlay} pointerEvents="box-none">
-        <SafeAreaView>
+        <View style={s.headerRow}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.backTxt}>←</Text>
           </TouchableOpacity>
-        </SafeAreaView>
-      </View>
-
-      {/* Collapsible bottom sheet */}
-      <BottomSheet ref={sheetRef} initialSnap="PEEK" onSnapChange={setSheetSnap}>
-        <View style={s.sheetContent}>
-        <View style={s.sheetRow}>
-          <Text style={s.sheetTitle}>{t("parcel.booking.setYourTrip")}</Text>
+          <View style={s.headerTextCol}>
+            <Text style={s.title} numberOfLines={1}>{t("parcel.booking.setYourTrip")}</Text>
+          </View>
           <TouchableOpacity style={s.nowBtn} activeOpacity={0.8}>
             <Text style={s.nowBtnText}>{t("booking.schedule.now")}</Text>
           </TouchableOpacity>
         </View>
+        <Image
+          source={require("../../../assets/illustrations/parcel.png")}
+          style={s.headerParcelImg}
+          resizeMode="contain"
+        />
+      </LinearGradient>
 
-        {/* Location connector block */}
-        <View style={s.locationBlock}>
-          {/* Pickup row */}
-          <TouchableOpacity
-            style={s.locRow}
-            onPress={() => openSearch("pickup")}
-            activeOpacity={0.8}
-          >
-            <View style={[s.locDot, { backgroundColor: COLORS.success }]} />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+      <ScrollView
+        style={s.scroll}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* Pickup */}
+        <SectionLabel icon="location" text={t("booking.overlay.pickupLocationTitle")} />
+        <TouchableOpacity
+          style={s.locInputRow}
+          onPress={() => openSearch("pickup")}
+          activeOpacity={0.8}
+        >
+          <View style={[s.locDot, { backgroundColor: COLORS.success }]} />
+          <View style={s.locTextWrap}>
             {locLoading && !pickup ? (
-              <ActivityIndicator size="small" color="#10B981" style={{ marginLeft: 4 }} />
+              <>
+                <ActivityIndicator size="small" color={COLORS.primary} />
+                <Text style={[s.locPlaceholder, { marginLeft: 8 }]}>
+                  {t("booking.overlay.fetchingLocation")}
+                </Text>
+              </>
             ) : (
-              <Text style={[s.locText, !pickup && s.locPlaceholder]} numberOfLines={1}>
+              <Text style={pickup ? s.locText : s.locPlaceholder} numberOfLines={1}>
                 {pickup?.address || t("locationPicker.searchPickupPlaceholder")}
               </Text>
             )}
-            {!locLoading && pickup && (
-              <TouchableOpacity
-                style={s.clearBtn}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                onPress={() => {
-                  setPickup(null);
-                  setActiveField("pickup");
-                  setSearchText("");
-                  setSuggestions([]);
-                  setTimeout(() => searchInputRef.current?.focus(), 120);
-                }}
-              >
-                <Text style={s.clearBtnTxt}>✕</Text>
-              </TouchableOpacity>
-            )}
-          </TouchableOpacity>
+          </View>
+          {!locLoading && pickup && (
+            <TouchableOpacity
+              style={s.clearBtn}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => {
+                setPickup(null);
+                setActiveField("pickup");
+                setSearchText("");
+                setSuggestions([]);
+                setTimeout(() => searchInputRef.current?.focus(), 120);
+              }}
+            >
+              <Text style={s.clearBtnTxt}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
 
-          <View style={s.locSeparator} />
-
-          {/* Drop row */}
-          <TouchableOpacity
-            style={s.locRow}
-            onPress={() => openSearch("drop")}
-            activeOpacity={0.8}
-          >
-            <View style={[s.locDot, { backgroundColor: COLORS.primary }]} />
-            <Text style={[s.locText, !drop && s.locPlaceholder]} numberOfLines={1}>
-              {drop?.address || t("parcel.home.whereTo")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        </View>
-      </BottomSheet>
-
-      {/* Restore pill — shown when the sheet is dragged down to see the full map */}
-      {sheetSnap === "COLLAPSED" && (
-        <View style={s.collapsedWrap}>
-          <TouchableOpacity style={s.collapsedPill} onPress={() => sheetRef.current?.snapTo("PEEK")}>
-            <Text style={s.collapsedText}>{t("parcel.booking.restorePill")}</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        {/* Drop */}
+        <SectionLabel icon="location" text={t("booking.overlay.dropLocationTitle")} style={{ marginTop: 16 }} />
+        <TouchableOpacity
+          style={s.locInputRow}
+          onPress={() => openSearch("drop")}
+          activeOpacity={0.8}
+        >
+          <View style={[s.locDot, { backgroundColor: COLORS.primary }]} />
+          <Text style={drop ? s.locText : s.locPlaceholder} numberOfLines={1}>
+            {drop?.address || t("parcel.home.whereTo")}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Full-screen search overlay */}
       {activeField && (
         <View style={s.overlay}>
           <SafeAreaView style={{ flex: 1 }}>
-            <View style={s.overlayHeader}>
+            <View style={[s.overlayHeader, { paddingTop: 14 + (Platform.OS === "android" ? insets.top : 0) }]}>
               <TouchableOpacity
                 style={s.backBtn}
                 onPress={() => { setActiveField(null); setSuggestions([]); setSearchText(""); }}
@@ -321,86 +321,79 @@ export default function ParcelBookingScreen() {
           </SafeAreaView>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  map: { ...StyleSheet.absoluteFillObject },
+  safe:   { flex: 1, backgroundColor: COLORS.bgAlt },
+  scroll: { flex: 1, paddingHorizontal: 20 },
 
-  topOverlay: { position: "absolute", top: 0, left: 0, right: 0, paddingHorizontal: 16, paddingTop: 8 },
+  header:        { paddingHorizontal: 20, paddingVertical: 32, minHeight: 170, justifyContent: "center" },
+  headerRow:     { flexDirection: "row", alignItems: "center", gap: 14 },
+  headerTextCol: { flex: 1, maxWidth: "50%" },
+  // parcel.png is a transparent cutout — bled past the header's own padding
+  // to the true edge, same treatment as truck's headerTruckImg.
+  headerParcelImg: { position: "absolute", right: -16, bottom: -8, width: 180, height: 130 },
   backBtn: {
     width: 42, height: 42, borderRadius: 21,
     backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center",
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12, shadowRadius: 8, elevation: 6,
+    shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt: { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
+  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
+  title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
 
-  sheetContent: { paddingHorizontal: 20, paddingBottom: 20 },
-
-  sheetRow: {
-    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  sheetTitle: { color: COLORS.textStrong, fontSize: 18, fontWeight: "800" },
   nowBtn: {
-    backgroundColor: COLORS.bgAlt, borderRadius: RADIUS.input, borderWidth: 1.5, borderColor: COLORS.border,
-    paddingHorizontal: 12, paddingVertical: 7,
+    backgroundColor: COLORS.white, borderRadius: RADIUS.input, borderWidth: 1.5, borderColor: COLORS.border,
+    paddingHorizontal: 12, paddingVertical: 8,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
   nowBtnText: { color: COLORS.textSecondary, fontSize: 12, fontWeight: "700" },
 
-  locationBlock: {
-    backgroundColor: COLORS.white, borderRadius: RADIUS.card,
-    borderWidth: 1.5, borderColor: COLORS.border,
-    overflow: "hidden",
-    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+  sectionLabelRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10, marginTop: 20 },
+  sectionBadge: {
+    width: 22, height: 22, borderRadius: 11,
+    backgroundColor: COLORS.primaryTint,
+    alignItems: "center", justifyContent: "center",
   },
-  locRow: {
-    flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 16, paddingVertical: 17,
+  sectionLabelText: {
+    fontSize: 11, fontWeight: "700", letterSpacing: 1.2,
+    color: COLORS.primary, textTransform: "uppercase",
+  },
+
+  locInputRow: {
+    flexDirection: "row", alignItems: "center",
+    backgroundColor: COLORS.bgAlt, borderRadius: 999,
+    borderWidth: 1.5, borderColor: COLORS.border,
+    paddingHorizontal: 16, paddingVertical: 14, gap: 12,
   },
   locDot:       { width: 11, height: 11, borderRadius: 5.5, flexShrink: 0 },
   locText:      { flex: 1, color: COLORS.textStrong, fontSize: 15, fontWeight: "500" },
-  locPlaceholder: { color: COLORS.textMuted, fontWeight: "400" },
-  locSeparator: { height: 1, backgroundColor: COLORS.border, marginLeft: 41 },
+  locPlaceholder: { flex: 1, color: COLORS.textMuted, fontSize: 15 },
+  locTextWrap:  { flex: 1, flexDirection: "row", alignItems: "center" },
   clearBtn:     { width: 24, height: 24, borderRadius: RADIUS.input, backgroundColor: COLORS.borderStrong, alignItems: "center", justifyContent: "center", flexShrink: 0 },
   clearBtnTxt:  { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
 
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: COLORS.white,
-    zIndex: 999,
-  },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: COLORS.white, zIndex: 999 },
   overlayHeader: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 16, paddingVertical: 14,
+    paddingHorizontal: 16, paddingBottom: 14,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
   },
-  overlayTitle: { color: COLORS.textStrong, fontSize: 17, fontWeight: "700" },
+  overlayTitle:     { color: COLORS.textStrong, fontSize: 17, fontWeight: "700" },
   overlayInputWrap: {
     flexDirection: "row", alignItems: "center", gap: 12,
-    margin: 16,
-    backgroundColor: COLORS.bgAlt, borderRadius: RADIUS.input,
+    margin: 16, backgroundColor: COLORS.bgAlt, borderRadius: RADIUS.input,
     borderWidth: 1.5, borderColor: COLORS.border,
     paddingHorizontal: 14, paddingVertical: 13,
   },
   overlayInput: { flex: 1, color: COLORS.textStrong, fontSize: 15, fontWeight: "500" },
-
-  collapsedWrap: { position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center" },
-  collapsedPill: {
-    backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet,
-    shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10,
-  },
-  collapsedText: { color: "#FFF", fontWeight: "700", fontSize: 14 },
 });
 
 const ov = StyleSheet.create({
-  row: {
-    flexDirection: "row", alignItems: "flex-start", gap: 12,
-    paddingHorizontal: 20, paddingVertical: 14,
-  },
+  row:       { flexDirection: "row", alignItems: "flex-start", gap: 12, paddingHorizontal: 20, paddingVertical: 14 },
   rowBorder: { borderTopWidth: 1, borderTopColor: "#F5F5F5" },
   pinWrap:   { width: 32, height: 32, borderRadius: 16, backgroundColor: COLORS.primaryTint2, alignItems: "center", justifyContent: "center", marginTop: -2 },
   pin:       { fontSize: 14 },

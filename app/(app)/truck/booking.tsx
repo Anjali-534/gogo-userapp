@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
 import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -170,6 +171,7 @@ function SectionLabel({ icon, text, style }: { icon: keyof typeof Ionicons.glyph
 export default function TruckBookingScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const { scope } = useLocalSearchParams<{ scope: string }>();
 
   const [userLat, setUserLat] = useState(0);
@@ -463,7 +465,7 @@ export default function TruckBookingScreen() {
       {showPickupSearch && (
         <View style={s.overlay}>
           <SafeAreaView style={{ flex: 1 }}>
-            <View style={s.overlayHeader}>
+            <View style={[s.overlayHeader, { paddingTop: 14 + (Platform.OS === "android" ? insets.top : 0) }]}>
               <TouchableOpacity
                 style={s.backBtn}
                 onPress={() => { setShowPickupSearch(false); setPickupSuggestions([]); setPickupSearchText(""); }}
@@ -662,7 +664,7 @@ const s = StyleSheet.create({
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: COLORS.white, zIndex: 999 },
   overlayHeader: {
     flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 16, paddingVertical: 14,
+    paddingHorizontal: 16, paddingBottom: 14,
     borderBottomWidth: 1, borderBottomColor: COLORS.border,
   },
   overlayTitle:     { color: COLORS.textStrong, fontSize: 17, fontWeight: "700" },

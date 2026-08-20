@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  ScrollView, ActivityIndicator, Alert,
+  ScrollView, ActivityIndicator, Alert, Image,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
@@ -239,32 +241,47 @@ export default function ParcelReviewScreen() {
     <SafeAreaView style={s.safe}>
       <StatusBar barStyle="dark-content" />
 
-      <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.title}>{t("booking.review.title")}</Text>
-          <Text style={s.subtitle}>{vehicleEmoji} {serviceName || t("parcel.review.serviceFallback")}</Text>
+      {/* Header — same full-bleed gradient hero treatment as Truck/Parcel's
+          booking screens, with the parcel illustration bled to the edge. */}
+      <LinearGradient
+        colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+        locations={[0, 0.6, 1]}
+        style={s.header}
+      >
+        <View style={s.headerRow}>
+          <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+            <Text style={s.backTxt}>←</Text>
+          </TouchableOpacity>
+          <View style={s.headerTextCol}>
+            <Text style={s.title} numberOfLines={1}>{t("booking.review.title")}</Text>
+            <Text style={s.subtitle}>{vehicleEmoji} {serviceName || t("parcel.review.serviceFallback")}</Text>
+          </View>
         </View>
-      </View>
+        <Image
+          source={require("../../../assets/illustrations/parcel.png")}
+          style={s.headerParcelImg}
+          resizeMode="contain"
+        />
+      </LinearGradient>
 
       <ScrollView
         style={s.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         {/* Route */}
         <Text style={s.sectionLabel}>{t("booking.review.route")}</Text>
         <View style={s.card}>
           <View style={s.routeRow}>
             <View style={[s.dot, { backgroundColor: COLORS.success }]} />
-            <Text style={s.routeText} numberOfLines={2}>{pickupAddress}</Text>
+            <Text style={s.routeText}>{pickupAddress}</Text>
           </View>
-          <View style={s.routeLine} />
+          <View style={s.routeLineWrap}>
+            <View style={s.routeLineDashed} />
+          </View>
           <View style={s.routeRow}>
             <View style={[s.dot, { backgroundColor: COLORS.primary }]} />
-            <Text style={s.routeText} numberOfLines={2}>{dropAddress}</Text>
+            <Text style={s.routeText}>{dropAddress}</Text>
           </View>
         </View>
 
@@ -301,42 +318,51 @@ export default function ParcelReviewScreen() {
           </View>
         </View>
 
-        <View style={s.payNoteRow}>
-          <Text style={s.payNote}>{t("booking.review.cashPaymentNote")}</Text>
+        <View style={s.payNoteCard}>
+          <Text style={s.payNoteText}>{t("booking.review.cashPaymentNote")}</Text>
+        </View>
+
+        {/* Payment method + timing — same underlying PaymentMethodToggle
+            component/state as before (untouched), just grouped under a
+            section label + shared card background alongside the timing
+            row so the two rows of two read as one options block. */}
+        <Text style={s.sectionLabel}>{t("booking.review.paymentAndTiming")}</Text>
+        <View style={s.optionsCard}>
+          <PaymentMethodToggle
+            value={paymentMethod}
+            onChange={setPaymentMethod}
+            walletBalance={walletBalance}
+            paymentsAvailable={paymentsAvailable}
+            fare={displayTotal}
+          />
+          <View style={s.modeRow}>
+            <TouchableOpacity
+              style={[s.modeChip, scheduleMode === "now" && s.modeChipActive]}
+              onPress={() => setScheduleMode("now")}
+              hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+            >
+              <Text style={s.modeChipIcon}>🕐</Text>
+              <Text style={[s.modeChipText, scheduleMode === "now" && s.modeChipTextActive]} numberOfLines={1}>{t("booking.schedule.nowChip")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.modeChip, scheduleMode === "schedule" && s.modeChipActive]}
+              onPress={() => { setScheduleMode("schedule"); setShowPicker(true); }}
+              hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+            >
+              <Text style={s.modeChipIcon}>📅</Text>
+              <Text
+                style={[s.modeChipText, scheduleMode === "schedule" && s.modeChipTextActive]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {scheduledDate ? t("booking.schedule.chip", { date: scheduledChipLabel(scheduledDate) }) : t("booking.schedule.chipPlaceholder")}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
 
       <View style={s.footer}>
-        <PaymentMethodToggle
-          value={paymentMethod}
-          onChange={setPaymentMethod}
-          walletBalance={walletBalance}
-          paymentsAvailable={paymentsAvailable}
-          fare={displayTotal}
-        />
-        <View style={s.modeRow}>
-          <TouchableOpacity
-            style={[s.modeChip, scheduleMode === "now" && s.modeChipActive]}
-            onPress={() => setScheduleMode("now")}
-            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
-          >
-            <Text style={[s.modeChipText, scheduleMode === "now" && s.modeChipTextActive]} numberOfLines={1}>{t("booking.schedule.nowChip")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[s.modeChip, scheduleMode === "schedule" && s.modeChipActive]}
-            onPress={() => { setScheduleMode("schedule"); setShowPicker(true); }}
-            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
-          >
-            <Text
-              style={[s.modeChipText, scheduleMode === "schedule" && s.modeChipTextActive]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {scheduledDate ? t("booking.schedule.chip", { date: scheduledChipLabel(scheduledDate) }) : t("booking.schedule.chipPlaceholder")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity
           style={[s.bookBtn, booking && { opacity: 0.6 }]}
           onPress={handleBook}
@@ -346,16 +372,19 @@ export default function ParcelReviewScreen() {
           {booking ? (
             <ActivityIndicator color={COLORS.white} />
           ) : (
-            <Text
-              style={s.bookBtnText}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.8}
-            >
-              {scheduleMode === "schedule" && scheduledDate
-                ? t("booking.schedule.scheduleFor", { time: scheduledLabel(scheduledDate) })
-                : t("booking.schedule.bookNowWithFare", { amount: displayTotal })}
-            </Text>
+            <View style={s.bookBtnRow}>
+              <Text
+                style={s.bookBtnText}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+              >
+                {scheduleMode === "schedule" && scheduledDate
+                  ? t("booking.schedule.scheduleFor", { time: scheduledLabel(scheduledDate) })
+                  : t("booking.schedule.bookNowWithFare", { amount: displayTotal })}
+              </Text>
+              <Ionicons name="arrow-forward" size={18} color={COLORS.white} style={{ marginLeft: 8 }} />
+            </View>
           )}
         </TouchableOpacity>
       </View>
@@ -373,12 +402,12 @@ const s = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: COLORS.bgAlt },
   scroll: { flex: 1, paddingHorizontal: 20 },
 
-  header: {
-    flexDirection: "row", alignItems: "center", gap: 14,
-    paddingHorizontal: 20, paddingVertical: 16,
-    borderBottomWidth: 1, borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.bgAlt,
-  },
+  header:        { paddingHorizontal: 20, paddingVertical: 32, minHeight: 150, justifyContent: "center" },
+  headerRow:     { flexDirection: "row", alignItems: "center", gap: 14 },
+  headerTextCol: { flex: 1, maxWidth: "62%" },
+  // parcel.png is a transparent cutout — bled past the header's own padding
+  // to the true edge, same treatment as truck/parcel booking screens' hero.
+  headerParcelImg: { position: "absolute", right: -16, bottom: -8, width: 160, height: 115 },
   backBtn: {
     width: 42, height: 42, borderRadius: 21,
     backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center",
@@ -403,30 +432,49 @@ const s = StyleSheet.create({
     shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
   },
 
-  routeRow:  { flexDirection: "row", alignItems: "flex-start", gap: 12, paddingVertical: 8 },
-  dot:       { width: 10, height: 10, borderRadius: 5, marginTop: 4, flexShrink: 0 },
-  routeText: { flex: 1, color: COLORS.textStrong, fontSize: 14, lineHeight: 20 },
-  routeLine: { width: 2, height: 18, backgroundColor: COLORS.borderStrong, marginLeft: 4, marginVertical: 2 },
+  routeRow:      { flexDirection: "row", alignItems: "flex-start", gap: 12, paddingVertical: 8 },
+  dot:           { width: 10, height: 10, borderRadius: 5, marginTop: 4, flexShrink: 0 },
+  routeText:     { flex: 1, color: COLORS.textStrong, fontSize: 14, lineHeight: 20 },
+  routeLineWrap: { marginLeft: 4, paddingVertical: 2 },
+  routeLineDashed: {
+    width: 0, height: 18,
+    borderLeftWidth: 2, borderStyle: "dashed", borderColor: COLORS.borderStrong,
+  },
 
   fareDivider:    { height: 1, backgroundColor: COLORS.border, marginVertical: 8 },
   fareTotalRow:   { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 4 },
   fareTotalLabel: { color: COLORS.textStrong, fontSize: 16, fontWeight: "800" },
   fareTotalVal:   { color: COLORS.primary, fontSize: 28, fontWeight: "900" },
 
-  payNoteRow: { alignItems: "center", marginTop: 14 },
-  payNote:    { color: COLORS.textMuted, fontSize: 12 },
+  payNoteCard: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    backgroundColor: COLORS.primaryTint2, borderRadius: RADIUS.input,
+    borderWidth: 1, borderColor: "#FFE4D6",
+    paddingVertical: 12, paddingHorizontal: 16, marginTop: 14,
+  },
+  payNoteText: { color: COLORS.textSecondary, fontSize: 12, fontWeight: "600" },
+
+  optionsCard: {
+    backgroundColor: COLORS.white, borderRadius: RADIUS.card,
+    borderWidth: 1, borderColor: COLORS.border,
+    padding: 14,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+  },
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
     backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
-  modeRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  modeRow: { flexDirection: "row", gap: 8 },
   modeChip: {
-    flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: RADIUS.input,
+    flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
+    paddingVertical: 14, borderRadius: RADIUS.input,
     backgroundColor: COLORS.bgAlt, borderWidth: 1.5, borderColor: COLORS.border,
   },
   modeChipActive: { backgroundColor: COLORS.primaryTint, borderColor: COLORS.primary },
+  modeChipIcon: { fontSize: 16 },
   modeChipText: { color: COLORS.textSecondary, fontSize: 13, fontWeight: "700" },
   modeChipTextActive: { color: COLORS.primary },
   bookBtn: {
@@ -435,5 +483,6 @@ const s = StyleSheet.create({
     shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
   },
+  bookBtnRow:  { flexDirection: "row", alignItems: "center", justifyContent: "center" },
   bookBtnText: { color: COLORS.white, fontWeight: "800", fontSize: 17 },
 });

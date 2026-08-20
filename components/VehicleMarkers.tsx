@@ -74,7 +74,7 @@ export function ParcelMarker() {
 
 // ─── PIN MARKERS ─────────────────────────────────────────────────────────────
 // Teardrop pin shape built from a circle + downward triangle, with pulse ring.
-function PinMarker({ color }: { color: string }) {
+function PinMarker({ color, onReady }: { color: string; onReady?: () => void }) {
   const scaleAnim   = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
@@ -86,6 +86,16 @@ function PinMarker({ color }: { color: string }) {
       ])
     ).start();
   }, []);
+
+  // Same Android PointAnnotation bitmap-snapshot timing issue as the vehicle
+  // icons, different trigger: pinCircle's `elevation` shadow is composited
+  // asynchronously by Android's rendering pipeline, so a snapshot taken
+  // right at mount can capture only the borderless `tip` triangle below
+  // (no elevation, renders instantly) while the circle+dot are still
+  // pending — exactly the "plain triangle" symptom. `onReady`, when passed,
+  // is OlaMapView's PointAnnotation refresh(); firing it once post-layout
+  // forces a re-snapshot with the full pin composited.
+  useEffect(() => { onReady?.(); }, []);
 
   return (
     <View style={p.container}>
@@ -106,8 +116,8 @@ function PinMarker({ color }: { color: string }) {
   );
 }
 
-export function PickupMarker() { return <PinMarker color="#22C55E" />; }
-export function DropMarker()   { return <PinMarker color="#FF6B2B" />; }
+export function PickupMarker({ onReady }: { onReady?: () => void } = {}) { return <PinMarker color="#22C55E" onReady={onReady} />; }
+export function DropMarker({ onReady }: { onReady?: () => void } = {})   { return <PinMarker color="#FF6B2B" onReady={onReady} />; }
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const v = StyleSheet.create({

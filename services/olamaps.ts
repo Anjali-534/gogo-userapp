@@ -123,6 +123,15 @@ export const olaDirections = async (
 // MapLibre GL JS on web), so instead of intercepting each tile/source
 // request to append api_key, the key is baked directly into every
 // source URL here, once, up front.
+//
+// Sources declared as { url: "<tilejson>" } (openmaptiles/vectordata/street)
+// are an extra hop: MapLibre Native fetches that TileJSON itself at runtime
+// to discover the real "tiles" template, and that template comes back from
+// Ola with no api_key on it — since there's no transformRequest hook to
+// catch that second fetch on native, those tile requests 401. Fixed below
+// by rewriting those sources to the inline { tiles: [...] } form using the
+// TileJSON already being fetched here for layer validation, with the key
+// appended directly to the tile template before native ever sees it.
 export async function fetchSanitizedOlaStyle(): Promise<any> {
   const res = await fetch(STYLE_URL);
   if (!res.ok) {
@@ -135,10 +144,12 @@ export async function fetchSanitizedOlaStyle(): Promise<any> {
     .map(([id]) => id);
 
   const validSourceLayers = new Map<string, Set<string>>();
+  const sourceTileJson     = new Map<string, any>();
   await Promise.all(vectorSourceIds.map(async (id) => {
     try {
       const tilejson = await fetch(withApiKeyParam(style.sources[id].url)).then(r => r.json());
       validSourceLayers.set(id, new Set((tilejson.vector_layers || []).map((l: { id: string }) => l.id)));
+      sourceTileJson.set(id, tilejson);
     } catch (err) {
       // Couldn't validate this source's TileJSON — don't drop its layers
       // on that basis alone, only filter what we can actually disprove.
@@ -155,9 +166,29 @@ export async function fetchSanitizedOlaStyle(): Promise<any> {
     return false;
   });
 
-  Object.values(style.sources || {}).forEach((s: any) => {
-    if (typeof s?.url === "string") s.url = withApiKeyParam(s.url);
-    if (Array.isArray(s?.tiles)) s.tiles = s.tiles.map((t: string) => withApiKeyParam(t));
+  Object.entries(style.sources || {}).forEach(([id, s]: [string, any]) => {
+    if (Array.isArray(s?.tiles)) {
+      s.tiles = s.tiles.map((t: string) => withApiKeyParam(t));
+      return;
+    }
+    if (typeof s?.url !== "string") return;
+
+    const tilejson = sourceTileJson.get(id);
+    if (!tilejson || !Array.isArray(tilejson.tiles) || tilejson.tiles.length === 0) {
+      // Couldn't resolve this source's real tile template — fall back to
+      // keying the reference URL alone (old behavior). The style still
+      // loads; only this source's actual tiles may 401 at render time.
+      console.error(`[fetchSanitizedOlaStyle] source "${id}" has no usable "tiles" in its TileJSON — falling back to keyed reference URL`);
+      s.url = withApiKeyParam(s.url);
+      return;
+    }
+
+    delete s.url;
+    s.tiles = tilejson.tiles.map((t: string) => withApiKeyParam(t));
+    if (typeof tilejson.minzoom === "number") s.minzoom = tilejson.minzoom;
+    if (typeof tilejson.maxzoom === "number") s.maxzoom = tilejson.maxzoom;
+    if (Array.isArray(tilejson.bounds))       s.bounds  = tilejson.bounds;
+    if (typeof tilejson.attribution === "string") s.attribution = tilejson.attribution;
   });
 
   return style;

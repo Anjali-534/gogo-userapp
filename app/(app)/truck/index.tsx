@@ -1,48 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
-  StatusBar,
+  View, Text, StyleSheet, TouchableOpacity, StatusBar,
 } from "react-native";
-import OlaMapView from "../../../components/OlaMapView";
-import { PickupMarker } from "../../../components/VehicleMarkers";
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
+import BookingHero from "../../../components/BookingHero";
+import BottomSheet, { BottomSheetHandle, COLLAPSED_PILL_BOTTOM } from "../../../components/BottomSheet";
 import { trackScreenView, trackBookingStarted } from "@/services/analytics";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
+
+type Scope = "city" | "outstation";
 
 export default function TruckIndexScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [scope, setScope] = useState<Scope | null>(null);
   const [sheetSnap, setSheetSnap] = useState<"FULL" | "HALF" | "PEEK" | "COLLAPSED">("PEEK");
   const sheetRef = useRef<BottomSheetHandle>(null);
 
   useEffect(() => {
     trackScreenView("TruckHome");
     trackBookingStarted({ service: "truck" });
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      }
-    })();
   }, []);
+
+  const handleContinue = () => {
+    if (!scope) return;
+    router.push({ pathname: "/(app)/truck/booking" as any, params: { scope } });
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" />
 
-      <OlaMapView location={location} zoomLevel={14} marker={<PickupMarker />} />
-
-      {/* Back button overlay */}
-      <SafeAreaView style={s.topBar} pointerEvents="box-none">
-        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
+      <BookingHero
+        illustration={require("../../../assets/illustrations/truck.png")}
+        onBack={() => router.back()}
+      />
 
       {/* Collapsible bottom sheet */}
       <BottomSheet ref={sheetRef} initialSnap="PEEK" onSnapChange={setSheetSnap}>
@@ -52,35 +45,50 @@ export default function TruckIndexScreen() {
 
           <View style={s.cardsRow}>
             <TouchableOpacity
-              style={s.card}
+              style={[s.card, scope === "city" && s.cardSelected]}
               activeOpacity={0.8}
-              onPress={() =>
-                router.push({ pathname: "/(app)/truck/booking" as any, params: { scope: "city" } })
-              }
+              onPress={() => setScope("city")}
             >
+              <View style={[s.radio, scope === "city" && s.radioSelected]}>
+                {scope === "city" && <View style={s.radioDot} />}
+              </View>
               <Text style={s.cardEmoji}>🏙️</Text>
               <Text style={s.cardTitle}>{t("common.withinCity")}</Text>
               <Text style={s.cardSub}>{t("truck.index.localDelivery")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={s.card}
+              style={[s.card, scope === "outstation" && s.cardSelected]}
               activeOpacity={0.8}
-              onPress={() =>
-                router.push({ pathname: "/(app)/truck/booking" as any, params: { scope: "outstation" } })
-              }
+              onPress={() => setScope("outstation")}
             >
+              <View style={[s.radio, scope === "outstation" && s.radioSelected]}>
+                {scope === "outstation" && <View style={s.radioDot} />}
+              </View>
               <Text style={s.cardEmoji}>🛣️</Text>
               <Text style={s.cardTitle}>{t("common.outstation")}</Text>
               <Text style={s.cardSub}>{t("truck.index.interstateTransport")}</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={s.trustBanner}>
+            <Text style={s.trustText}>🛡️ {t("truck.index.trustBanner")}</Text>
+          </View>
+
+          <TouchableOpacity
+            style={[s.continueBtn, !scope && s.continueBtnDisabled]}
+            activeOpacity={0.85}
+            disabled={!scope}
+            onPress={handleContinue}
+          >
+            <Text style={s.continueBtnText}>{t("common.continue")}</Text>
+          </TouchableOpacity>
         </View>
       </BottomSheet>
 
-      {/* Restore pill — shown when the sheet is dragged down to see the full map */}
+      {/* Restore pill — shown when the sheet is dragged down to see the full hero */}
       {sheetSnap === "COLLAPSED" && (
-        <View style={s.collapsedWrap}>
+        <View style={s.collapsedWrap} pointerEvents="box-none">
           <TouchableOpacity style={s.collapsedPill} onPress={() => sheetRef.current?.snapTo("PEEK")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.collapsedText}>{t("truck.index.collapsedBookTruck")}</Text>
           </TouchableOpacity>
@@ -91,19 +99,6 @@ export default function TruckIndexScreen() {
 }
 
 const s = StyleSheet.create({
-  topBar: {
-    position: "absolute", top: 0, left: 0, right: 0,
-    paddingHorizontal: 16, paddingTop: 52,
-  },
-  backBtn: {
-    width: 42, height: 42, borderRadius: 21,
-    backgroundColor: COLORS.white,
-    alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12, shadowRadius: 8, elevation: 6,
-  },
-  backTxt: { fontSize: 20, color: COLORS.textStrong, fontWeight: "700", lineHeight: 24 },
-
   content: { paddingHorizontal: SPACING.xl, paddingBottom: 48 },
 
   title:    { color: COLORS.textStrong, fontSize: 22, fontWeight: "700", letterSpacing: -0.3, marginBottom: 4 },
@@ -117,11 +112,37 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 12, elevation: 3,
   },
+  cardSelected: { borderColor: COLORS.primary, backgroundColor: COLORS.primaryTint2 },
   cardEmoji: { fontSize: 40, marginBottom: 4 },
   cardTitle: { color: COLORS.textStrong, fontSize: 16, fontWeight: "700" },
   cardSub:   { color: COLORS.textSecondary, fontSize: 12, fontWeight: "500" },
 
-  collapsedWrap: { position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center" },
+  radio: {
+    position: "absolute", top: 10, right: 10,
+    width: 20, height: 20, borderRadius: 10,
+    borderWidth: 2, borderColor: COLORS.border,
+    alignItems: "center", justifyContent: "center",
+  },
+  radioSelected: { borderColor: COLORS.primary },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.primary },
+
+  trustBanner: {
+    backgroundColor: COLORS.primaryTint2, borderRadius: RADIUS.input,
+    borderWidth: 1, borderColor: "#FFE4D6",
+    paddingHorizontal: 16, paddingVertical: 12,
+    marginTop: 20,
+  },
+  trustText: { color: COLORS.textSecondary, fontSize: 13, fontWeight: "600", textAlign: "center" },
+
+  continueBtn: {
+    backgroundColor: COLORS.primary, borderRadius: RADIUS.input,
+    paddingVertical: 16, alignItems: "center",
+    marginTop: 20,
+  },
+  continueBtnDisabled: { backgroundColor: COLORS.border },
+  continueBtnText: { color: COLORS.white, fontSize: 16, fontWeight: "700" },
+
+  collapsedWrap: { position: "absolute", bottom: COLLAPSED_PILL_BOTTOM, left: 0, right: 0, alignItems: "center" },
   collapsedPill: {
     backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet,
     shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10,

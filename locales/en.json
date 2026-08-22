@@ -650,7 +650,13 @@
       },
       "accountHeader": "ACCOUNT",
       "changePassword": "Change password",
-      "deleteAccount": "Delete account"
+      "deleteAccount": "Delete account",
+      "deleteAccountConfirm": {
+        "title": "Delete your account?",
+        "message": "This permanently deletes your account. Booking history is retained only as required for tax compliance. This cannot be undone.",
+        "confirm": "Delete My Account"
+      },
+      "deleteAccountError": "Something went wrong. Please try again."
     },
     "home": {
       "menu": {
@@ -711,7 +717,7 @@
         "message": "You will be logged out.",
         "confirm": "Sign out"
       },
-      "companyAttribution": "A Unit of Aggarwal Publicity & Marketing Pvt. Ltd."
+      "companyAttribution": "A Unit of Bogie AI Technologies Pvt Ltd"
     },
     "wallet": {
       "title": "Wallet",
@@ -827,8 +833,8 @@
         "community": "Community Guidelines",
         "licenses": "Licenses"
       },
-      "copyright": "© 2026 bogie Logistics · Aggarwal Publicity and Marketing Pvt. Ltd. · All rights reserved.",
-      "copyrightMultiline": "© 2026 bogie Logistics\nAggarwal Publicity and Marketing Pvt. Ltd.\nAll rights reserved.",
+      "copyright": "© 2026 bogie Logistics · Bogie AI Technologies Pvt Ltd · All rights reserved.",
+      "copyrightMultiline": "© 2026 bogie Logistics\nBogie AI Technologies Pvt Ltd\nAll rights reserved.",
       "privacy": {
         "subtitle": "Privacy Policy — bogie",
         "datesLabel": "Effective: {{effective}} | Updated: {{updated}}"
@@ -1138,6 +1144,7 @@
     "nearbyDrivers_other": "🚗 {{count}} drivers nearby",
     "distToDriver": "Driver {{dist}}",
     "distToDrop": "Drop {{dist}}",
+    "speedKmh": "{{speed}} km/h",
     "driverFallback": "Your driver",
     "vehicleFallback": "Vehicle",
     "callDriverTitle": "Call Driver",

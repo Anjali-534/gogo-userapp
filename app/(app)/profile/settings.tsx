@@ -3,9 +3,13 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Swi
 import { useRouter, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import * as Notifications from "expo-notifications";
+import axios from "axios";
 import { COLORS, RADIUS } from "@/constants/theme";
 import LanguagePicker from "@/components/LanguagePicker";
 import { registerPushToken } from "@/services/notifications";
+import { clearSession, getToken } from "@/services/session";
+
+const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -44,6 +48,35 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      t("profile.settings.deleteAccountConfirm.title"),
+      t("profile.settings.deleteAccountConfirm.message"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("profile.settings.deleteAccountConfirm.confirm"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const token = await getToken();
+              await axios.delete(`${API}/gogoo/rider/account`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              await clearSession();
+              router.replace("/(auth)/login");
+            } catch (err: any) {
+              Alert.alert(
+                t("profile.settings.deleteAccountConfirm.title"),
+                err?.response?.data?.error || t("profile.settings.deleteAccountError")
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={s.safe}>
       <View style={s.header}>
@@ -76,7 +109,11 @@ export default function SettingsScreen() {
           { key: "changePassword", label: t("profile.settings.changePassword") },
           { key: "deleteAccount",  label: t("profile.settings.deleteAccount") },
         ].map((item, i) => (
-          <TouchableOpacity key={item.key} style={[s.menuItem, i === 0 && { marginBottom: 10 }]}>
+          <TouchableOpacity
+            key={item.key}
+            style={[s.menuItem, i === 0 && { marginBottom: 10 }]}
+            onPress={item.key === "deleteAccount" ? handleDeleteAccount : undefined}
+          >
             <Text style={[s.menuLabel, item.key === "deleteAccount" && { color: COLORS.danger }]}>{item.label}</Text>
             <Text style={s.chevron}>›</Text>
           </TouchableOpacity>

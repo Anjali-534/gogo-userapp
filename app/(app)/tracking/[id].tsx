@@ -694,6 +694,15 @@ export default function TrackingScreen() {
         </View>
       ) : null}
 
+      {/* Speed pill — driver's live GPS speed, stacked below the distance pill.
+          user-app's right-side slot is already taken by mapModeBtn (active-ride
+          only), so this sits centered below distPill instead of beside it. */}
+      {driver?.lat && !["completed","cancelled"].includes(booking.status) ? (
+        <View style={s.speedPill}>
+          <Text style={s.speedPillTxt}>{t("tracking.speedKmh", { speed: Math.round(driver.speed ?? 0) })}</Text>
+        </View>
+      ) : null}
+
       {/* SOS — always visible above the sheet, independent of its position */}
       {!["scheduled", "completed", "cancelled"].includes(booking.status) && (
         <SOSButton
@@ -1026,6 +1035,8 @@ const s = StyleSheet.create({
   mapModeBtnTxt: { fontSize:19 },
   distPill:   { position:"absolute", top:Platform.OS==="ios"?56:40, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, elevation:5 },
   distPillTxt:{ color:"#fff", fontWeight:"800", fontSize:13 },
+  speedPill:    { position:"absolute", top:Platform.OS==="ios"?102:86, alignSelf:"center", backgroundColor:"#fff", paddingHorizontal:12, paddingVertical:6, borderRadius:16, elevation:4 },
+  speedPillTxt: { color:"#111", fontWeight:"800", fontSize:12 },
   nearbyPill:   { position:"absolute", top:Platform.OS==="ios"?104:88, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, backgroundColor:"rgba(17,17,17,0.75)", elevation:5 },
   nearbyPillTxt:{ color:"#fff", fontWeight:"700", fontSize:13 },
 

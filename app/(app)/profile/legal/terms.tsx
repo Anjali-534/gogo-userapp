@@ -64,7 +64,7 @@ export default function TermsScreen() {
       </View>
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
         <Text style={s.meta}>{t("profile.legal.terms.datesLabel", { effective: "June 1, 2026", updated: "June 18, 2026" })}</Text>
-        <Text style={s.meta}>Aggarwal Publicity and Marketing Pvt. Ltd., New Delhi, India</Text>
+        <Text style={s.meta}>Bogie AI Technologies Pvt Ltd, New Delhi, India</Text>
 
         <View style={s.infoBox}>
           <Text style={s.infoText}>

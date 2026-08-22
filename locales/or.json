@@ -646,7 +646,13 @@
       },
       "accountHeader": "ଆକାଉଣ୍ଟ",
       "changePassword": "ପାସୱାର୍ଡ ବଦଳାନ୍ତୁ",
-      "deleteAccount": "ଆକାଉଣ୍ଟ ଡିଲିଟ୍ କରନ୍ତୁ"
+      "deleteAccount": "ଆକାଉଣ୍ଟ ଡିଲିଟ୍ କରନ୍ତୁ",
+      "deleteAccountConfirm": {
+        "title": "ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ଡିଲିଟ୍ କରିବେ?",
+        "message": "ଏହା ଆପଣଙ୍କ ଆକାଉଣ୍ଟକୁ ସ୍ଥାୟୀ ଭାବେ ଡିଲିଟ୍ କରିଦେବ। ବୁକିଂ ହିଷ୍ଟୋରୀ କେବଳ ଟିକସ ଅନୁପାଳନ ପାଇଁ ଆବଶ୍ୟକ ଅନୁସାରେ ରଖାଯିବ। ଏହାକୁ ପୂର୍ବବତ୍ କରାଯାଇପାରିବ ନାହିଁ।",
+        "confirm": "ମୋ ଆକାଉଣ୍ଟ ଡିଲିଟ୍ କରନ୍ତୁ"
+      },
+      "deleteAccountError": "କିଛି ଭୁଲ ହୋଇଗଲା। ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
     },
     "home": {
       "menu": {
@@ -707,7 +713,7 @@
         "message": "ଆପଣ ଲଗଆଉଟ୍ ହୋଇଯିବେ।",
         "confirm": "ସାଇନ୍ ଆଉଟ୍ କରନ୍ତୁ"
       },
-      "companyAttribution": "Aggarwal Publicity & Marketing Pvt. Ltd. ର ଏକ ୟୁନିଟ୍"
+      "companyAttribution": "Bogie AI Technologies Pvt Ltd ର ଏକ ୟୁନିଟ୍"
     },
     "wallet": {
       "title": "ୱାଲେଟ୍",
@@ -804,8 +810,8 @@
         "community": "ସାମ୍ପ୍ରଦାୟିକ ମାର୍ଗଦର୍ଶିକା",
         "licenses": "ଲାଇସେନ୍ସ"
       },
-      "copyright": "© 2026 bogie Logistics · Aggarwal Publicity and Marketing Pvt. Ltd. · ସର୍ବସ୍ୱତ୍ୱ ସଂରକ୍ଷିତ।",
-      "copyrightMultiline": "© 2026 bogie Logistics\nAggarwal Publicity and Marketing Pvt. Ltd.\nସର୍ବସ୍ୱତ୍ୱ ସଂରକ୍ଷିତ।",
+      "copyright": "© 2026 bogie Logistics · Bogie AI Technologies Pvt Ltd · ସର୍ବସ୍ୱତ୍ୱ ସଂରକ୍ଷିତ।",
+      "copyrightMultiline": "© 2026 bogie Logistics\nBogie AI Technologies Pvt Ltd\nସର୍ବସ୍ୱତ୍ୱ ସଂରକ୍ଷିତ।",
       "privacy": {
         "subtitle": "ଗୋପନୀୟତା ନୀତି — bogie",
         "datesLabel": "ପ୍ରଭାବଶାଳୀ: {{effective}} | ଅପଡେଟ୍ ହୋଇଛି: {{updated}}"
@@ -1115,6 +1121,7 @@
     "nearbyDrivers_other": "🚗 {{count}} ଡ୍ରାଇଭର ପାଖରେ",
     "distToDriver": "ଡ୍ରାଇଭର {{dist}}",
     "distToDrop": "ଡ୍ରପ୍ {{dist}}",
+    "speedKmh": "{{speed}} କିମି/ଘ",
     "driverFallback": "ଆପଣଙ୍କର ଡ୍ରାଇଭର",
     "vehicleFallback": "ଗାଡ଼ି",
     "callDriverTitle": "ଡ୍ରାଇଭରଙ୍କୁ କଲ୍ କରନ୍ତୁ",

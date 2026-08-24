@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useScreenTimeTracker,
   startSession,
@@ -15,6 +16,9 @@ import {
 export default function AppLayout() {
   useScreenTimeTracker(); // automatic screen time + view tracking on every navigation
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const BASE_TAB_BAR_HEIGHT = 70;
+  const BASE_TAB_BAR_PADDING_BOTTOM = 10;
 
   useEffect(() => {
     const init = async () => {
@@ -48,7 +52,15 @@ export default function AppLayout() {
   return (
     <Tabs screenOptions={{
       headerShown: false,
-      tabBarStyle: { backgroundColor: "#FFFFFF", borderTopColor: "#F0F0F0", borderTopWidth: 1, height: 70, paddingBottom: 10, paddingTop: 8, elevation: 12 },
+      tabBarStyle: {
+        backgroundColor: "#FFFFFF",
+        borderTopColor: "#F0F0F0",
+        borderTopWidth: 1,
+        height: BASE_TAB_BAR_HEIGHT + insets.bottom,
+        paddingBottom: BASE_TAB_BAR_PADDING_BOTTOM + insets.bottom,
+        paddingTop: 8,
+        elevation: 12,
+      },
       tabBarActiveTintColor: "#FF6B2B",
       tabBarInactiveTintColor: "#BBBBBB",
       tabBarLabelStyle: { fontSize: 10, fontWeight: "700" },

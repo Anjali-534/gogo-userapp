@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput, Linking, Alert, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput, Linking, Alert, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
 import SOSButton from "../../../components/SOSButton";
 import { COLORS, RADIUS } from "@/constants/theme";
+
+const BEFORE_RIDE_ICONS: (keyof typeof Ionicons.glyphMap)[] = [
+  "person-outline", "share-social-outline", "car-outline", "battery-charging-outline",
+];
 
 const EMERGENCY_NUMBERS = [
   { key: "police",         number: "112" },
@@ -67,35 +72,54 @@ export default function SafetyScreen() {
           <Text style={s.backTxt}>←</Text>
         </TouchableOpacity>
         <Text style={s.title}>{t("profile.safety.title")}</Text>
+        <Image source={require("../../../assets/illustrations/shieldcheckmark.png")} style={s.headerArt} resizeMode="contain" />
       </View>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* SOS Banner */}
-        <View style={s.sosBanner}>
-          <Text style={s.sosIcon}>🛡</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={s.sosTitle}>{t("profile.safety.sosBannerTitle")}</Text>
-            <Text style={s.sosSub}>{t("profile.safety.sosBannerSub")}</Text>
+        {/* Hero banner */}
+        <View style={s.heroCard}>
+          <View style={s.heroIconWrap}>
+            <Image source={require("../../../assets/illustrations/shieldcheckmark.png")} style={s.heroIconImg} resizeMode="contain" />
           </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.heroTitle}>{t("profile.safety.sosBannerTitle")}</Text>
+            <Text style={s.heroSub}>{t("profile.safety.sosBannerSub")}</Text>
+          </View>
+          <Image
+            source={require("../../../assets/illustrations/design.png")}
+            style={s.heroLeaves}
+            resizeMode="contain"
+          />
         </View>
 
         {/* Emergency SOS */}
         <Text style={s.sectionHeader}>{t("profile.safety.emergencySosHeader")}</Text>
         <SOSButton variant="inline" style={{ marginBottom: 8 }} />
         <View style={s.infoBox}>
+          <View style={s.infoIconWrap}>
+            <Ionicons name="information" size={16} color={COLORS.primary} />
+          </View>
           <Text style={s.infoText}>
             {t("profile.safety.sosInfoText")}
           </Text>
+          <Image
+            source={require("../../../assets/illustrations/sos.png")}
+            style={s.infoArt}
+            resizeMode="contain"
+          />
         </View>
 
         {/* Before ride */}
         <Text style={s.sectionHeader}>{t("profile.safety.beforeRideHeader")}</Text>
         <View style={s.card}>
           {BEFORE_RIDE.map((item, i) => (
-            <View key={item} style={[s.checkRow, i > 0 && { borderTopWidth: 1, borderTopColor: "#F5F5F5" }]}>
-              <Text style={s.checkMark}>✓</Text>
-              <Text style={s.checkText}>{item}</Text>
+            <View key={item} style={[s.tipRow, i > 0 && { borderTopWidth: 1, borderTopColor: "#F5F5F5" }]}>
+              <View style={s.tipIconWrap}>
+                <Ionicons name={BEFORE_RIDE_ICONS[i] ?? "checkmark-circle-outline"} size={18} color={COLORS.successStrong} />
+              </View>
+              <Text style={s.tipText}>{item}</Text>
+              <Ionicons name="chevron-forward" size={18} color={COLORS.successStrong} />
             </View>
           ))}
         </View>
@@ -194,19 +218,40 @@ const s = StyleSheet.create({
   header:       { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingTop: 36, paddingBottom: 16 },
   back:         { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.border, alignItems: "center", justifyContent: "center" },
   backTxt:      { fontSize: 18, fontWeight: "700", color: COLORS.textPrimary },
-  title:        { color: COLORS.textPrimary, fontSize: 20, fontWeight: "900" },
+  title:        { color: COLORS.textPrimary, fontSize: 20, fontWeight: "900", flex: 1 },
+  headerArt:    { width: 34, height: 34 },
   scroll:       { paddingHorizontal: 20 },
-  sosBanner:    { backgroundColor: COLORS.textPrimary, borderRadius: RADIUS.sheet, padding: 20, marginBottom: 8, flexDirection: "row", alignItems: "center", gap: 14 },
-  sosIcon:      { fontSize: 32 },
-  sosTitle:     { color: "#fff", fontSize: 15, fontWeight: "800", marginBottom: 4 },
-  sosSub:       { color: "#aaa", fontSize: 13, lineHeight: 18 },
+
+  heroCard:     {
+    flexDirection: "row", alignItems: "center", gap: 14,
+    backgroundColor: COLORS.successTint2, borderRadius: RADIUS.sheet,
+    borderWidth: 1, borderColor: COLORS.successTint,
+    padding: 18, marginBottom: 8, overflow: "hidden",
+  },
+  heroIconWrap: { width: 52, height: 52, borderRadius: 26, backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center" },
+  heroIconImg:  { width: 30, height: 30 },
+  heroTitle:    { color: COLORS.textPrimary, fontSize: 16, fontWeight: "900", marginBottom: 4 },
+  heroSub:      { color: COLORS.textSecondary, fontSize: 13, lineHeight: 18 },
+  heroLeaves:   { position: "absolute", bottom: -6, right: -6, width: 64, height: 64, opacity: 0.9 },
+
   sectionHeader:{ fontSize: 13, fontWeight: "700", letterSpacing: 1, color: COLORS.textMuted, textTransform: "uppercase", marginTop: 24, marginBottom: 10 },
-  infoBox:      { backgroundColor: COLORS.primaryTint2, borderLeftWidth: 3, borderLeftColor: COLORS.primary, padding: 14, borderRadius: 8, marginBottom: 8 },
-  infoText:     { fontSize: 14, lineHeight: 20, color: COLORS.textSecondary },
+
+  infoBox:      {
+    flexDirection: "row", alignItems: "flex-start", gap: 10,
+    backgroundColor: COLORS.primaryTint2, borderLeftWidth: 3, borderLeftColor: COLORS.primary,
+    padding: 14, borderRadius: 8, marginBottom: 8,
+  },
+  infoIconWrap: { width: 24, height: 24, borderRadius: 12, backgroundColor: COLORS.primaryTint, alignItems: "center", justifyContent: "center", marginTop: 1 },
+  infoText:     { flex: 1, fontSize: 13, lineHeight: 19, color: COLORS.textSecondary },
+  infoArt:      { width: 48, height: 48, alignSelf: "center" },
+
   card:         { backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, overflow: "hidden", marginBottom: 4 },
   checkRow:     { flexDirection: "row", alignItems: "flex-start", padding: 14, gap: 12 },
-  checkMark:    { color: "#22C55E", fontSize: 15, fontWeight: "800", marginTop: 1 },
+  checkMark:    { color: COLORS.success, fontSize: 15, fontWeight: "800", marginTop: 1 },
   checkText:    { flex: 1, color: COLORS.textSecondary, fontSize: 14, lineHeight: 20 },
+  tipRow:       { flexDirection: "row", alignItems: "center", padding: 14, gap: 12 },
+  tipIconWrap:  { width: 34, height: 34, borderRadius: 17, backgroundColor: COLORS.successTint, alignItems: "center", justifyContent: "center" },
+  tipText:      { flex: 1, color: COLORS.textSecondary, fontSize: 14, lineHeight: 20 },
   emergRow:     { flexDirection: "row", alignItems: "center", padding: 14, justifyContent: "space-between" },
   emergLabel:   { color: COLORS.textPrimary, fontSize: 14, fontWeight: "600" },
   emergNumber:  { color: COLORS.textSecondary, fontSize: 14, fontWeight: "700" },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Stack, useRouter } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Linking from "expo-linking";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
@@ -102,11 +103,13 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }} onTouchStart={trackUserInteraction}>
-      <I18nextProvider i18n={i18n}>
-        <ErrorBoundary>
-          <Stack screenOptions={{ headerShown: false }} />
-        </ErrorBoundary>
-      </I18nextProvider>
+      <SafeAreaProvider>
+        <I18nextProvider i18n={i18n}>
+          <ErrorBoundary>
+            <Stack screenOptions={{ headerShown: false }} />
+          </ErrorBoundary>
+        </I18nextProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

@@ -61,14 +61,14 @@ export default function ProfileScreen() {
   const initial = (user?.name || "R")[0].toUpperCase();
 
   const menuItems = [
-    { icon: "⚙️",   key: "settings",     route: "/(app)/profile/settings"      },
-    { icon: "💳",   key: "wallet",       route: "/(app)/profile/wallet"        },
+    { icon: "⚙️",   img: require("../../../assets/illustrations/settings.png"),        key: "settings",     route: "/(app)/profile/settings"      },
+    { icon: "💳",   img: require("../../../assets/illustrations/wallet.png"),          key: "wallet",       route: "/(app)/profile/wallet"        },
     { icon: "🎁",   key: "refer",        route: "/(app)/profile/refer"         },
     { icon: "🏷",   key: "promos",       route: "/(app)/profile/promos"        },
     { icon: "🔔",   key: "notifications",route: "/(app)/profile/notifications" },
     { icon: "🚗",   key: "drive",        route: "/(app)/profile/drive"         },
-    { icon: "🆘",   key: "help",         route: "/(app)/profile/help"          },
-    { icon: "🛡",   key: "safety",       route: "/(app)/profile/safety"        },
+    { icon: "🆘",   img: require("../../../assets/illustrations/help.png"),            key: "help",         route: "/(app)/profile/help"          },
+    { icon: "🛡",   img: require("../../../assets/illustrations/shieldcheckmark.png"), key: "safety",       route: "/(app)/profile/safety"        },
     { icon: "📩",   key: "inbox",        route: "/(app)/profile/inbox"         },
     { icon: "📋",   key: "legal",        route: "/(app)/profile/legal"         },
   ];
@@ -76,9 +76,9 @@ export default function ProfileScreen() {
   const supportItem = { icon: "💬", route: "/(app)/support" };
 
   const quickActions = [
-    { key: "help",   route: "/(app)/profile/help",    icon: "🆘", badgeBg: COLORS.dangerTint,  badgeColor: COLORS.danger },
-    { key: "wallet", route: "/(app)/profile/wallet",  icon: "💳", badgeBg: COLORS.warningTint, badgeColor: COLORS.warning },
-    { key: "safety", route: "/(app)/profile/safety",  icon: "🛡", badgeBg: COLORS.primaryTint, badgeColor: COLORS.primary },
+    { key: "help",   route: "/(app)/profile/help",    icon: "🆘", img: require("../../../assets/illustrations/help.png"),            badgeBg: COLORS.dangerTint,  badgeColor: COLORS.danger },
+    { key: "wallet", route: "/(app)/profile/wallet",  icon: "💳", img: require("../../../assets/illustrations/wallet.png"),          badgeBg: COLORS.warningTint, badgeColor: COLORS.warning },
+    { key: "safety", route: "/(app)/profile/safety",  icon: "🛡", img: require("../../../assets/illustrations/shieldcheckmark.png"), badgeBg: COLORS.primaryTint, badgeColor: COLORS.primary },
     { key: "inbox",  route: "/(app)/profile/inbox",   icon: "📩", badgeBg: COLORS.infoTint,    badgeColor: COLORS.info },
   ];
 
@@ -142,7 +142,9 @@ export default function ProfileScreen() {
             return (
               <TouchableOpacity key={qa.key} style={s.quickCard} onPress={() => router.push(qa.route as any)}>
                 <View style={[s.quickBadge, { backgroundColor: qa.badgeBg }]}>
-                  <Text style={[s.quickIcon, { color: qa.badgeColor }]}>{qa.icon}</Text>
+                  {qa.img
+                    ? <Image source={qa.img} style={s.quickIconImg} resizeMode="contain" />
+                    : <Text style={[s.quickIcon, { color: qa.badgeColor }]}>{qa.icon}</Text>}
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={s.quickLabel}>{t(`profile.home.menu.${qa.key}.label`)}</Text>
@@ -173,7 +175,9 @@ export default function ProfileScreen() {
               onPress={() => router.push(item.route as any)}
             >
               <View style={s.menuItemBadge}>
-                <Text style={s.menuItemIcon}>{item.icon}</Text>
+                {item.img
+                  ? <Image source={item.img} style={s.menuItemIconImg} resizeMode="contain" />
+                  : <Text style={s.menuItemIcon}>{item.icon}</Text>}
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.menuLabel}>{t(`profile.home.menu.${item.key}.label`)}</Text>
@@ -225,6 +229,7 @@ const s = StyleSheet.create({
   quickCard:   { width: "48%", backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, paddingVertical: 16, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 10 },
   quickBadge:  { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
   quickIcon:   { fontSize: 18 },
+  quickIconImg:{ width: 24, height: 24 },
   quickLabel:  { color: COLORS.textPrimary, fontSize: 14, fontWeight: "700" },
   quickSub:    { color: "#999", fontSize: 10, marginTop: 1 },
 
@@ -238,6 +243,7 @@ const s = StyleSheet.create({
   menuDivider: { borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
   menuItemBadge:{ width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.bgSubtle, alignItems: "center", justifyContent: "center" },
   menuItemIcon:{ fontSize: 17 },
+  menuItemIconImg:{ width: 20, height: 20 },
   menuLabel:   { color: COLORS.textPrimary, fontSize: 15, fontWeight: "600" },
   menuSub:     { color: "#999", fontSize: 12, marginTop: 2 },
   chevron:     { color: "#CCC", fontSize: 20 },

@@ -11,7 +11,8 @@ const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.u
 // push still surfaces if the rider has the app open when it arrives.
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),

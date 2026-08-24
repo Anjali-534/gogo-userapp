@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert,
-  Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform,
+  Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -115,9 +116,9 @@ export default function WalletScreen() {
   };
 
   const PAYMENT_METHODS = [
-    { icon: "💵", key: "cash", labelKey: "booking.payment.cash" },
-    { icon: "📱", key: "upi",  labelKey: "booking.payment.upi" },
-    { icon: "💳", key: "card", labelKey: "profile.wallet.methods.card.label" },
+    { icon: "cash-outline" as const,           tint: COLORS.successTint, iconColor: COLORS.successStrong, key: "cash", labelKey: "booking.payment.cash" },
+    { icon: "phone-portrait-outline" as const, tint: "#F3E8FF",          iconColor: COLORS.purple,         key: "upi",  labelKey: "booking.payment.upi" },
+    { icon: "card-outline" as const,           tint: "#FEF9C3",          iconColor: "#CA8A04",             key: "card", labelKey: "profile.wallet.methods.card.label" },
   ];
 
   return (
@@ -132,20 +133,30 @@ export default function WalletScreen() {
 
         {/* Balance card */}
         <View style={s.balanceCard}>
-          <Text style={s.balanceLabel}>{t("profile.wallet.bogieCash")}</Text>
-          {loading ? (
-            <ActivityIndicator color="#fff" style={{ marginVertical: 8 }} />
-          ) : (
-            <Text style={s.balance}>₹{balance.toFixed(2)}</Text>
-          )}
-          <TouchableOpacity style={s.addBtn} onPress={handleAddMoney}>
-            <Text style={s.addBtnText}>{t("profile.wallet.addMoney")}</Text>
-          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <Text style={s.balanceLabel}>{t("profile.wallet.bogieCash")}</Text>
+            {loading ? (
+              <ActivityIndicator color={COLORS.primary} style={{ marginVertical: 8, alignSelf: "flex-start" }} />
+            ) : (
+              <Text style={s.balance}>₹{balance.toFixed(2)}</Text>
+            )}
+            <TouchableOpacity style={s.addBtn} onPress={handleAddMoney} activeOpacity={0.85}>
+              <Ionicons name="add" size={16} color="#fff" />
+              <Text style={s.addBtnText}>{t("profile.wallet.addMoney").replace("+ ", "")}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={s.balanceArtWrap}>
+            <Image source={require("../../../assets/illustrations/wallet.png")} style={s.balanceArt} resizeMode="contain" />
+            <Ionicons name="sparkles" size={14} color={COLORS.primary} style={s.sparkle1} />
+            <Ionicons name="sparkles" size={10} color={COLORS.primary} style={s.sparkle2} />
+          </View>
         </View>
 
         {!paymentsAvailable && (
           <View style={s.comingSoonBanner}>
-            <Text style={s.comingSoonIcon}>🚧</Text>
+            <View style={s.comingSoonIconWrap}>
+              <Ionicons name="construct-outline" size={18} color={COLORS.primary} />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={s.comingSoonTitle}>{t("profile.wallet.paymentsComingSoonTitle")}</Text>
               <Text style={s.comingSoonSub}>{t("profile.wallet.paymentsComingSoonSub")}</Text>
@@ -162,7 +173,9 @@ export default function WalletScreen() {
               style={[s.row, i > 0 && { borderTopWidth: 1, borderTopColor: "#F5F5F5" }]}
               onPress={() => Alert.alert(t("profile.wallet.comingSoonTitle"), t("profile.wallet.comingSoonMethod", { method: t(m.labelKey) }))}
             >
-              <Text style={s.rowIcon}>{m.icon}</Text>
+              <View style={[s.rowIconWrap, { backgroundColor: m.tint }]}>
+                <Ionicons name={m.icon} size={18} color={m.iconColor} />
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.rowLabel}>{t(m.labelKey)}</Text>
                 <Text style={s.rowSub}>{t(`profile.wallet.methods.${m.key}.sub`)}</Text>
@@ -278,22 +291,32 @@ const s = StyleSheet.create({
   backTxt:      { fontSize: 18, fontWeight: "700", color: COLORS.textPrimary },
   title:        { color: COLORS.textPrimary, fontSize: 20, fontWeight: "900" },
   scroll:       { paddingHorizontal: 20 },
-  balanceCard:  { backgroundColor: COLORS.textPrimary, borderRadius: RADIUS.sheet, padding: 24, marginBottom: 16, alignItems: "center", gap: 8 },
-  balanceLabel: { color: "#aaa", fontSize: 14 },
-  balance:      { color: "#fff", fontSize: 36, fontWeight: "900" },
-  addBtn:       { backgroundColor: COLORS.primary, borderRadius: RADIUS.input, paddingHorizontal: 24, paddingVertical: 10, marginTop: 8 },
+  balanceCard:  {
+    flexDirection: "row", alignItems: "center",
+    backgroundColor: COLORS.primaryTint, borderRadius: RADIUS.sheet,
+    borderWidth: 1, borderColor: COLORS.primaryBorder,
+    padding: 22, marginBottom: 16, overflow: "hidden",
+  },
+  balanceLabel: { color: COLORS.textSecondary, fontSize: 13, fontWeight: "600" },
+  balance:      { color: COLORS.textPrimary, fontSize: 32, fontWeight: "900", marginTop: 4, marginBottom: 12 },
+  addBtn:       { flexDirection: "row", alignItems: "center", gap: 6, alignSelf: "flex-start", backgroundColor: COLORS.primary, borderRadius: RADIUS.input, paddingHorizontal: 18, paddingVertical: 10 },
   addBtnText:   { color: "#fff", fontWeight: "800", fontSize: 14 },
+  balanceArtWrap: { width: 84, height: 84, alignItems: "center", justifyContent: "center" },
+  balanceArt:     { width: 76, height: 76 },
+  sparkle1:       { position: "absolute", top: 2, right: 4 },
+  sparkle2:       { position: "absolute", bottom: 10, left: 0 },
   comingSoonBanner: {
     flexDirection: "row", gap: 12, alignItems: "center",
     backgroundColor: "#FFF7ED", borderRadius: RADIUS.card, borderWidth: 1, borderColor: "#FED7AA",
     padding: 14, marginBottom: 20,
   },
-  comingSoonIcon:  { fontSize: 22 },
+  comingSoonIconWrap: { width: 34, height: 34, borderRadius: 17, backgroundColor: COLORS.primaryTint, alignItems: "center", justifyContent: "center" },
   comingSoonTitle: { color: "#9A3412", fontSize: 13, fontWeight: "800" },
   comingSoonSub:   { color: "#C2410C", fontSize: 12, marginTop: 2, lineHeight: 16 },
   sectionTitle: { color: COLORS.textPrimary, fontSize: 14, fontWeight: "800", marginBottom: 12, marginTop: 4 },
   card:         { backgroundColor: COLORS.white, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, overflow: "hidden", marginBottom: 20 },
   row:          { flexDirection: "row", alignItems: "center", padding: 16, gap: 14 },
+  rowIconWrap:  { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
   rowIcon:      { fontSize: 22, width: 30, textAlign: "center" },
   rowLabel:     { color: COLORS.textPrimary, fontSize: 14, fontWeight: "700" },
   rowSub:       { color: "#999", fontSize: 12, marginTop: 2 },

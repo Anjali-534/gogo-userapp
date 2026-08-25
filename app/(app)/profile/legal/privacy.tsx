@@ -14,7 +14,7 @@ export default function PrivacyScreen() {
         <TouchableOpacity onPress={() => router.back()} style={s.back} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
           <Text style={s.backTxt}>←</Text>
         </TouchableOpacity>
-        <Text style={s.title}>{t("profile.legal.items.privacy")}</Text>
+        <Text style={s.title}>{t("Privacy Policy")}</Text>
       </View>
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
         <Text style={s.meta}>{t("profile.legal.privacy.datesLabel", { effective: "June 1, 2026", updated: "June 18, 2026" })}</Text>

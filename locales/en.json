@@ -45,6 +45,8 @@
       "emailPlaceholder": "you@gmail.com",
       "passwordLabel": "PASSWORD",
       "passwordPlaceholder": "Min 8 characters",
+      "orDivider": "OR",
+      "continueWithGoogle": "Continue with Google",
       "errors": {
         "fillFields": "Please fill in all fields",
         "invalidEmailTitle": "Invalid Email",
@@ -590,6 +592,7 @@
       "zeroCommissionBanner": "Zero Platform Commission on Ambulance Services",
       "emergencyBannerText": "This is an emergency booking. We will dispatch the nearest available ambulance immediately.",
       "freeDisclaimer": "⚠️ Free ambulance availability depends on government/NGO resources in your area.",
+      "freeBillingDisclaimer": "⚠️ You'll be charged the standard fare unless our team confirms NGO/government coverage and waives it — we'll call you to confirm.",
       "selectedHospital": "Selected Hospital",
       "summary": {
         "title": "Booking Summary",

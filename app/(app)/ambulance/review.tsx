@@ -75,9 +75,16 @@ export default function AmbulanceReviewScreen() {
   const km               = parseFloat(distanceKm  || "0");
   const distCharge       = Math.round(km * rate);
   const estimatedFareNum = parseFloat(estimatedFare || "0");
-  // For paid: prefer estimatedFare if valid; otherwise calculate from base + distance
+  // Prefer estimatedFare if valid; otherwise calculate from base + distance.
+  // This is the real fare regardless of isFree — every ambulance booking is
+  // created as paid server-side (CreateBooking always inserts
+  // is_free_ambulance=FALSE and validates estimated_fare against the
+  // server-computed fare within tolerance; staff waive it afterward via a
+  // separate endpoint). Submitting ₹0 for a free request fails that check.
+  // The FREE-branch UI below is unaffected — it renders its own literal
+  // "₹0"/"FREE" copy and never reads totalFare.
   const calculatedFare   = baseFareNum + distCharge;
-  const totalFare        = isFree ? 0 : (estimatedFareNum > 0 ? estimatedFareNum : calculatedFare);
+  const totalFare        = estimatedFareNum > 0 ? estimatedFareNum : calculatedFare;
 
   const [booking,   setBooking]   = useState(false);
   const [rulesOpen, setRulesOpen] = useState(isEmergency);
@@ -352,6 +359,18 @@ export default function AmbulanceReviewScreen() {
             </>
           )}
         </View>
+
+        {/* Billing disclaimer for free requests — every ambulance booking is
+            created as paid server-side; staff waive the fare afterward only
+            if NGO/government coverage is confirmed. Must be visible here,
+            next to the FREE/₹0 copy above, before the user taps book. */}
+        {isFree && (
+          <View style={s.freeDisclaimer}>
+            <Text style={s.freeDisclaimerText}>
+              {t("ambulance.review.freeBillingDisclaimer")}
+            </Text>
+          </View>
+        )}
 
         {/* Payment note for paid */}
         {!isFree && hospitalName ? (

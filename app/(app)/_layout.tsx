@@ -50,21 +50,24 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <Tabs screenOptions={{
-      headerShown: false,
-      tabBarStyle: {
-        backgroundColor: "#FFFFFF",
-        borderTopColor: "#F0F0F0",
-        borderTopWidth: 1,
-        height: BASE_TAB_BAR_HEIGHT + insets.bottom,
-        paddingBottom: BASE_TAB_BAR_PADDING_BOTTOM + insets.bottom,
-        paddingTop: 8,
-        elevation: 12,
-      },
-      tabBarActiveTintColor: "#FF6B2B",
-      tabBarInactiveTintColor: "#BBBBBB",
-      tabBarLabelStyle: { fontSize: 10, fontWeight: "700" },
-    }}>
+    <Tabs
+      backBehavior="history"
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: "#FFFFFF",
+          borderTopColor: "#F0F0F0",
+          borderTopWidth: 1,
+          height: BASE_TAB_BAR_HEIGHT + insets.bottom,
+          paddingBottom: BASE_TAB_BAR_PADDING_BOTTOM + insets.bottom,
+          paddingTop: 8,
+          elevation: 12,
+        },
+        tabBarActiveTintColor: "#FF6B2B",
+        tabBarInactiveTintColor: "#BBBBBB",
+        tabBarLabelStyle: { fontSize: 10, fontWeight: "700" },
+      }}
+    >
       <Tabs.Screen name="home/index"    options={{ title: t("common.tabs.home"),    tabBarIcon: ({ color, size, focused }) => <Ionicons name={focused ? "home"            : "home-outline"}            size={size ?? 22} color={color} /> }} />
       <Tabs.Screen name="history/index" options={{ title: t("common.tabs.rides"),   tabBarIcon: ({ color, size, focused }) => <Ionicons name={focused ? "time"            : "time-outline"}            size={size ?? 22} color={color} /> }} />
       <Tabs.Screen name="profile"       options={{ title: t("common.tabs.profile"), tabBarIcon: ({ color, size, focused }) => <Ionicons name={focused ? "person-circle"   : "person-circle-outline"}   size={size ?? 22} color={color} /> }} />

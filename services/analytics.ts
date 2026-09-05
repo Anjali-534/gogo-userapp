@@ -460,7 +460,7 @@ export const setUserProperties = (user: {
     await crashlytics().setAttributes({ name: user.name || "unknown", type: "rider" });
   });
 
-export const trackLogin = (params: { method: "phone" | "otp" | "email"; userId: string }) =>
+export const trackLogin = (params: { method: "phone" | "otp" | "email" | "google"; userId: string }) =>
   safe(async () => {
     await analytics().logLogin({ method: params.method });
     await analytics().setUserId(params.userId);

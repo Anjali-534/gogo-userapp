@@ -90,6 +90,13 @@ was considered and rejected in favor of precision:
   textbook Odia अम्ल जान — ଅମ୍ଳଜାନ — rather than the transliteration ଅକ୍ସିଜେନ୍. Both are
   widely understood in Odisha; flagging so a native speaker can confirm ଅମ୍ଳଜାନ is what
   appears on real ambulance/hospital signage rather than a bookish word people don't say aloud.
+- **freeBillingDisclaimer** (`ambulance.review.freeBillingDisclaimer`, added post-Batch 2) — new
+  billing-clarity string: warns a free/NGO ambulance requester that the standard fare is still
+  charged until staff confirm coverage and waive it. Used माफ़ / ମାଫ୍ ("waive") — the standard
+  fee-waiver term in Hindi/Odia banking and telecom apps, not a literal/awkward paraphrase.
+  Flagging because a soft or overly-reassuring mistranslation here is a different class of risk
+  than the equipment-terminology items above: it could lead a rider to believe the ride is
+  definitely free when it isn't. Confirm this reads as a clear financial warning.
 
 Full table (English source → Hindi → Odia) for every `ambulance.*` key added in Batch 2:
 
@@ -145,6 +152,7 @@ Key | English | Hindi | Odia
 `ambulance.review.btn.*` | Request Free / EMERGENCY REQUEST / Book {{hospital}} | फ्री एम्बुलेंस रिक्वेस्ट / इमरजेंसी रिक्वेस्ट / {{hospital}} बुक करें | ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ରିକୱେଷ୍ଟ / ଜରୁରୀକାଳୀନ ରିକୱେଷ୍ଟ / {{hospital}} ବୁକ୍ କରନ୍ତୁ
 `ambulance.review.charges.*` | Commission, ₹0 (Zero Commission), Government/NGO, ✅ Covered, FREE | कमीशन, ₹0 (ज़ीरो कमीशन), सरकार/NGO, ✅ कवर्ड, फ्री | କମିଶନ୍, ₹0 (ଜିରୋ କମିଶନ୍), ସରକାର/NGO, ✅ କଭର୍ଡ୍, ମାଗଣା
 `ambulance.review.emergencyBannerText` | 🚨 This is an emergency booking... | 🚨 यह एक इमरजेंसी बुकिंग है... | 🚨 ଏହା ଏକ ଜରୁରୀକାଳୀନ ବୁକିଂ...
+`ambulance.review.freeBillingDisclaimer` | ⚠️ You'll be charged the standard fare unless our team confirms NGO/government coverage and waives it... | ⚠️ जब तक हमारी टीम NGO/सरकारी सहायता की पुष्टि करके इसे माफ़ नहीं करती... | ⚠️ ଆମ ଟିମ୍ NGO/ସରକାରୀ ସହାୟତା ନିଶ୍ଚିତ କରି ଏହାକୁ ମାଫ୍ ନକରିବା ପର୍ଯ୍ୟନ୍ତ...
 `ambulance.review.freeDisclaimer` | ⚠️ Free ambulance availability depends on government/NGO resources... | ⚠️ फ्री एम्बुलेंस की उपलब्धता... | ⚠️ ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ଉପଲବ୍ଧତା...
 `ambulance.review.paymentNote` | 💡 Payment is made directly to {{hospital}}... | 💡 पेमेंट सीधे {{hospital}} को की जाती है... | 💡 ପେମେଣ୍ଟ ସିଧାସଳଖ {{hospital}} କୁ କରାଯାଏ...
 `ambulance.review.rules` (5-item array) | Arrival time, documentation, availability, call 108, zero commission | see or.json/hi.json | see or.json/hi.json

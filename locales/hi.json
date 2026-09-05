@@ -44,6 +44,8 @@
       "emailPlaceholder": "you@gmail.com",
       "passwordLabel": "पासवर्ड",
       "passwordPlaceholder": "कम से कम 8 अक्षर",
+      "orDivider": "या",
+      "continueWithGoogle": "Google से जारी रखें",
       "errors": {
         "fillFields": "कृपया सभी फ़ील्ड भरें",
         "invalidEmailTitle": "अमान्य ईमेल",
@@ -586,6 +588,7 @@
       "zeroCommissionBanner": "एम्बुलेंस सेवाओं पर ज़ीरो प्लेटफ़ॉर्म कमीशन",
       "emergencyBannerText": "यह एक इमरजेंसी बुकिंग है। हम तुरंत सबसे नज़दीकी उपलब्ध एम्बुलेंस भेजेंगे।",
       "freeDisclaimer": "⚠️ फ्री एम्बुलेंस की उपलब्धता आपके क्षेत्र में सरकारी/NGO संसाधनों पर निर्भर करती है।",
+      "freeBillingDisclaimer": "⚠️ जब तक हमारी टीम NGO/सरकारी सहायता की पुष्टि करके इसे माफ़ नहीं करती, तब तक आपसे सामान्य किराया लिया जाएगा — पुष्टि के लिए हम आपको कॉल करेंगे।",
       "selectedHospital": "चुना गया अस्पताल",
       "summary": {
         "title": "बुकिंग सारांश",

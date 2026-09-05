@@ -35,11 +35,43 @@ type NearbyHospital = {
   is_verified: boolean;
 };
 
+type AmbulanceService = {
+  id: string;
+  slug: string;
+  category: string;
+  base_fare: number;
+  per_km_rate: number;
+};
+
 const PURPOSES: { key: string; icon: keyof typeof Ionicons.glyphMap }[] = [
   { key: "patient_transfer", icon: "medical-outline" },
   { key: "emergency",        icon: "alert-circle-outline" },
   { key: "dead_body",        icon: "flower-outline" },
 ];
+
+// Straight-line distance × 1.3 road-distance factor — mirrors the backend's
+// own server-side recompute (roadDistanceFactor in gogoo.go) and the same
+// estimate already used by ambulance/vehicles.tsx, so the client-estimated
+// fare lands inside the backend's ±5%/₹5 tolerance check at CreateBooking.
+function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
+  const R = 6371;
+  const dLat = ((bLat - aLat) * Math.PI) / 180;
+  const dLng = ((bLng - aLng) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((aLat * Math.PI) / 180) *
+      Math.cos((bLat * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Mirrors the purpose/sub-type → service slug mapping used by the backend
+// and the website's AmbulanceBookingFlow.tsx: dead-body always rides on
+// Patient Transport; patient_transfer/emergency ride on the chosen BLS/ALS.
+function resolveServiceSlug(purpose: string, subType: string): string {
+  if (purpose === "dead_body") return "ambulance_transport";
+  return subType === "als" ? "ambulance_als" : "ambulance_bls";
+}
 
 // ─── Places helpers (Ola Maps, Google fallback via backend proxy) ────────────
 async function autocompletePlaces(input: string, lat: number, lng: number): Promise<PlaceSuggestion[]> {
@@ -157,6 +189,7 @@ export default function AmbulanceBookingScreen() {
 
   const [deadBodyModal,  setDeadBodyModal]  = useState(false);
   const [pendingPurpose, setPendingPurpose] = useState("");
+  const [submitting,     setSubmitting]     = useState(false);
 
   const fetchNearbyHospitals = useCallback(async (lat: number, lng: number) => {
     try {
@@ -307,25 +340,64 @@ export default function AmbulanceBookingScreen() {
     contactPhone.length === 10 &&
     (!needsSubType || ambulanceSubType.length > 0);
 
-  const proceed = () => {
-    if (!canProceed) return;
+  const proceed = async () => {
+    if (!canProceed || submitting) return;
+    setSubmitting(true);
+
+    // Resolve the real service (id + fare) for the chosen purpose/sub-type —
+    // review.tsx used to fall back to "whatever ambulance service the API
+    // returns first" because these were never passed through. Same slug
+    // mapping the backend and the website's AmbulanceBookingFlow.tsx use.
+    let serviceTypeId = "";
+    let baseFareNum = 0;
+    let perKmRateNum = 0;
+    try {
+      const res = await fetch(`${BACKEND}/gogoo/services`);
+      const services: AmbulanceService[] = await res.json();
+      const slug = resolveServiceSlug(purpose, ambulanceSubType);
+      const svc =
+        services.find((s) => s.slug === slug) ||
+        services.find((s) => s.category === "ambulance");
+      if (svc) {
+        serviceTypeId = svc.id;
+        baseFareNum = Number(svc.base_fare) || 0;
+        perKmRateNum = Number(svc.per_km_rate) || 0;
+      }
+    } catch {}
+
+    const distanceKm =
+      pickup && drop
+        ? Math.round(haversineKm(pickup.lat, pickup.lng, drop.lat, drop.lng) * 1.3 * 10) / 10
+        : 0;
+    const estimatedFare = Math.round(baseFareNum + distanceKm * perKmRateNum);
 
     const shared = {
       type,
       purpose,
       ambulanceSubType,
-      pickupLat:                String(pickup!.lat),
-      pickupLng:                String(pickup!.lng),
-      pickupAddress:            pickup!.address,
-      dropLat:                  String(drop!.lat),
-      dropLng:                  String(drop!.lng),
-      dropAddress:              drop!.address,
-      patientName:              patientName.trim(),
+      pickupLat:     String(pickup!.lat),
+      pickupLng:     String(pickup!.lng),
+      pickupAddress: pickup!.address,
+      dropLat:       String(drop!.lat),
+      dropLng:       String(drop!.lng),
+      dropAddress:   drop!.address,
+      patientName:   patientName.trim(),
       contactPhone,
-      medNotes:                 medNotes.trim(),
-      selectedDropHospitalId:   selectedDropHospital?.id   || "",
-      selectedDropHospitalName: selectedDropHospital?.name || "",
+      medNotes:      medNotes.trim(),
+      // Named to match what review.tsx actually destructures — these used
+      // to be sent as selectedDropHospitalId/selectedDropHospitalName,
+      // which review.tsx never reads.
+      hospitalId:    selectedDropHospital?.id    || "",
+      hospitalName:  selectedDropHospital?.name  || "",
+      hospitalPhone: selectedDropHospital?.phone || "",
+      serviceTypeId,
+      baseFare:      String(baseFareNum),
+      perKmRate:     String(perKmRateNum),
+      distanceKm:    String(distanceKm),
+      estimatedFare: String(estimatedFare),
     };
+
+    setSubmitting(false);
 
     if (isFree) {
       router.push({ pathname: "/(app)/ambulance/free-info" as any, params: shared });
@@ -581,14 +653,18 @@ export default function AmbulanceBookingScreen() {
       {/* Fixed bottom */}
       <View style={s.bottomBar}>
         <TouchableOpacity
-          style={[s.proceedBtn, !canProceed && s.proceedDisabled]}
+          style={[s.proceedBtn, (!canProceed || submitting) && s.proceedDisabled]}
           onPress={proceed}
-          disabled={!canProceed}
+          disabled={!canProceed || submitting}
           activeOpacity={0.85}
         >
-          <Text style={s.proceedText}>
-            {isFree ? t("ambulance.booking.confirmRequestFree") : t("ambulance.booking.confirmChooseHospital")}
-          </Text>
+          {submitting ? (
+            <ActivityIndicator size="small" color={COLORS.white} />
+          ) : (
+            <Text style={s.proceedText}>
+              {isFree ? t("ambulance.booking.confirmRequestFree") : t("ambulance.booking.confirmChooseHospital")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       </KeyboardAvoidingView>

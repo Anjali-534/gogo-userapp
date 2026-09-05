@@ -44,6 +44,8 @@
       "emailPlaceholder": "you@gmail.com",
       "passwordLabel": "ପାସୱାର୍ଡ",
       "passwordPlaceholder": "ଅତିକମରେ 8 ଅକ୍ଷର",
+      "orDivider": "କିମ୍ବା",
+      "continueWithGoogle": "Google ସହିତ ଜାରି ରଖନ୍ତୁ",
       "errors": {
         "fillFields": "ଦୟାକରି ସମସ୍ତ ଫିଲ୍ଡ ପୂରଣ କରନ୍ତୁ",
         "invalidEmailTitle": "ଅବୈଧ ଇମେଲ୍",
@@ -586,6 +588,7 @@
       "zeroCommissionBanner": "ଆମ୍ବୁଲାନ୍ସ ସେବାରେ ଜିରୋ ପ୍ଲାଟଫର୍ମ କମିଶନ୍",
       "emergencyBannerText": "ଏହା ଏକ ଜରୁରୀକାଳୀନ ବୁକିଂ। ଆମେ ତୁରନ୍ତ ନିକଟସ୍ଥ ଉପଲବ୍ଧ ଆମ୍ବୁଲାନ୍ସ ପଠାଇବୁ।",
       "freeDisclaimer": "⚠️ ମାଗଣା ଆମ୍ବୁଲାନ୍ସ ଉପଲବ୍ଧତା ଆପଣଙ୍କ ଅଞ୍ଚଳରେ ସରକାରୀ/NGO ସମ୍ବଳ ଉପରେ ନିର୍ଭର କରେ।",
+      "freeBillingDisclaimer": "⚠️ ଆମ ଟିମ୍ NGO/ସରକାରୀ ସହାୟତା ନିଶ୍ଚିତ କରି ଏହାକୁ ମାଫ୍ ନକରିବା ପର୍ଯ୍ୟନ୍ତ ଆପଣଙ୍କଠାରୁ ମାନକ ଭଡ଼ା ନିଆଯିବ — ନିଶ୍ଚିତ କରିବା ପାଇଁ ଆମେ ଆପଣଙ୍କୁ କଲ୍ କରିବୁ।",
       "selectedHospital": "ବଚ୍ଛିତ ଡାକ୍ତରଖାନା",
       "summary": {
         "title": "ବୁକିଂ ସାରାଂଶ",

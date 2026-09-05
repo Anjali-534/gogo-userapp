@@ -8,12 +8,22 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+  isErrorWithCode,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 import { trackLogin } from "@/services/analytics";
 import { registerPushToken } from "@/services/notifications";
 import { setToken } from "@/services/session";
 import LanguageSwitcherButton from "@/components/LanguageSwitcherButton";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
+
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+});
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -24,6 +34,7 @@ export default function LoginScreen() {
   const [name,         setName]         = useState("");
   const [phone,        setPhone]        = useState("");
   const [loading,      setLoading]      = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [referralCheck, setReferralCheck] = useState<{ valid: boolean; referrer_name?: string } | null>(null);
@@ -97,6 +108,29 @@ export default function LoginScreen() {
     } finally { setLoading(false); }
   };
 
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      if (!isSuccessResponse(response)) return; // user cancelled the picker
+
+      const { idToken } = response.data;
+      const res = await axios.post(`${API}/auth/google`, { id_token: idToken });
+      const profileRes = await axios.get(`${API}/gogoo/rider/profile`, {
+        headers: { Authorization: `Bearer ${res.data.access_token}` },
+      }).catch(() => ({ data: {} }));
+      const riderId = profileRes.data?.rider_id;
+      await storeSession({ ...res.data, rider_id: riderId });
+      if (riderId) trackLogin({ method: "google", userId: String(riderId) });
+      registerPushToken();
+      router.replace("/(app)/home");
+    } catch (e: any) {
+      if (isErrorWithCode(e) && e.code === statusCodes.IN_PROGRESS) return;
+      Alert.alert(t("auth.login.errors.loginFailedTitle"), e.response?.data?.error || t("auth.login.errors.loginFailedDefault"));
+    } finally { setGoogleLoading(false); }
+  };
+
   return (
     <View style={s.root}>
       <StatusBar barStyle="dark-content" backgroundColor="#FAFAFA" />
@@ -168,6 +202,28 @@ export default function LoginScreen() {
               : <Text style={s.btnText}>{tab === "login" ? t("auth.login.signIn") : t("auth.login.createAccount")}</Text>
             }
           </TouchableOpacity>
+
+          <View style={s.dividerRow}>
+            <View style={s.dividerLine} />
+            <Text style={s.dividerText}>{t("auth.login.orDivider")}</Text>
+            <View style={s.dividerLine} />
+          </View>
+
+          <TouchableOpacity
+            style={[s.googleBtn, googleLoading && s.btnDisabled]}
+            onPress={handleGoogleLogin}
+            disabled={googleLoading || loading}
+          >
+            {googleLoading
+              ? <ActivityIndicator color="#0D0D0D" />
+              : (
+                <>
+                  <Ionicons name="logo-google" size={18} color="#0D0D0D" style={s.googleIcon} />
+                  <Text style={s.googleBtnText}>{t("auth.login.continueWithGoogle")}</Text>
+                </>
+              )
+            }
+          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -197,4 +253,10 @@ const s = StyleSheet.create({
   eyeBtn:        { padding: 14 },
   referralOk:    { color: "#10B981", fontSize: 12, fontWeight: "600", marginTop: -4 },
   referralBad:   { color: "#F59E0B", fontSize: 12, fontWeight: "600", marginTop: -4 },
+  dividerRow:    { flexDirection: "row", alignItems: "center", marginTop: 4 },
+  dividerLine:   { flex: 1, height: 1, backgroundColor: "#F0F0F0" },
+  dividerText:   { color: "#9CA3AF", fontSize: 11, fontWeight: "700", letterSpacing: 1.2, textTransform: "uppercase", marginHorizontal: 12 },
+  googleBtn:     { flexDirection: "row", backgroundColor: "#FFFFFF", borderWidth: 1.5, borderColor: "#F0F0F0", borderRadius: 16, paddingVertical: 16, alignItems: "center", justifyContent: "center", gap: 10 },
+  googleIcon:    { marginRight: 2 },
+  googleBtnText: { color: "#0D0D0D", fontWeight: "700", fontSize: 15, letterSpacing: 0.3 },
 });

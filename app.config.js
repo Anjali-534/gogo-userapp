@@ -53,5 +53,6 @@ module.exports = ({ config }) => ({
     "./plugins/withDisableAndroidBackup.js",
     "expo-secure-store",
     "@maplibre/maplibre-react-native",
+    "@react-native-google-signin/google-signin",
   ],
 });

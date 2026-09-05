@@ -54,6 +54,8 @@
         "invalidPassword": "ପାସୱାର୍ଡ ଅତିକମରେ 8 ଅକ୍ଷରର ହେବା ଉଚିତ୍",
         "loginFailedTitle": "ଲଗଇନ୍ ବିଫଳ",
         "loginFailedDefault": "ଇମେଲ୍ କିମ୍ବା ପାସୱାର୍ଡ ଭୁଲ୍ ଅଛି",
+        "googleSignInFailedTitle": "Google ସାଇନ୍-ଇନ୍ ବିଫଳ",
+        "googleSignInFailedDefault": "Google ସହିତ ସାଇନ୍ ଇନ୍ ହୋଇପାରିଲା ନାହିଁ। ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।",
         "signupFailedTitle": "ସାଇନ୍ ଅପ୍ ବିଫଳ",
         "signupFailedDefault": "କିଛି ଭୁଲ୍ ହୋଇଗଲା"
       }

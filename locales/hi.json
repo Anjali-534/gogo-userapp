@@ -54,6 +54,8 @@
         "invalidPassword": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
         "loginFailedTitle": "लॉगिन विफल",
         "loginFailedDefault": "ईमेल या पासवर्ड गलत है",
+        "googleSignInFailedTitle": "Google साइन-इन विफल",
+        "googleSignInFailedDefault": "Google से साइन इन नहीं हो सका। कृपया पुनः प्रयास करें।",
         "signupFailedTitle": "साइन अप विफल",
         "signupFailedDefault": "कुछ गड़बड़ हो गई"
       }

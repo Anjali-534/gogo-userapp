@@ -14,7 +14,7 @@ import {
   isErrorWithCode,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { trackLogin } from "@/services/analytics";
+import { trackLogin, trackError } from "@/services/analytics";
 import { registerPushToken } from "@/services/notifications";
 import { setToken } from "@/services/session";
 import LanguageSwitcherButton from "@/components/LanguageSwitcherButton";
@@ -127,7 +127,20 @@ export default function LoginScreen() {
       router.replace("/(app)/home");
     } catch (e: any) {
       if (isErrorWithCode(e) && e.code === statusCodes.IN_PROGRESS) return;
-      Alert.alert(t("auth.login.errors.loginFailedTitle"), e.response?.data?.error || t("auth.login.errors.loginFailedDefault"));
+      // This is the Google Sign-In path, not password login — never fall
+      // back to the password-login error copy ("Invalid email or
+      // password"), since a native GoogleSignin SDK error (e.g.
+      // DEVELOPER_ERROR, Play Services unavailable) or a network failure
+      // reaching /auth/google has no e.response and would otherwise show
+      // that unrelated, misleading message.
+      trackError({
+        error: isErrorWithCode(e) ? `google_signin code=${e.code}: ${e.message}` : String(e?.message || e),
+        screen: "login_google",
+      });
+      Alert.alert(
+        t("auth.login.errors.googleSignInFailedTitle"),
+        e.response?.data?.error || t("auth.login.errors.googleSignInFailedDefault")
+      );
     } finally { setGoogleLoading(false); }
   };
 

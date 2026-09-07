@@ -1,7 +1,7 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, ActivityIndicator, Image, Animated, Alert,
+  SafeAreaView, ActivityIndicator, Image, Animated, Alert, useWindowDimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
@@ -16,6 +16,22 @@ import { registerPushToken } from "@/services/notifications";
 import * as Notifications from "expo-notifications";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
+
+// ── Hero illustration sizing ──────────────────────────────────────────
+// Same explicit-pixel technique as driver-app's Home hero: computed from
+// the real screen width and hero-truck.png's true natural dimensions
+// (read directly from the PNG's IHDR chunk — 1774x887, i.e. 2:1 — not the
+// 1672x940 driver-app's code assumes, which no longer matches this file).
+// No aspectRatio/percentage sizing — Yoga's resolution of that combination
+// inside expo-linear-gradient is what broke driver-app's hero originally.
+// Width itself comes from the useWindowDimensions() hook inside the
+// component (see heroImgH/heroH below), not a Dimensions.get() snapshot
+// taken once at module load — so rotation/split-screen/foldables recompute
+// these on the fly instead of freezing at whatever width the app launched
+// with. HERO_TOP_BAND/HERO_BOT_GAP are fixed margins, not width-derived,
+// so they stay as plain constants.
+const HERO_TOP_BAND = 32;
+const HERO_BOT_GAP  = 12;
 
 // Illustrations are placeholders (assets/illustrations/) — real 3D-style
 // artwork drops in later using these exact filenames, see build report.
@@ -41,6 +57,11 @@ const ACTIVE_STATUSES = ["searching", "accepted", "arriving", "in_progress"];
 
 export default function HomeScreen() {
   const { t } = useTranslation();
+  // Reactive width — see the HERO_TOP_BAND/HERO_BOT_GAP comment above for
+  // why this isn't a module-level Dimensions.get() constant.
+  const { width: heroScreenW } = useWindowDimensions();
+  const heroImgH = Math.round(heroScreenW * (887 / 1774));
+  const heroH    = HERO_TOP_BAND + heroImgH + HERO_BOT_GAP;
   const [user,          setUser]          = useState<any>(null);
   const [savedPlaces,   setSavedPlaces]   = useState<any[]>([]);
   const [loadingPlaces, setLoadingPlaces] = useState(false);
@@ -250,20 +271,39 @@ export default function HomeScreen() {
 
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* Hero — full-bleed, fades from brand gradient into the page background
-            (no card/box). Logo/bell header lives inside this same gradient now,
-            so there's no separate white bar above the hero content.
-            hero-truck.png still has its own baked-in rectangular background (not
-            transparent), so it's rendered small/contained rather than filling
-            the section — see note back to product re: re-export. */}
+        {/* Hero — explicit computed-px width/height (heroScreenW/heroH from
+            useWindowDimensions above), same technique as driver-app's Home
+            hero: the illustration is an absolutely-positioned full-bleed
+            background at an explicit heroScreenW x heroImgH, with the
+            bell/greeting in normal flow at an explicit zIndex so they overlay
+            directly on top of it instead of sitting in a separate band
+            above the image. */}
         <LinearGradient
           colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
           locations={[0, 0.6, 1]}
-          style={s.hero}
+          style={[s.hero, { width: heroScreenW, height: heroH }]}
+          onLayout={e => console.log("[USER_HERO/tmp] container", JSON.stringify(e.nativeEvent.layout))}
         >
-          {/* Logo bar */}
-          <View style={s.logoBar}>
-            <Image source={require("../../../assets/logo.png")} style={s.logo} resizeMode="contain" />
+          {/* Vehicle illustration — full-bleed background layer, explicit
+              pixel box from the asset's real 1774x887 (2:1) dimensions so no
+              vehicle is cropped or distorted. Renders first so the
+              greeting/bell draw on top. */}
+          <Image
+            source={require("../../../assets/illustrations/hero-truck.png")}
+            style={[s.heroBgImg, { width: heroScreenW, height: heroImgH }]}
+            resizeMode="contain"
+            onLayout={e => console.log("[USER_HERO/tmp] image", JSON.stringify(e.nativeEvent.layout))}
+          />
+
+          {/* Greeting + bell — same row, same height, matching driver-app's
+              heroContent pattern (text on one side, bell on the other,
+              both starting at the same paddingTop) instead of two stacked
+              rows with independent offsets. */}
+          <View style={s.heroContent} onLayout={e => console.log("[USER_HERO/tmp] content", JSON.stringify(e.nativeEvent.layout))}>
+            <View style={s.heroTextCol}>
+              <Text style={s.greeting}>{greeting}, {firstName} 👋</Text>
+              <Text style={s.subGreeting}>{t("home.subGreeting")}</Text>
+            </View>
             <TouchableOpacity
               onPress={() => { setUnreadCount(0); router.push("/(app)/notifications"); }}
               style={s.notifBtn}
@@ -276,18 +316,6 @@ export default function HomeScreen() {
                 </View>
               )}
             </TouchableOpacity>
-          </View>
-
-          {/* Image renders first (background) so the greeting text, drawn after,
-              always sits visually on top even where the scene's sun disc overlaps. */}
-          <Image
-            source={require("../../../assets/illustrations/hero-truck.png")}
-            style={s.heroTruckImg}
-            resizeMode="contain"
-          />
-          <View style={s.heroTextCol}>
-            <Text style={s.greeting}>{greeting}, {firstName} 👋</Text>
-            <Text style={s.subGreeting}>{t("home.subGreeting")}</Text>
           </View>
         </LinearGradient>
 
@@ -468,26 +496,29 @@ const s = StyleSheet.create({
   toastTitle:     { color: COLORS.textPrimary, fontWeight: "800", fontSize: 13 },
   toastBody:      { color: "#666", fontSize: 12, marginTop: 2, lineHeight: 16 },
 
-  logoBar:        { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingTop: 52, paddingBottom: 8 },
-  logo:           { width: 180, height: 64, marginLeft: -38 },
   notifBtn:       { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.bgSubtle, alignItems: "center", justifyContent: "center" },
   badge:          { position: "absolute", top: 2, right: 2, minWidth: 16, height: 16, borderRadius: RADIUS.chip, backgroundColor: COLORS.danger, alignItems: "center", justifyContent: "center", paddingHorizontal: 3 },
   badgeText:      { color: COLORS.white, fontSize: 9, fontWeight: "900" },
 
-  // Hero — full-bleed section (no border radius, no horizontal inset), soft
-  // cream/peach gradient fading into the page background. Logo/bell row now
-  // lives inside here (see logoBar's own paddingTop for status-bar clearance),
-  // so content flows top-down instead of being vertically centered as a group.
-  hero:           { paddingHorizontal: 20, paddingBottom: 28, minHeight: 210 },
-  heroTextCol:    { maxWidth: "58%", marginTop: 8 },
+  // Hero — width/height come from the reactive heroScreenW/heroH computed
+  // in the component (see useWindowDimensions above) and are merged in via
+  // inline style at the call site. No aspectRatio, no percentages: Yoga has
+  // nothing to infer. Bell/greeting overlay directly on the image's
+  // sky/cloud area instead of sitting in a separate band above it.
+  hero:           { paddingHorizontal: 20 },
+  // Greeting + bell in one row, same height, same paddingTop — matching
+  // driver-app's heroContent pattern instead of two independently-offset
+  // stacked rows.
+  heroContent:    { zIndex: 1, flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", paddingTop: 34, gap: 12 },
+  heroTextCol:    { flex: 1 },
   // Lightened hero background (was solid brand orange) needs dark text now,
   // not the white that worked on the old saturated gradient.
   greeting:       { color: COLORS.textPrimary, fontSize: 20, fontWeight: "800" },
   subGreeting:    { color: COLORS.textSecondary, fontSize: 13, marginTop: 4 },
-  // hero-truck.png is 1200x747 (~1.61:1) with transparent margins around the
-  // scene — sized to span most of the hero width and bled to the true screen
-  // edge (right: -20 cancels the hero's own horizontal padding).
-  heroTruckImg:   { position: "absolute", right: -20, bottom: -14, width: 250, height: 156 },
+  // Full-bleed vehicle illustration: width/height merged in via inline style
+  // (see hero above) at the asset's real 1774x887 (2:1) ratio so no vehicle
+  // is cropped or distorted. Pinned to the hero's bottom edge, behind the text.
+  heroBgImg:      { position: "absolute", left: 0, bottom: HERO_BOT_GAP, zIndex: 0 },
 
   sectionHeader:  { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
   sectionTitle:   { color: COLORS.textPrimary, fontSize: 16, fontWeight: "800", marginBottom: 12 },

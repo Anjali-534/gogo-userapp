@@ -2,6 +2,7 @@
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Alert, ActivityIndicator, ScrollView, StatusBar, Image,
+  KeyboardAvoidingView, Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -162,6 +163,7 @@ export default function LoginScreen() {
     <View style={s.root}>
       <StatusBar barStyle="dark-content" backgroundColor="#FAFAFA" />
       <LanguageSwitcherButton />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
 
         <View style={s.logoRow}>
@@ -254,6 +256,7 @@ export default function LoginScreen() {
         </View>
 
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

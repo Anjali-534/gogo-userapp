@@ -7,12 +7,33 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:452086529308:android:69ae1cbf73f10116274ed9",
+        "mobilesdk_app_id": "1:452086529308:android:9dceada079101b9a274ed9",
         "android_client_info": {
-          "package_name": "com.gogoo.user"
+          "package_name": "com.gogoo.driver"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "452086529308-18ft5kafqd3a8lem86aatsjna7arsce4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gogoo.driver",
+            "certificate_hash": "b236d0792ad9c8ec732ec721c57232e7f590d691"
+          }
+        },
+        {
+          "client_id": "452086529308-jgrsjg9in9q4fv9dbf01g2vkq1r97s3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gogoo.driver",
+            "certificate_hash": "0dada15b5ad08f64df183a15cd9bbb0a6eb8d78c"
+          }
+        },
+        {
+          "client_id": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAOQlfoRcHCxhFZqGV5UHw2xRo_2d6og1w"
@@ -20,7 +41,71 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "452086529308-0ahanf2ruk0pnjcdjrbbtcd4c4n576qv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gogoo.driver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452086529308:android:69ae1cbf73f10116274ed9",
+        "android_client_info": {
+          "package_name": "com.gogoo.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452086529308-3me3so5e51ngm50hbn9l5rgpku2sftno.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gogoo.user",
+            "certificate_hash": "04c45ebee0d3f6dd5b05b54ea44d12fefd69eb76"
+          }
+        },
+        {
+          "client_id": "452086529308-n7gq6uhp6n315vqp2tlvbhh170v1ikip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gogoo.user",
+            "certificate_hash": "fe7a434f7ad258483dac566f5b95924ea25bbdbb"
+          }
+        },
+        {
+          "client_id": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOQlfoRcHCxhFZqGV5UHw2xRo_2d6og1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "452086529308-0ahanf2ruk0pnjcdjrbbtcd4c4n576qv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gogoo.driver"
+              }
+            }
+          ]
         }
       }
     }

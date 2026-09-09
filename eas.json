@@ -17,7 +17,7 @@
         "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
         "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo",
         "EXPO_PUBLIC_OLA_MAPS_KEY": "t2Fqkl5WorEAyNmENVToJnK1aPDrduKibWR3Yd4k",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "709951436108-9ulc9c7rsj8hm1phsfs63vst6o0j1hdt.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com"
       }
     },
     "preview": {
@@ -32,7 +32,7 @@
         "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
         "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo",
         "EXPO_PUBLIC_OLA_MAPS_KEY": "t2Fqkl5WorEAyNmENVToJnK1aPDrduKibWR3Yd4k",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "709951436108-9ulc9c7rsj8hm1phsfs63vst6o0j1hdt.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com"
       }
     },
     "production": {
@@ -46,7 +46,7 @@
         "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
         "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo",
         "EXPO_PUBLIC_OLA_MAPS_KEY": "t2Fqkl5WorEAyNmENVToJnK1aPDrduKibWR3Yd4k",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "709951436108-9ulc9c7rsj8hm1phsfs63vst6o0j1hdt.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com"
       }
     }
   },

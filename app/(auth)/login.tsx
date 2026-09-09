@@ -128,20 +128,6 @@ export default function LoginScreen() {
       router.replace("/(app)/home");
     } catch (e: any) {
       if (isErrorWithCode(e) && e.code === statusCodes.IN_PROGRESS) return;
-      // ─── TEMPORARY DEBUG — remove once the Google Sign-In error is identified ───
-      // Dumps the raw native/axios error straight to the Metro console so it's
-      // visible immediately on a dev-client build connected to Metro, instead of
-      // waiting on Crashlytics' reporting delay. Safe to delete this whole block.
-      // eslint-disable-next-line no-console
-      console.log("[DEBUG][login_google] Google Sign-In failed →", {
-        code: (e as any)?.code,                       // native GoogleSignin status code (e.g. DEVELOPER_ERROR / "10", SIGN_IN_REQUIRED, NETWORK_ERROR)
-        message: (e as any)?.message,
-        name: (e as any)?.name,
-        isErrorWithCode: isErrorWithCode(e),
-        serverResponse: (e as any)?.response?.data,   // set only if the failure was the axios call to /auth/google
-        raw: e,
-      });
-      // ─────────────────────────────────────────────────────────────────────────
       // This is the Google Sign-In path, not password login — never fall
       // back to the password-login error copy ("Invalid email or
       // password"), since a native GoogleSignin SDK error (e.g.
@@ -152,10 +138,17 @@ export default function LoginScreen() {
         error: isErrorWithCode(e) ? `google_signin code=${e.code}: ${e.message}` : String(e?.message || e),
         screen: "login_google",
       });
+      // ─── TEMPORARY DEBUG — surfaces the raw error on screen so it can't be ───
+      // missed. Revert to the real user-facing message once identified:
+      //   Alert.alert(
+      //     t("auth.login.errors.googleSignInFailedTitle"),
+      //     e.response?.data?.error || t("auth.login.errors.googleSignInFailedDefault")
+      //   );
       Alert.alert(
-        t("auth.login.errors.googleSignInFailedTitle"),
-        e.response?.data?.error || t("auth.login.errors.googleSignInFailedDefault")
+        "DEBUG: Google Sign-In Failed",
+        `code: ${(e as any)?.code}\nmessage: ${(e as any)?.message}\nname: ${(e as any)?.name}\nisErrorWithCode: ${isErrorWithCode(e)}\nserverResponse: ${JSON.stringify((e as any)?.response?.data)}`
       );
+      // ──────────────────────────────────────────────────────────────────────
     } finally { setGoogleLoading(false); }
   };
 

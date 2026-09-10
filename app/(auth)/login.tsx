@@ -2,7 +2,7 @@
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Alert, ActivityIndicator, ScrollView, StatusBar, Image,
-  KeyboardAvoidingView, Platform,
+  KeyboardAvoidingView, Platform, NativeModules,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -152,6 +152,19 @@ export default function LoginScreen() {
     } finally { setGoogleLoading(false); }
   };
 
+  // TEMPORARY DEBUG: shows this running build's actual signing certificate
+  // SHA-1, read directly from PackageManager on-device. Remove alongside
+  // android/.../SigningCertModule.kt + SigningCertPackage.kt once the
+  // Google Sign-In SHA-1 mismatch investigation is closed.
+  const handleShowSigningCertDebug = async () => {
+    try {
+      const sha1 = await NativeModules.SigningCertModule.getSigningCertSha1();
+      Alert.alert("TEMPORARY DEBUG: Signing Cert SHA-1", sha1);
+    } catch (e: any) {
+      Alert.alert("TEMPORARY DEBUG: Signing Cert SHA-1", `Error: ${e?.message || e}`);
+    }
+  };
+
   return (
     <View style={s.root}>
       <StatusBar barStyle="dark-content" backgroundColor="#FAFAFA" />
@@ -234,6 +247,7 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={[s.googleBtn, googleLoading && s.btnDisabled]}
             onPress={handleGoogleLogin}
+            onLongPress={handleShowSigningCertDebug}
             disabled={googleLoading || loading}
           >
             {googleLoading

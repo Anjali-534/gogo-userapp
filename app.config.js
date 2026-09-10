@@ -54,5 +54,8 @@ module.exports = ({ config }) => ({
     "expo-secure-store",
     "@maplibre/maplibre-react-native",
     "@react-native-google-signin/google-signin",
+    // TEMPORARY DEBUG: remove once the Google Sign-In SHA-1 mismatch
+    // investigation is closed (see app/(auth)/login.tsx onLongPress).
+    "./plugins/withSigningCertModule.js",
   ],
 });

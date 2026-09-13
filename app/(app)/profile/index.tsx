@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Alert, Image,
+  TouchableOpacity, Alert, Image, useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,12 +13,21 @@ import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
+// Same explicit-pixel hero technique as Home (see home/index.tsx) — computed
+// from the real screen width and hero-truck.png's true natural dimensions
+// (1774x887, 2:1), not aspectRatio/percentage sizing.
+const HERO_TOP_BAND = 32;
+const HERO_BOT_GAP  = 12;
+
 export default function ProfileScreen() {
   const [user,        setUser]        = useState<any>(null);
   const [rider,       setRider]       = useState<any>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const router = useRouter();
   const { t } = useTranslation();
+  const { width: heroScreenW } = useWindowDimensions();
+  const heroImgH = Math.round(heroScreenW * (887 / 1774));
+  const heroH    = HERO_TOP_BAND + heroImgH + HERO_BOT_GAP;
 
   const fetchUnread = useCallback(async () => {
     try {
@@ -86,21 +95,22 @@ export default function ProfileScreen() {
     <SafeAreaView style={[s.safe, { position: "relative" }]}>
 
       {/* ── FIXED HEADER — does not scroll ── */}
-      {/* Hero — gradient background with a skyline/road illustration bled
-          along the base, logo top-left, name/rating + avatar row below.
-          Illustration renders first so it sits behind the logo/text. */}
+      {/* Hero — same full-bleed background-image + overlaid-content pattern
+          as Home (see home/index.tsx): explicit computed-px width/height
+          (heroScreenW/heroH from useWindowDimensions above), illustration as
+          an absolutely-positioned full-bleed background layer (zIndex 0),
+          name/rating/avatar overlaid on top (zIndex 2). No logo. */}
       <LinearGradient
         colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
         locations={[0, 0.6, 1]}
-        style={s.hero}
+        style={[s.hero, { width: heroScreenW, height: heroH }]}
       >
         <Image
           source={require("../../../assets/illustrations/hero-truck.png")}
-          style={s.heroBackdrop}
+          style={[s.heroBgImg, { width: heroScreenW, height: heroImgH }]}
           resizeMode="contain"
         />
-        <Image source={require("../../../assets/logo.png")} style={s.logo} resizeMode="contain" />
-        <View style={s.fixedHeader}>
+        <View style={s.heroContent}>
           <View style={{ flex: 1 }}>
             <Text style={s.userName}>{user?.name || "Rider"}</Text>
             <View style={s.ratingRow}>
@@ -206,17 +216,17 @@ export default function ProfileScreen() {
 const s = StyleSheet.create({
   safe:        { flex: 1, backgroundColor: COLORS.bg },
 
-  // Hero — compact full-bleed section (same proportions as the other
-  // full-bleed heroes in the app), gradient edge-to-edge with no inset.
-  // Illustration renders first (background), sized as a proper corner
-  // scene bled to the true screen edge — the avatar circle deliberately
-  // sits on top of it (solid badge over art is fine); the name/rating text
-  // column is left-aligned and bounded by the avatar in the row, so it
-  // stays clear of the illustration's dense (non-transparent) area.
-  hero:          { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 20, minHeight: 190, overflow: "hidden" },
-  heroBackdrop:  { position: "absolute", right: -20, bottom: -10, width: 220, height: 137 },
-  logo:          { width: 140, height: 50, marginLeft: -34, marginBottom: 4 },
-  fixedHeader: { flexDirection: "row", alignItems: "center", paddingBottom: 12 },
+  // Hero — width/height come from the reactive heroScreenW/heroH computed in
+  // the component (see useWindowDimensions above) and are merged in via
+  // inline style at the call site, same as Home. No aspectRatio, no
+  // percentages: Yoga has nothing to infer.
+  hero:          { paddingHorizontal: 20 },
+  // Full-bleed vehicle illustration: width/height merged in via inline style
+  // (see hero above) at the asset's real 1774x887 (2:1) ratio so no vehicle
+  // is cropped or distorted. Pinned to the hero's bottom edge, behind the
+  // name/rating/avatar content.
+  heroBgImg:     { position: "absolute", left: 0, bottom: HERO_BOT_GAP, zIndex: 0 },
+  heroContent:   { zIndex: 2, flexDirection: "row", alignItems: "center", paddingTop: 34, paddingBottom: 12 },
   userName:    { color: COLORS.textPrimary, fontSize: 28, fontWeight: "900" },
   ratingRow:   { marginTop: 6, backgroundColor: COLORS.border, alignSelf: "flex-start", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   ratingText:  { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },

@@ -3,11 +3,13 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   ScrollView, ActivityIndicator, Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { trackBookingCompleted, trackBookingFailed, trackPaymentViewed } from "@/services/analytics";
 import SchedulePicker from "../../../components/SchedulePicker";
 import PaymentMethodToggle from "../../../components/PaymentMethodToggle";
@@ -39,6 +41,7 @@ const fr = StyleSheet.create({
 export default function CabReviewScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
   const {
@@ -52,6 +55,8 @@ export default function CabReviewScreen() {
   const baseFare     = parseFloat(estimatedFare  || "0");
   const couponDisc   = parseFloat(couponDiscount || "0");
   const km           = parseFloat(distanceKm     || "0");
+
+  const [footerHeight, setFooterHeight] = useState(120);
 
   const [booking, setBooking] = useState(false);
   const [outstandingFee, setOutstandingFee] = useState(0);
@@ -248,7 +253,7 @@ export default function CabReviewScreen() {
 
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("booking.review.title")}</Text>
@@ -259,7 +264,7 @@ export default function CabReviewScreen() {
       <ScrollView
         style={s.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
       >
         {/* Route */}
         <Text style={s.sectionLabel}>{t("booking.review.route")}</Text>
@@ -313,7 +318,10 @@ export default function CabReviewScreen() {
         </View>
       </ScrollView>
 
-      <View style={s.footer}>
+      <View
+        style={[s.footer, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         <PaymentMethodToggle
           value={paymentMethod}
           onChange={setPaymentMethod}
@@ -392,7 +400,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle: { color: COLORS.textSecondary, fontSize: 13, marginTop: 2 },
 
@@ -425,7 +432,7 @@ const s = StyleSheet.create({
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   modeRow: { flexDirection: "row", gap: 8, marginBottom: 12 },

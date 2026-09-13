@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView,
   ActivityIndicator, Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
@@ -190,7 +191,7 @@ export default function BookingScreen() {
           // Came from home screen with a category
           <View style={s.catHeader}>
             <TouchableOpacity style={s.catBackBtn} onPress={() => router.back()}>
-              <Text style={s.catBackTxt}>←</Text>
+              <Ionicons name="arrow-back" size={20} color="#111" />
             </TouchableOpacity>
             <View style={[s.catIconWrap, { backgroundColor: catMeta.color + "15" }]}>
               <Text style={{ fontSize: 22 }}>{catMeta.icon}</Text>
@@ -323,7 +324,6 @@ const s = StyleSheet.create({
   // Category header (when opened from home screen)
   catHeader:  { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 20 },
   catBackBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: "#F5F5F5", alignItems: "center", justifyContent: "center" },
-  catBackTxt: { fontSize: 18, color: "#111", fontWeight: "700" },
   catIconWrap:{ width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center" },
   catTitle:   { color: "#111", fontSize: 20, fontWeight: "900" },
   catSub:     { color: "#999", fontSize: 12, marginTop: 1 },

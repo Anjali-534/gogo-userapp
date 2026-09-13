@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { trackBookingCompleted, trackBookingFailed, trackPaymentViewed } from "@/services/analytics";
 import SchedulePicker from "../../../components/SchedulePicker";
 import PaymentMethodToggle from "../../../components/PaymentMethodToggle";
@@ -41,6 +42,7 @@ const fr = StyleSheet.create({
 export default function ParcelReviewScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
   const {
@@ -63,6 +65,7 @@ export default function ParcelReviewScreen() {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "wallet">("cash");
   const [walletBalance, setWalletBalance] = useState(0);
   const [paymentsAvailable, setPaymentsAvailable] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(120);
 
   const displayTotal = Math.max(0, baseFare - couponDisc) + outstandingFee;
 
@@ -250,7 +253,7 @@ export default function ParcelReviewScreen() {
       >
         <View style={s.headerRow}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
           </TouchableOpacity>
           <View style={s.headerTextCol}>
             <Text style={s.title} numberOfLines={1}>{t("booking.review.title")}</Text>
@@ -267,7 +270,7 @@ export default function ParcelReviewScreen() {
       <ScrollView
         style={s.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
       >
         {/* Route */}
         <Text style={s.sectionLabel}>{t("booking.review.route")}</Text>
@@ -362,7 +365,10 @@ export default function ParcelReviewScreen() {
         </View>
       </ScrollView>
 
-      <View style={s.footer}>
+      <View
+        style={[s.footer, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         <TouchableOpacity
           style={[s.bookBtn, booking && { opacity: 0.6 }]}
           onPress={handleBook}
@@ -372,19 +378,16 @@ export default function ParcelReviewScreen() {
           {booking ? (
             <ActivityIndicator color={COLORS.white} />
           ) : (
-            <View style={s.bookBtnRow}>
-              <Text
-                style={s.bookBtnText}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.8}
-              >
-                {scheduleMode === "schedule" && scheduledDate
-                  ? t("booking.schedule.scheduleFor", { time: scheduledLabel(scheduledDate) })
-                  : t("booking.schedule.bookNowWithFare", { amount: displayTotal })}
-              </Text>
-              <Ionicons name="arrow-forward" size={18} color={COLORS.white} style={{ marginLeft: 8 }} />
-            </View>
+            <Text
+              style={s.bookBtnText}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
+              {scheduleMode === "schedule" && scheduledDate
+                ? t("booking.schedule.scheduleFor", { time: scheduledLabel(scheduledDate) })
+                : t("booking.schedule.bookNowWithFare", { amount: displayTotal })}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
@@ -414,7 +417,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle: { color: COLORS.textSecondary, fontSize: 13, marginTop: 2 },
 
@@ -464,7 +466,7 @@ const s = StyleSheet.create({
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   modeRow: { flexDirection: "row", gap: 8 },
@@ -483,6 +485,5 @@ const s = StyleSheet.create({
     shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
   },
-  bookBtnRow:  { flexDirection: "row", alignItems: "center", justifyContent: "center" },
   bookBtnText: { color: COLORS.white, fontWeight: "800", fontSize: 17 },
 });

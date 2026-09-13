@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, Image,
   TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
@@ -98,7 +99,7 @@ export default function SupportIndexScreen() {
           style={s.hero}
         >
           <TouchableOpacity onPress={() => router.back()} style={s.back} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color={COLORS.textPrimary} />
           </TouchableOpacity>
           <Text style={s.title}>{t("support.index.title")}</Text>
           <Text style={s.subtitle}>
@@ -218,7 +219,6 @@ const s = StyleSheet.create({
   // rather than blending fully into the gradient.
   hero:              { paddingHorizontal: 20, paddingTop: 52, paddingBottom: 20, minHeight: 190, overflow: "hidden" },
   back:              { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 6, elevation: 2 },
-  backTxt:           { fontSize: 18, fontWeight: "700", color: COLORS.textPrimary },
   title:             { fontSize: 22, fontWeight: "900", color: COLORS.textPrimary, letterSpacing: 0.5, marginTop: 14 },
   subtitle:          { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, maxWidth: "62%" },
   subtitleHighlight: { color: COLORS.primary, fontWeight: "800" },

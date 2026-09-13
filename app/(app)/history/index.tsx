@@ -75,32 +75,33 @@ export default function HistoryScreen() {
   return (
     <View style={s.safe}>
       <StatusBar barStyle="dark-content" />
+      {/* Hero — fixed, sits outside the ScrollView so it stays in place while
+          the content below scrolls independently. Full-bleed section (no
+          border radius, no horizontal inset, no card/box), starting from the
+          very top of the screen behind the status bar — same treatment as
+          the other full-bleed heroes (BookingHero.tsx, home screen).
+          Title/badge are stacked and left-aligned so they stay clear of the
+          illustration, which is bled to the right/bottom edge. */}
+      <LinearGradient
+        colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+        locations={[0, 0.6, 1]}
+        style={s.hero}
+      >
+        <Text style={s.title}>{t("history.title")}</Text>
+        {!loading && rides.length > 0 && (
+          <View style={s.countPill}>
+            <Text style={s.countPillText}>{t("history.tripsCount", { count: rides.length })}</Text>
+          </View>
+        )}
+
+        <Image
+          source={require("../../../assets/illustrations/parcel.png")}
+          style={s.heroImg}
+          resizeMode="contain"
+        />
+      </LinearGradient>
+
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
-
-        {/* Hero — full-bleed section (no border radius, no horizontal inset,
-            no card/box), starting from the very top of the screen behind the
-            status bar — same treatment as the other full-bleed heroes
-            (BookingHero.tsx, home screen). Title/badge are stacked and
-            left-aligned so they stay clear of the illustration, which is
-            bled to the right/bottom edge. */}
-        <LinearGradient
-          colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
-          locations={[0, 0.6, 1]}
-          style={s.hero}
-        >
-          <Text style={s.title}>{t("history.title")}</Text>
-          {!loading && rides.length > 0 && (
-            <View style={s.countPill}>
-              <Text style={s.countPillText}>{t("history.tripsCount", { count: rides.length })}</Text>
-            </View>
-          )}
-
-          <Image
-            source={require("../../../assets/illustrations/parcel.png")}
-            style={s.heroImg}
-            resizeMode="contain"
-          />
-        </LinearGradient>
 
         <View style={s.contentPad}>
         {loading ? (

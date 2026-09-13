@@ -191,7 +191,7 @@ export default function ParcelBookingScreen() {
       >
         <View style={s.headerRow}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
           </TouchableOpacity>
           <View style={s.headerTextCol}>
             <Text style={s.title} numberOfLines={1}>{t("parcel.booking.setYourTrip")}</Text>
@@ -281,7 +281,7 @@ export default function ParcelBookingScreen() {
                 onPress={() => { setActiveField(null); setSuggestions([]); setSearchText(""); }}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <Text style={s.backTxt}>←</Text>
+                <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
               </TouchableOpacity>
               <Text style={s.overlayTitle}>
                 {activeField === "pickup" ? t("booking.overlay.pickupLocationTitle") : t("booking.overlay.dropLocationTitle")}
@@ -341,7 +341,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
 
   nowBtn: {

@@ -93,6 +93,7 @@ export default function AmbulanceReviewScreen() {
   // balance covers the fare. This is just a transparency note so the rider
   // isn't confused later about how they were charged, not a decision point.
   const [walletPaidNote, setWalletPaidNote] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(120);
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -248,7 +249,7 @@ export default function AmbulanceReviewScreen() {
 
       <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("booking.review.title")}</Text>
@@ -262,7 +263,7 @@ export default function AmbulanceReviewScreen() {
       <ScrollView
         style={s.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
       >
         {/* Zero commission banner — always show */}
         <View style={s.noCommBanner}>
@@ -409,7 +410,10 @@ export default function AmbulanceReviewScreen() {
         </View>
       )}
 
-      <View style={s.footer}>
+      <View
+        style={[s.footer, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         {isEmergency && !booking ? (
           <Animated.View style={{ opacity: pulseAnim }}>
             <TouchableOpacity
@@ -460,7 +464,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:         { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:           { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle:        { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
   urgentBadge:     { backgroundColor: COLORS.danger, borderRadius: RADIUS.chip, paddingHorizontal: 10, paddingVertical: 4 },
@@ -556,7 +559,7 @@ const s = StyleSheet.create({
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   walletNoteBanner: {

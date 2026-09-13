@@ -4,6 +4,7 @@ import {
   Linking, Platform, TextInput, Alert, Modal, ScrollView,
   Animated, PanResponder, Dimensions, KeyboardAvoidingView, Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker, Polyline, Circle, Heatmap, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
 import SOSButton from "../../../components/SOSButton";
@@ -661,7 +662,7 @@ export default function TrackingScreen() {
 
       {/* Back button */}
       <TouchableOpacity style={s.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-        <Text style={s.backTxt}>←</Text>
+        <Ionicons name="arrow-back" size={20} color="#111" />
       </TouchableOpacity>
 
       {/* Map view mode toggle — active-ride only. Icon shows what tapping
@@ -1030,7 +1031,6 @@ const s = StyleSheet.create({
   mapErrorBtnText:{ color:"#fff", fontWeight:"800", fontSize:13 },
 
   backBtn:    { position:"absolute", top:Platform.OS==="ios"?56:40, left:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
-  backTxt:    { fontSize:22, color:"#111", fontWeight:"700" },
   mapModeBtn: { position:"absolute", top:Platform.OS==="ios"?56:40, right:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
   mapModeBtnTxt: { fontSize:19 },
   distPill:   { position:"absolute", top:Platform.OS==="ios"?56:40, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, elevation:5 },

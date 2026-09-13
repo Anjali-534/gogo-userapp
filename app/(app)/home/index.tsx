@@ -269,55 +269,54 @@ export default function HomeScreen() {
         </Animated.View>
       )}
 
-      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
+      {/* Hero — fixed, sits outside the ScrollView so it stays in place while
+          the content below scrolls independently. Explicit computed-px
+          width/height (heroScreenW/heroH from useWindowDimensions above),
+          same technique as driver-app's Home hero: the illustration is an
+          absolutely-positioned full-bleed background at an explicit
+          heroScreenW x heroImgH, with the bell/greeting in normal flow at an
+          explicit zIndex so they overlay directly on top of it instead of
+          sitting in a separate band above the image. */}
+      <LinearGradient
+        colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
+        locations={[0, 0.6, 1]}
+        style={[s.hero, { width: heroScreenW, height: heroH }]}
+      >
+        {/* Vehicle illustration — full-bleed background layer, explicit
+            pixel box from the asset's real 1774x887 (2:1) dimensions so no
+            vehicle is cropped or distorted. Renders first so the
+            greeting/bell draw on top. */}
+        <Image
+          source={require("../../../assets/illustrations/hero-truck.png")}
+          style={[s.heroBgImg, { width: heroScreenW, height: heroImgH }]}
+          resizeMode="contain"
+        />
 
-        {/* Hero — explicit computed-px width/height (heroScreenW/heroH from
-            useWindowDimensions above), same technique as driver-app's Home
-            hero: the illustration is an absolutely-positioned full-bleed
-            background at an explicit heroScreenW x heroImgH, with the
-            bell/greeting in normal flow at an explicit zIndex so they overlay
-            directly on top of it instead of sitting in a separate band
-            above the image. */}
-        <LinearGradient
-          colors={["#FFE8D9", "#FFF6F0", COLORS.bg]}
-          locations={[0, 0.6, 1]}
-          style={[s.hero, { width: heroScreenW, height: heroH }]}
-          onLayout={e => console.log("[USER_HERO/tmp] container", JSON.stringify(e.nativeEvent.layout))}
-        >
-          {/* Vehicle illustration — full-bleed background layer, explicit
-              pixel box from the asset's real 1774x887 (2:1) dimensions so no
-              vehicle is cropped or distorted. Renders first so the
-              greeting/bell draw on top. */}
-          <Image
-            source={require("../../../assets/illustrations/hero-truck.png")}
-            style={[s.heroBgImg, { width: heroScreenW, height: heroImgH }]}
-            resizeMode="contain"
-            onLayout={e => console.log("[USER_HERO/tmp] image", JSON.stringify(e.nativeEvent.layout))}
-          />
-
-          {/* Greeting + bell — same row, same height, matching driver-app's
-              heroContent pattern (text on one side, bell on the other,
-              both starting at the same paddingTop) instead of two stacked
-              rows with independent offsets. */}
-          <View style={s.heroContent} onLayout={e => console.log("[USER_HERO/tmp] content", JSON.stringify(e.nativeEvent.layout))}>
-            <View style={s.heroTextCol}>
-              <Text style={s.greeting}>{greeting}, {firstName} 👋</Text>
-              <Text style={s.subGreeting}>{t("home.subGreeting")}</Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => { setUnreadCount(0); router.push("/(app)/notifications"); }}
-              style={s.notifBtn}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <Ionicons name="notifications-outline" size={22} color="#555" />
-              {unreadCount > 0 && (
-                <View style={s.badge}>
-                  <Text style={s.badgeText}>{unreadCount > 9 ? "9+" : unreadCount}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
+        {/* Greeting + bell — same row, same height, matching driver-app's
+            heroContent pattern (text on one side, bell on the other,
+            both starting at the same paddingTop) instead of two stacked
+            rows with independent offsets. */}
+        <View style={s.heroContent}>
+          <View style={s.heroTextCol}>
+            <Text style={s.greeting}>{greeting}, {firstName} 👋</Text>
+            <Text style={s.subGreeting}>{t("home.subGreeting")}</Text>
           </View>
-        </LinearGradient>
+          <TouchableOpacity
+            onPress={() => { setUnreadCount(0); router.push("/(app)/notifications"); }}
+            style={s.notifBtn}
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          >
+            <Ionicons name="notifications-outline" size={22} color="#555" />
+            {unreadCount > 0 && (
+              <View style={s.badge}>
+                <Text style={s.badgeText}>{unreadCount > 9 ? "9+" : unreadCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+
+      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
 
         <View style={s.contentPad}>
         {/* Active ride banner */}

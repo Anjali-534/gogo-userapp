@@ -3,9 +3,11 @@ import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator,
   TextInput, FlatList, Platform, Keyboard, Alert, ScrollView,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
 import axios from "axios";
@@ -37,6 +39,7 @@ function pIcon(label: string) {
 export default function LocationPicker() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 const mode = params.mode;
   const isPickup = mode !== "drop";
@@ -329,7 +332,7 @@ const mode = params.mode;
         {/* Back + Search */}
         <View style={s.headerRow}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color="#111" />
           </TouchableOpacity>
           <View style={[s.searchBox, { borderColor: accent }]}>
             <TextInput
@@ -412,7 +415,7 @@ const mode = params.mode;
       </TouchableOpacity>
 
       {/* BOTTOM SHEET */}
-      <View style={s.sheet}>
+      <View style={[s.sheet, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}>
         <Text style={s.sheetLabel}>{isPickup ? t("locationPicker.sheetLabelPickup") : t("locationPicker.sheetLabelDrop")}</Text>
 
         {/* Address */}
@@ -495,7 +498,6 @@ const s = StyleSheet.create({
   topPanel:   { position: "absolute", top: Platform.OS === "ios" ? 52 : 36, left: 12, right: 12, zIndex: 10 },
   headerRow:  { flexDirection: "row", alignItems: "center", gap: 8 },
   backBtn:    { width: 44, height: 44, borderRadius: 22, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", elevation: 4, shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 6 },
-  backTxt:    { fontSize: 20, color: "#111", fontWeight: "700" },
   searchBox:  { flex: 1, flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 14, borderWidth: 2, paddingLeft: 14, height: 44, elevation: 4, shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 6 },
   searchInput:{ flex: 1, color: "#111", fontSize: 14, padding: 0 },
 
@@ -512,7 +514,7 @@ const s = StyleSheet.create({
 
   myLocBtn:   { position: "absolute", right: 16, bottom: 220, width: 46, height: 46, borderRadius: 23, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", elevation: 4, shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 6 },
 
-  sheet:         { position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "#fff", borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: Platform.OS === "ios" ? 36 : 24, gap: 10, elevation: 12, shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 14 },
+  sheet:         { position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "#fff", borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, gap: 10, elevation: 12, shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 14 },
   sheetLabel:    { color: "#888", fontSize: 10, fontWeight: "800", letterSpacing: 1 },
   addressBox:    { flexDirection: "row", alignItems: "flex-start", gap: 10, backgroundColor: "#F8F8F8", borderRadius: 12, borderWidth: 1.5, padding: 12 },
   addressDot:    { width: 10, height: 10, borderRadius: 5, marginTop: 3, flexShrink: 0 },

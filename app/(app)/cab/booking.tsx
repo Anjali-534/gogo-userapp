@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   TextInput, ScrollView, ActivityIndicator, Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
@@ -199,7 +200,7 @@ export default function CabBookingScreen() {
       <View style={s.topOverlay} pointerEvents="box-none">
         <SafeAreaView>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
           </TouchableOpacity>
         </SafeAreaView>
       </View>
@@ -266,7 +267,7 @@ export default function CabBookingScreen() {
 
       {/* Restore pill — shown when the sheet is dragged down to see the full map */}
       {sheetSnap === "COLLAPSED" && (
-        <View style={s.collapsedWrap}>
+        <View style={[s.collapsedWrap, { bottom: 40 + insets.bottom }]}>
           <TouchableOpacity style={s.collapsedPill} onPress={() => sheetRef.current?.snapTo("PEEK")}>
             <Text style={s.collapsedText}>{t("cab.booking.restorePill")}</Text>
           </TouchableOpacity>
@@ -283,7 +284,7 @@ export default function CabBookingScreen() {
                 onPress={() => { setActiveField(null); setSuggestions([]); setSearchText(""); }}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <Text style={s.backTxt}>←</Text>
+                <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
               </TouchableOpacity>
               <Text style={s.overlayTitle}>
                 {activeField === "pickup" ? t("booking.overlay.pickupLocationTitle") : t("booking.overlay.dropLocationTitle")}
@@ -337,7 +338,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12, shadowRadius: 8, elevation: 6,
   },
-  backTxt: { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
 
   sheetContent: { paddingHorizontal: 20, paddingBottom: 20 },
 
@@ -390,7 +390,7 @@ const s = StyleSheet.create({
   },
   overlayInput: { flex: 1, color: COLORS.textStrong, fontSize: 15, fontWeight: "500" },
 
-  collapsedWrap: { position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center" },
+  collapsedWrap: { position: "absolute", left: 0, right: 0, alignItems: "center" },
   collapsedPill: {
     backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet,
     shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10,

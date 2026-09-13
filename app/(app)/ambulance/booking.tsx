@@ -190,6 +190,7 @@ export default function AmbulanceBookingScreen() {
   const [deadBodyModal,  setDeadBodyModal]  = useState(false);
   const [pendingPurpose, setPendingPurpose] = useState("");
   const [submitting,     setSubmitting]     = useState(false);
+  const [footerHeight,   setFooterHeight]   = useState(120);
 
   const fetchNearbyHospitals = useCallback(async (lat: number, lng: number) => {
     try {
@@ -419,7 +420,7 @@ export default function AmbulanceBookingScreen() {
       {/* Header */}
       <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("ambulance.booking.title")}</Text>
@@ -449,7 +450,7 @@ export default function AmbulanceBookingScreen() {
         style={s.scroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
       >
         {/* Purpose selector */}
         <Text style={s.sectionLabel}>{t("ambulance.booking.purposeSectionTitle")}</Text>
@@ -651,7 +652,10 @@ export default function AmbulanceBookingScreen() {
       </ScrollView>
 
       {/* Fixed bottom */}
-      <View style={s.bottomBar}>
+      <View
+        style={[s.bottomBar, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         <TouchableOpacity
           style={[s.proceedBtn, (!canProceed || submitting) && s.proceedDisabled]}
           onPress={proceed}
@@ -679,7 +683,7 @@ export default function AmbulanceBookingScreen() {
                 onPress={() => { setShowPickupSearch(false); setPickupSuggestions([]); setPickupSearchText(""); }}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <Text style={s.backTxt}>←</Text>
+                <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
               </TouchableOpacity>
               <Text style={s.overlayTitle}>{t("booking.overlay.pickupLocationTitle")}</Text>
             </View>
@@ -740,7 +744,7 @@ export default function AmbulanceBookingScreen() {
                 onPress={() => { setShowDropSearch(false); setDropSuggestions([]); setDropSearchText(""); }}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <Text style={s.backTxt}>←</Text>
+                <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
               </TouchableOpacity>
               <Text style={s.overlayTitle}>{t("booking.overlay.dropLocationTitle")}</Text>
             </View>
@@ -865,7 +869,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
 
@@ -957,7 +960,7 @@ const s = StyleSheet.create({
 
   bottomBar: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   proceedBtn:      { backgroundColor: COLORS.primary, borderRadius: RADIUS.card, paddingVertical: 18, alignItems: "center", shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6 },

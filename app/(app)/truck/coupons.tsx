@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   ScrollView, TextInput,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -66,7 +67,7 @@ export default function TruckCouponsScreen() {
 
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("booking.coupons.title")}</Text>
@@ -163,7 +164,6 @@ const s = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
     backgroundColor: COLORS.bgSubtle, alignItems: "center", justifyContent: "center",
   },
-  backTxt:  { fontSize: 18, color: COLORS.textPrimary, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textPrimary, fontSize: 18, fontWeight: "900" },
   subtitle: { color: "#888", fontSize: 12, marginTop: 1 },
 

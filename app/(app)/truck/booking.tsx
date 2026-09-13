@@ -190,6 +190,7 @@ export default function TruckBookingScreen() {
   const [receiverPhone, setReceiverPhone] = useState("");
   const [sameAsMe,      setSameAsMe]      = useState(false);
   const [myPhone,       setMyPhone]       = useState("");
+  const [footerHeight,  setFooterHeight]  = useState(120);
 
   useEffect(() => {
     let mounted = true;
@@ -305,7 +306,7 @@ export default function TruckBookingScreen() {
       >
         <View style={s.headerRow}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
           </TouchableOpacity>
           <View style={s.headerTextCol}>
             <Text style={s.title} numberOfLines={1}>{t("truck.booking.title")}</Text>
@@ -321,13 +322,13 @@ export default function TruckBookingScreen() {
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
       <ScrollView
         style={s.scroll}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
       >
         {/* Pickup */}
         <SectionLabel icon="location" text={t("truck.booking.pickupLocationLabel")} />
@@ -448,7 +449,10 @@ export default function TruckBookingScreen() {
       </ScrollView>
 
       {/* Fixed bottom */}
-      <View style={s.bottomBar}>
+      <View
+        style={[s.bottomBar, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         <TouchableOpacity
           style={[s.proceedBtn, !canProceed && s.proceedDisabled]}
           onPress={proceed}
@@ -456,7 +460,6 @@ export default function TruckBookingScreen() {
           activeOpacity={0.85}
         >
           <Text style={s.proceedText}>{t("truck.booking.confirmProceed")}</Text>
-          <Ionicons name="arrow-forward" size={18} color={COLORS.white} style={{ marginLeft: 8 }} />
         </TouchableOpacity>
       </View>
       </KeyboardAvoidingView>
@@ -471,7 +474,7 @@ export default function TruckBookingScreen() {
                 onPress={() => { setShowPickupSearch(false); setPickupSuggestions([]); setPickupSearchText(""); }}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <Text style={s.backTxt}>←</Text>
+                <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
               </TouchableOpacity>
               <Text style={s.overlayTitle}>{t("booking.overlay.pickupLocationTitle")}</Text>
             </View>
@@ -568,7 +571,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitle: { color: COLORS.textSecondary, fontSize: 12, marginTop: 2 },
 
@@ -632,7 +634,7 @@ const s = StyleSheet.create({
 
   bottomBar: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   proceedBtn: {

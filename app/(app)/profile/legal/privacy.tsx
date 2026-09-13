@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { COLORS } from "@/constants/theme";
@@ -12,7 +13,7 @@ export default function PrivacyScreen() {
     <SafeAreaView style={s.safe}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => router.back()} style={s.back} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={s.title}>{t("Privacy Policy")}</Text>
       </View>
@@ -278,7 +279,6 @@ const s = StyleSheet.create({
   safe:          { flex: 1, backgroundColor: COLORS.bg },
   header:        { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingTop: 36, paddingBottom: 16 },
   back:          { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.border, alignItems: "center", justifyContent: "center" },
-  backTxt:       { fontSize: 18, fontWeight: "700", color: COLORS.textPrimary },
   title:         { color: COLORS.textPrimary, fontSize: 20, fontWeight: "900", flex: 1 },
   scroll:        { paddingHorizontal: 20 },
   meta:          { color: COLORS.textMuted, fontSize: 12, marginBottom: 4, lineHeight: 18 },

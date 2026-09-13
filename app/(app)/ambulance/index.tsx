@@ -5,13 +5,14 @@ import {
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import BookingHero from "../../../components/BookingHero";
-import BottomSheet, { BottomSheetHandle, COLLAPSED_PILL_BOTTOM } from "../../../components/BottomSheet";
+import BottomSheet, { BottomSheetHandle, useCollapsedPillBottom } from "../../../components/BottomSheet";
 import { trackScreenView, trackAmbulanceTypeSelected } from "@/services/analytics";
 import { COLORS, RADIUS, SPACING } from "@/constants/theme";
 
 export default function AmbulanceIndexScreen() {
   const router   = useRouter();
   const { t } = useTranslation();
+  const collapsedPillBottom = useCollapsedPillBottom();
   const [sheetSnap, setSheetSnap] = useState<"FULL" | "HALF" | "PEEK" | "COLLAPSED">("PEEK");
   const sheetRef = useRef<BottomSheetHandle>(null);
 
@@ -93,7 +94,7 @@ export default function AmbulanceIndexScreen() {
 
       {/* Restore pill — shown when the sheet is dragged down to see the full hero */}
       {sheetSnap === "COLLAPSED" && (
-        <View style={s.collapsedWrap} pointerEvents="box-none">
+        <View style={[s.collapsedWrap, { bottom: collapsedPillBottom }]} pointerEvents="box-none">
           <TouchableOpacity style={s.collapsedPill} onPress={() => sheetRef.current?.snapTo("PEEK")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.collapsedText}>{t("ambulance.index.collapsedBookAmbulance")}</Text>
           </TouchableOpacity>
@@ -152,7 +153,7 @@ const s = StyleSheet.create({
   },
   disclaimerText: { color: COLORS.warningStrong, fontSize: 12, lineHeight: 18 },
 
-  collapsedWrap: { position: "absolute", bottom: COLLAPSED_PILL_BOTTOM, left: 0, right: 0, alignItems: "center" },
+  collapsedWrap: { position: "absolute", left: 0, right: 0, alignItems: "center" },
   collapsedPill: {
     backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet,
     shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10,

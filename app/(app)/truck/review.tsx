@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   ScrollView, ActivityIndicator, Alert, Animated, Image, Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
@@ -72,6 +73,7 @@ export default function TruckReviewScreen() {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "wallet">("cash");
   const [walletBalance, setWalletBalance] = useState(0);
   const [paymentsAvailable, setPaymentsAvailable] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(120);
   const rulesAnim = React.useRef(new Animated.Value(0)).current;
 
   const displayTotal = (parseFloat(totalFare || "0") || Math.max(0, base + loadCharge + unloadCharge - couponDisc)) + outstandingFee;
@@ -259,7 +261,7 @@ export default function TruckReviewScreen() {
 
       <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.title}>{t("booking.review.title")}</Text>
@@ -273,7 +275,7 @@ export default function TruckReviewScreen() {
       <ScrollView
         style={s.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
       >
         {/* Route summary */}
         <Text style={s.sectionLabel}>{t("booking.review.route")}</Text>
@@ -439,7 +441,10 @@ export default function TruckReviewScreen() {
         </View>
       </ScrollView>
 
-      <View style={s.footer}>
+      <View
+        style={[s.footer, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         <TouchableOpacity
           style={[s.bookBtn, booking && { opacity: 0.6 }]}
           onPress={handleBook}
@@ -488,7 +493,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt:  { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
   title:    { color: COLORS.textStrong, fontSize: 18, fontWeight: "700" },
   subtitleRow:  { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 3 },
   subtitleIcon: { width: 14, height: 14 },
@@ -571,7 +575,7 @@ const s = StyleSheet.create({
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
   },
   modeRow: { flexDirection: "row", gap: 8, marginBottom: 12 },

@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   ScrollView, ActivityIndicator, Dimensions, Modal, Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { PickupMarker } from "../../../components/VehicleMarkers";
 import { VEHICLE_INFO } from "../../../components/VehicleInfo";
@@ -11,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
@@ -40,6 +42,7 @@ type VehicleRow = { id: string; slug: string; emoji: string; label: string };
 export default function RentalsScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
   const pLat  = parseFloat(params.pickupLat  || "0");
@@ -54,6 +57,7 @@ export default function RentalsScreen() {
   const [booking,         setBooking]         = useState(false);
   const [couponCode,      setCouponCode]      = useState("");
   const [couponDiscount,  setCouponDiscount]  = useState(0);
+  const [footerHeight,    setFooterHeight]    = useState(120);
 
   useEffect(() => {
     axios
@@ -168,7 +172,7 @@ export default function RentalsScreen() {
       <View style={s.topOverlay} pointerEvents="box-none">
         <SafeAreaView>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Text style={s.backTxt}>←</Text>
+            <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
           </TouchableOpacity>
         </SafeAreaView>
       </View>
@@ -177,7 +181,7 @@ export default function RentalsScreen() {
       <View style={s.content}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
         >
           {/* Header */}
           <View style={s.header}>
@@ -268,7 +272,10 @@ export default function RentalsScreen() {
       </View>
 
       {/* Bottom action bar */}
-      <View style={s.actionBar}>
+      <View
+        style={[s.actionBar, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
         <TouchableOpacity style={s.paymentChip} activeOpacity={0.8} hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}>
           <Text style={s.paymentChipText}>{t("common.cashChip")}</Text>
         </TouchableOpacity>
@@ -380,7 +387,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12, shadowRadius: 8, elevation: 6,
   },
-  backTxt: { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
 
   content: {
     flex: 1, backgroundColor: COLORS.white,
@@ -446,7 +452,7 @@ const s = StyleSheet.create({
   actionBar: {
     position: "absolute", bottom: 0, left: 0, right: 0,
     flexDirection: "row", alignItems: "center",
-    backgroundColor: COLORS.white, paddingHorizontal: 16, paddingVertical: 14, paddingBottom: 30,
+    backgroundColor: COLORS.white, paddingHorizontal: 16, paddingVertical: 14,
     borderTopWidth: 1, borderTopColor: COLORS.border, gap: 10,
     shadowColor: "#000", shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 12,

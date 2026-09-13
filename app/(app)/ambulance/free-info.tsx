@@ -3,11 +3,13 @@ import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
   ScrollView, ActivityIndicator, Dimensions, Animated, PanResponder,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { PickupMarker } from "../../../components/VehicleMarkers";
 import axios from "axios";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const { height: SCREEN_H } = Dimensions.get("window");
@@ -23,12 +25,14 @@ const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.u
 export default function AmbulanceFreeInfoScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
   const { purpose, ambulanceSubType, pickupLat, pickupLng } = params;
 
   const [ngos,        setNgos]        = useState<any[]>([]);
   const [loading,     setLoading]     = useState(true);
   const [currentSnap, setCurrentSnap] = useState(SNAPS.FULL);
+  const [footerHeight, setFooterHeight] = useState(120);
 
   const isEmergency = purpose === "emergency";
   const pLat = parseFloat(pickupLat || "0");
@@ -125,7 +129,7 @@ export default function AmbulanceFreeInfoScreen() {
       {/* Back button */}
       <SafeAreaView style={s.topBar} pointerEvents="box-none">
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
         </TouchableOpacity>
       </SafeAreaView>
 
@@ -142,7 +146,7 @@ export default function AmbulanceFreeInfoScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           scrollEnabled={isFull}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: footerHeight + 20 }}
         >
           {/* Zero commission banner */}
           <View style={s.zeroBanner}>
@@ -215,7 +219,10 @@ export default function AmbulanceFreeInfoScreen() {
 
       {/* Footer button — outside sheet, always at screen bottom */}
       {!isCollapsed && (
-        <View style={s.footer}>
+        <View
+          style={[s.footer, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+          onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+        >
           <TouchableOpacity style={s.requestBtn} onPress={proceed} activeOpacity={0.88}>
             <Text style={s.requestBtnText}>
               {isEmergency ? t("ambulance.freeInfo.requestBtnEmergency") : t("ambulance.freeInfo.requestBtnNormal")}
@@ -226,7 +233,7 @@ export default function AmbulanceFreeInfoScreen() {
 
       {/* Collapsed pill */}
       {isCollapsed && (
-        <View style={s.collapsedWrap}>
+        <View style={[s.collapsedWrap, { bottom: 40 + insets.bottom }]}>
           <TouchableOpacity style={s.collapsedPill} onPress={() => snapTo(SNAPS.FULL)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.collapsedText}>{t("ambulance.freeInfo.collapsedInfo")}</Text>
           </TouchableOpacity>
@@ -274,7 +281,6 @@ const s = StyleSheet.create({
     shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
   },
-  backTxt: { fontSize: 18, color: COLORS.textStrong, fontWeight: "700", lineHeight: 22 },
 
   sheet: {
     position: "absolute", left: 0, right: 0, top: 0, height: SCREEN_H,
@@ -355,7 +361,7 @@ const s = StyleSheet.create({
 
   footer: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 34,
+    backgroundColor: COLORS.white, paddingHorizontal: 20, paddingTop: 16,
     borderTopWidth: 1, borderTopColor: COLORS.border,
     shadowColor: "#000", shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 12,
@@ -367,7 +373,7 @@ const s = StyleSheet.create({
   },
   requestBtnText: { color: COLORS.white, fontWeight: "700", fontSize: 16, letterSpacing: 0.3 },
 
-  collapsedWrap: { position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center" },
+  collapsedWrap: { position: "absolute", left: 0, right: 0, alignItems: "center" },
   collapsedPill: { backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10 },
   collapsedText: { color: "#FFF", fontWeight: "700", fontSize: 14 },
 });

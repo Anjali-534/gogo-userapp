@@ -11,6 +11,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, RADIUS } from "@/constants/theme";
 
 const { height: SCREEN_H } = Dimensions.get("window");
@@ -56,6 +57,7 @@ type VehicleRow = {
 export default function CabVehiclesScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
   const { pickupLat, pickupLng, pickupAddress, dropLat, dropLng } = params;
 
@@ -66,6 +68,7 @@ export default function CabVehiclesScreen() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [infoSlug,       setInfoSlug]       = useState<string | null>(null);
   const [currentSnap,    setCurrentSnap]    = useState(SNAPS.PEEK);
+  const [footerHeight,   setFooterHeight]   = useState(120);
 
   const pLat  = parseFloat(pickupLat || "0");
   const pLng  = parseFloat(pickupLng || "0");
@@ -201,7 +204,6 @@ export default function CabVehiclesScreen() {
   };
 
   const isCollapsed = currentSnap === SNAPS.COLLAPSED;
-  const isFull      = currentSnap === SNAPS.FULL;
 
   return (
     <View style={{ flex: 1 }}>
@@ -242,8 +244,7 @@ export default function CabVehiclesScreen() {
         ) : (
           <ScrollView
             showsVerticalScrollIndicator={false}
-            scrollEnabled={isFull}
-            contentContainerStyle={{ paddingBottom: 120 }}
+            contentContainerStyle={{ paddingBottom: footerHeight + 20 }}
           >
             {vehicles.map(v => {
               const isSel   = selected?.slug === v.slug && selected?.id === v.id;
@@ -326,7 +327,10 @@ export default function CabVehiclesScreen() {
 
       {/* Action bar — fixed at screen bottom, always visible when not collapsed */}
       {!loading && vehicles.length > 0 && !isCollapsed && (
-        <View style={s.actionBar}>
+        <View
+          style={[s.actionBar, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}
+          onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+        >
           <TouchableOpacity style={s.paymentChip} activeOpacity={0.8} hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}>
             <Text style={s.paymentChipText}>{t("common.cashChip")}</Text>
           </TouchableOpacity>
@@ -357,7 +361,7 @@ export default function CabVehiclesScreen() {
 
       {/* Collapsed pill — tap to expand back to PEEK */}
       {isCollapsed && (
-        <View style={s.collapsedWrap}>
+        <View style={[s.collapsedWrap, { bottom: 40 + insets.bottom }]}>
           <TouchableOpacity style={s.collapsedPill} onPress={() => snapTo(SNAPS.PEEK)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.collapsedText}>{t("cab.vehicles.collapsedChooseRide")}</Text>
           </TouchableOpacity>
@@ -493,7 +497,7 @@ const s = StyleSheet.create({
     position: "absolute", bottom: 0, left: 0, right: 0,
     flexDirection: "row", alignItems: "center",
     backgroundColor: COLORS.white,
-    paddingHorizontal: 16, paddingVertical: 14, paddingBottom: 34,
+    paddingHorizontal: 16, paddingVertical: 14,
     borderTopWidth: 1, borderTopColor: COLORS.border, gap: 10,
     shadowColor: "#000", shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06, shadowRadius: 8, elevation: 12,
@@ -515,7 +519,7 @@ const s = StyleSheet.create({
   bookBtnFare: { color: COLORS.primaryBorder, fontSize: 11, fontWeight: "600", marginTop: 1 },
 
   collapsedWrap: {
-    position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center",
+    position: "absolute", left: 0, right: 0, alignItems: "center",
   },
   collapsedPill: {
     backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10,

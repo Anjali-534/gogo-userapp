@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
   TextInput, FlatList, Keyboard, ActivityIndicator, Alert, Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getToken } from "@/services/session";
@@ -105,7 +106,7 @@ export default function AddSavedPlaceScreen() {
     <SafeAreaView style={s.safe}>
       <View style={[s.header, { paddingTop: 20 + (Platform.OS === "android" ? insets.top : 0) }]}>
         <TouchableOpacity onPress={() => router.back()} style={s.back} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={s.title}>{t("savedPlaceAdd.title")}</Text>
       </View>
@@ -215,7 +216,6 @@ const s = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: COLORS.bg },
   header: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingBottom: 16 },
   back:   { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.border, alignItems: "center", justifyContent: "center" },
-  backTxt:{ fontSize: 18, fontWeight: "700", color: COLORS.textPrimary },
   title:  { color: COLORS.textPrimary, fontSize: 20, fontWeight: "900" },
 
   body: { paddingHorizontal: 20 },

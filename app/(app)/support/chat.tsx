@@ -4,6 +4,7 @@ import {
   TextInput, ScrollView, KeyboardAvoidingView, Platform,
   StatusBar, ActivityIndicator, Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearToken, getToken } from "@/services/session";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -204,7 +205,7 @@ export default function SupportChatScreen() {
       {/* Header */}
       <View style={s.header}>
         <TouchableOpacity onPress={() => router.back()} style={s.back} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <Text style={s.backTxt}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.ticketNum}>{ticket?.ticket_number || t("support.chat.headerFallback")}</Text>
@@ -328,7 +329,6 @@ const s = StyleSheet.create({
   safe:          { flex: 1, backgroundColor: COLORS.bg },
   header:        { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 16, paddingTop: 36, paddingBottom: 12, backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.border },
   back:          { width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.border, alignItems: "center", justifyContent: "center" },
-  backTxt:       { fontSize: 18, fontWeight: "700", color: COLORS.textPrimary },
   ticketNum:     { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary, fontFamily: "monospace" },
   ticketSubject: { fontSize: 12, color: COLORS.textSecondary, marginTop: 1 },
   statusBadge:   { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },

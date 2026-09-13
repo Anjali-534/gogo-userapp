@@ -255,7 +255,7 @@ export default function TruckVehiclesScreen() {
 
       {/* Collapsed pill */}
       {isCollapsed && (
-        <View style={s.collapsedWrap}>
+        <View style={[s.collapsedWrap, { bottom: 40 + insets.bottom }]}>
           <TouchableOpacity style={s.collapsedPill} onPress={() => snapTo(SNAPS.PEEK)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={s.collapsedText}>{t("truck.vehicles.collapsedChooseVehicle")}</Text>
           </TouchableOpacity>
@@ -324,7 +324,7 @@ const s = StyleSheet.create({
   proceedDisabled: { opacity: 0.45, shadowOpacity: 0 },
   proceedText:     { color: COLORS.white, fontWeight: "700", fontSize: 16, letterSpacing: 0.3 },
 
-  collapsedWrap: { position: "absolute", bottom: 40, left: 0, right: 0, alignItems: "center" },
+  collapsedWrap: { position: "absolute", left: 0, right: 0, alignItems: "center" },
   collapsedPill: { backgroundColor: COLORS.textStrong, paddingHorizontal: 20, paddingVertical: 10, borderRadius: RADIUS.sheet, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 10 },
   collapsedText: { color: "#FFF", fontWeight: "700", fontSize: 14 },
 });

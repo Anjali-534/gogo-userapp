@@ -1,5 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import { Animated, Dimensions, PanResponder, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height: SCREEN_H } = Dimensions.get("window");
 
@@ -19,6 +20,14 @@ export const SNAP = {
 const COLLAPSED_SHEET_TOP = (SCREEN_H - SHEET_H) + SNAP.COLLAPSED;
 export const COLLAPSED_PILL_BOTTOM = Math.round(SCREEN_H - COLLAPSED_SHEET_TOP) + 20;
 
+// Same base offset as COLLAPSED_PILL_BOTTOM, plus the device's bottom safe-area
+// inset so the pill clears the Android 3-button nav bar instead of sitting
+// underneath it.
+export function useCollapsedPillBottom() {
+  const insets = useSafeAreaInsets();
+  return COLLAPSED_PILL_BOTTOM + insets.bottom;
+}
+
 type SnapKey = keyof typeof SNAP;
 
 export interface BottomSheetHandle {
@@ -33,6 +42,7 @@ interface Props {
 
 const BottomSheet = forwardRef<BottomSheetHandle, Props>(
   ({ initialSnap = "PEEK", onSnapChange, children }, ref) => {
+    const insets   = useSafeAreaInsets();
     const sheetY   = useRef(new Animated.Value(SNAP[initialSnap])).current;
     const panStart = useRef(0);
 
@@ -51,8 +61,15 @@ const BottomSheet = forwardRef<BottomSheetHandle, Props>(
 
     const pan = useRef(
       PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder:  (_, gs) => Math.abs(gs.dy) > 5,
+        // Never claim on touch-down — that would swallow every tap on the
+        // content below (cards, buttons, saved-place rows) before it can
+        // register as a press. Only claim once a real, mostly-vertical drag
+        // is underway, so plain taps and any horizontal gestures inside
+        // {children} (e.g. cab/index.tsx's category-pill scroller) pass
+        // through untouched.
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: (_, gs) =>
+          Math.abs(gs.dy) > 8 && Math.abs(gs.dy) > Math.abs(gs.dx) * 1.5,
         onPanResponderGrant: () => { panStart.current = (sheetY as any)._value; },
         onPanResponderMove:  (_, gs) => {
           sheetY.setValue(
@@ -76,8 +93,11 @@ const BottomSheet = forwardRef<BottomSheetHandle, Props>(
     ).current;
 
     return (
-      <Animated.View style={[sh.sheet, { height: SHEET_H, transform: [{ translateY: sheetY }] }]}>
-        <View {...pan.panHandlers} style={sh.handleWrap} hitSlop={{ top: 14, bottom: 14, left: 0, right: 0 }}>
+      <Animated.View
+        {...pan.panHandlers}
+        style={[sh.sheet, { height: SHEET_H, paddingBottom: Math.max(insets.bottom, 16) + 16, transform: [{ translateY: sheetY }] }]}
+      >
+        <View style={sh.handleWrap} hitSlop={{ top: 14, bottom: 14, left: 0, right: 0 }}>
           <View style={sh.handle} />
         </View>
         {children}

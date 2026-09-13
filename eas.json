@@ -15,7 +15,7 @@
       "environment": "development",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
-        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo",
+        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyAOQlfoRcHCxhFZqGV5UHw2xRo_2d6og1w",
         "EXPO_PUBLIC_OLA_MAPS_KEY": "t2Fqkl5WorEAyNmENVToJnK1aPDrduKibWR3Yd4k",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com"
       }
@@ -30,7 +30,7 @@
       "environment": "preview",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
-        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo",
+        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyAOQlfoRcHCxhFZqGV5UHw2xRo_2d6og1w",
         "EXPO_PUBLIC_OLA_MAPS_KEY": "t2Fqkl5WorEAyNmENVToJnK1aPDrduKibWR3Yd4k",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com"
       }
@@ -44,7 +44,7 @@
       "environment": "production",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://gogobackend-production.up.railway.app",
-        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDVeZ2HFhOBx-HvFAw-qhtujH-uDje_vZo",
+        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyAOQlfoRcHCxhFZqGV5UHw2xRo_2d6og1w",
         "EXPO_PUBLIC_OLA_MAPS_KEY": "t2Fqkl5WorEAyNmENVToJnK1aPDrduKibWR3Yd4k",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "452086529308-jtfjcudpul8p85perl10snlupj351bj0.apps.googleusercontent.com"
       }

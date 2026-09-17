@@ -123,6 +123,8 @@ function LocationInput({
           style={li.input}
           placeholder={label}
           placeholderTextColor={COLORS.textMuted}
+          cursorColor={COLORS.textStrong}
+          selectionColor={COLORS.textStrong}
           value={text}
           onChangeText={onChangeText}
           returnKeyType="search"
@@ -402,6 +404,8 @@ export default function TruckBookingScreen() {
             style={s.fieldPillInput}
             placeholder={t("truck.booking.receiverNamePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textStrong}
+            selectionColor={COLORS.textStrong}
             value={receiverName}
             onChangeText={setReceiverName}
           />
@@ -413,6 +417,8 @@ export default function TruckBookingScreen() {
             style={s.fieldPillInput}
             placeholder={t("truck.booking.receiverPhonePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textStrong}
+            selectionColor={COLORS.textStrong}
             value={receiverPhone}
             onChangeText={v => setReceiverPhone(v.replace(/\D/g, "").slice(0, 10))}
             keyboardType="numeric"
@@ -485,6 +491,8 @@ export default function TruckBookingScreen() {
                 style={s.overlayInput}
                 placeholder={t("booking.overlay.searchPickup")}
                 placeholderTextColor={COLORS.textMuted}
+                cursorColor={COLORS.textStrong}
+                selectionColor={COLORS.textStrong}
                 value={pickupSearchText}
                 onChangeText={onPickupSearchChange}
                 autoCorrect={false}

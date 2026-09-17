@@ -612,6 +612,8 @@ export default function AmbulanceBookingScreen() {
             style={s.fieldInput}
             placeholder={t("ambulance.booking.patientNamePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textStrong}
+            selectionColor={COLORS.textStrong}
             value={patientName}
             onChangeText={setPatientName}
           />
@@ -620,6 +622,8 @@ export default function AmbulanceBookingScreen() {
             style={s.fieldInput}
             placeholder={t("ambulance.booking.contactPhonePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textStrong}
+            selectionColor={COLORS.textStrong}
             value={contactPhone}
             onChangeText={v => setContactPhone(v.replace(/\D/g, "").slice(0, 10))}
             keyboardType="numeric"
@@ -641,6 +645,8 @@ export default function AmbulanceBookingScreen() {
           style={s.notesInput}
           placeholder={t("ambulance.booking.medicalNotesPlaceholder")}
           placeholderTextColor={COLORS.textMuted}
+          cursorColor={COLORS.textStrong}
+          selectionColor={COLORS.textStrong}
           value={medNotes}
           onChangeText={setMedNotes}
           multiline
@@ -694,6 +700,8 @@ export default function AmbulanceBookingScreen() {
                 style={s.overlayInput}
                 placeholder={t("booking.overlay.searchPickup")}
                 placeholderTextColor={COLORS.textMuted}
+                cursorColor={COLORS.textStrong}
+                selectionColor={COLORS.textStrong}
                 value={pickupSearchText}
                 onChangeText={onPickupSearchChange}
                 autoCorrect={false}
@@ -755,6 +763,8 @@ export default function AmbulanceBookingScreen() {
                 style={s.overlayInput}
                 placeholder={t("ambulance.booking.dropSearchPlaceholder")}
                 placeholderTextColor={COLORS.textMuted}
+                cursorColor={COLORS.textStrong}
+                selectionColor={COLORS.textStrong}
                 value={dropSearchText}
                 onChangeText={onDropSearchChange}
                 autoCorrect={false}

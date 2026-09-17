@@ -192,14 +192,17 @@ export default function LoginScreen() {
             <>
               <Text style={s.label}>{t("auth.login.fullNameLabel")}</Text>
               <TextInput style={s.input} value={name} onChangeText={setName}
-                placeholder={t("auth.login.fullNamePlaceholder")} placeholderTextColor="#AEAEAE" />
+                placeholder={t("auth.login.fullNamePlaceholder")} placeholderTextColor="#AEAEAE"
+                cursorColor="#0D0D0D" selectionColor="#0D0D0D" />
               <Text style={s.label}>{t("auth.login.phoneLabel")}</Text>
               <TextInput style={s.input} value={phone} onChangeText={setPhone}
-                placeholder={t("auth.login.phonePlaceholder")} placeholderTextColor="#AEAEAE" keyboardType="phone-pad" />
+                placeholder={t("auth.login.phonePlaceholder")} placeholderTextColor="#AEAEAE" keyboardType="phone-pad"
+                cursorColor="#0D0D0D" selectionColor="#0D0D0D" />
               <Text style={s.label}>{t("auth.login.referralLabel")}</Text>
               <TextInput style={s.input} value={referralCode}
                 onChangeText={v => { setReferralCode(v); setReferralCheck(null); }}
                 onBlur={checkReferralCode}
+                cursorColor="#0D0D0D" selectionColor="#0D0D0D"
                 placeholder={t("auth.login.referralPlaceholder")} placeholderTextColor="#AEAEAE" autoCapitalize="characters" />
               {referralCheck && (
                 <Text style={referralCheck.valid ? s.referralOk : s.referralBad}>
@@ -211,6 +214,7 @@ export default function LoginScreen() {
           <Text style={s.label}>{t("auth.login.emailLabel")}</Text>
           <TextInput style={s.input} value={email} onChangeText={setEmail}
             placeholder={t("auth.login.emailPlaceholder")} placeholderTextColor="#AEAEAE"
+            cursorColor="#0D0D0D" selectionColor="#0D0D0D"
             autoCapitalize="none" keyboardType="email-address" />
           <Text style={s.label}>{t("auth.login.passwordLabel")}</Text>
           <View style={s.passwordRow}>
@@ -220,6 +224,8 @@ export default function LoginScreen() {
               onChangeText={setPassword}
               placeholder={t("auth.login.passwordPlaceholder")}
               placeholderTextColor="#AEAEAE"
+              cursorColor="#0D0D0D"
+              selectionColor="#0D0D0D"
               secureTextEntry={!showPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(v => !v)} style={s.eyeBtn}>

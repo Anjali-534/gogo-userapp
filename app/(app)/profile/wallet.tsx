@@ -251,6 +251,8 @@ export default function WalletScreen() {
                 style={s.amountInput}
                 placeholder={t("profile.wallet.addMoneyAmountPlaceholder")}
                 placeholderTextColor={COLORS.textMuted}
+                cursorColor={COLORS.textPrimary}
+                selectionColor={COLORS.textPrimary}
                 keyboardType="number-pad"
                 value={amount}
                 onChangeText={setAmount}

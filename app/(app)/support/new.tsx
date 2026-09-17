@@ -151,6 +151,8 @@ export default function NewSupportChatScreen() {
             style={s.bookingInput}
             placeholder={t("support.new.bookingPlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textPrimary}
+            selectionColor={COLORS.textPrimary}
             value={bookingId}
             onChangeText={setBookingId}
             autoCapitalize="none"
@@ -162,6 +164,8 @@ export default function NewSupportChatScreen() {
             style={s.messageInput}
             placeholder={t("support.new.messagePlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textPrimary}
+            selectionColor={COLORS.textPrimary}
             value={freeform}
             onChangeText={setFreeform}
             multiline

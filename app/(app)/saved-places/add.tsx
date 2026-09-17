@@ -119,6 +119,8 @@ export default function AddSavedPlaceScreen() {
             onChangeText={onQueryChange}
             placeholder={t("savedPlaceAdd.searchPlaceholder")}
             placeholderTextColor="#AAA"
+            cursorColor={COLORS.textPrimary}
+            selectionColor={COLORS.textPrimary}
             returnKeyType="search"
           />
           {sugLoading
@@ -188,6 +190,8 @@ export default function AddSavedPlaceScreen() {
                   onChangeText={setCustomLabel}
                   placeholder={t("locationPicker.customLabelPlaceholder")}
                   placeholderTextColor="#AAA"
+                  cursorColor={COLORS.textPrimary}
+                  selectionColor={COLORS.textPrimary}
                   autoFocus
                   returnKeyType="done"
                   onSubmitEditing={() => { if (customLabel.trim()) savePlace(customLabel.trim()); }}

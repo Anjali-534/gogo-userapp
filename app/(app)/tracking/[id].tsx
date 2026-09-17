@@ -5,6 +5,7 @@ import {
   Animated, PanResponder, Dimensions, KeyboardAvoidingView, Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Polyline, Circle, Heatmap, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
 import SOSButton from "../../../components/SOSButton";
@@ -191,6 +192,7 @@ export default function TrackingScreen() {
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const mapRef  = useRef<MapView>(null);
+  const insets  = useSafeAreaInsets();
 
   // ── State ────────────────────────────────────────────────────────────────
   const [booking,            setBooking]            = useState<any>(null);
@@ -231,11 +233,17 @@ export default function TrackingScreen() {
   // ── Animated bottom sheet ────────────────────────────────────────────────
   const sheetY     = useRef(new Animated.Value(SHEET_OFFSET)).current;
   const panStartRef = useRef(0);
+  // Mirrors sheetExpanded/scroll position for synchronous reads inside the
+  // PanResponder callbacks below — those fire outside React's render cycle,
+  // so state read there would lag a frame behind the real value.
+  const sheetExpandedRef = useRef(false);
+  const scrollOffsetRef  = useRef(0);
 
   const snapSheet = (target: number, velocity = 0) => {
     Animated.spring(sheetY, {
       toValue: target, velocity, useNativeDriver: true, tension: 68, friction: 12,
     }).start();
+    sheetExpandedRef.current = target === 0;
     setSheetExpanded(target === 0);
     setSheetHidden(target === HIDDEN_OFFSET);
   };
@@ -243,8 +251,21 @@ export default function TrackingScreen() {
   const collapseSheet = () => snapSheet(SHEET_OFFSET);
 
   const panResponder = useRef(PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder:  (_, gs) => Math.abs(gs.dy) > 4,
+    // Never claim on touch-down — that would swallow every tap on the sheet's
+    // own buttons (cancel, call, chat, pay, collapse) before it can register
+    // as a press. Only claim once a real, mostly-vertical drag is underway.
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_, gs) => {
+      const verticalEnough = Math.abs(gs.dy) > 8 && Math.abs(gs.dy) > Math.abs(gs.dx) * 1.5;
+      if (!verticalEnough) return false;
+      // Collapsed/hidden: no scrollable content is visible yet, so the whole
+      // card is draggable in either direction. Expanded: the sheet's own
+      // ScrollView (route/fare/trust content) owns vertical drags except
+      // right at its own top edge, where a further downward drag collapses
+      // the sheet instead of scrolling.
+      if (!sheetExpandedRef.current) return true;
+      return scrollOffsetRef.current <= 0 && gs.dy > 0;
+    },
     onPanResponderGrant: () => { panStartRef.current = (sheetY as any)._value; },
     onPanResponderMove: (_, gs) => {
       const next = Math.max(0, Math.min(HIDDEN_OFFSET, panStartRef.current + gs.dy));
@@ -716,14 +737,17 @@ export default function TrackingScreen() {
       )}
 
       {/* ── ANIMATED BOTTOM SHEET ─────────────────────────────────── */}
-      <Animated.View style={[s.sheet, { height: FULL_HEIGHT, transform: [{ translateY: sheetY }] }]}>
+      <Animated.View
+        {...panResponder.panHandlers}
+        style={[s.sheet, { height: FULL_HEIGHT, transform: [{ translateY: sheetY }] }]}
+      >
         {/* Drag handle */}
-        <View {...panResponder.panHandlers} style={s.handleArea} hitSlop={{ top: 14, bottom: 14, left: 0, right: 0 }}>
+        <View style={s.handleArea} hitSlop={{ top: 14, bottom: 14, left: 0, right: 0 }}>
           <View style={s.handle} />
         </View>
 
         {/* ── PEEK CONTENT (always visible) ── */}
-        <View style={s.peekSection}>
+        <View style={[s.peekSection, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}>
           {/* Status row */}
           <View style={s.statusRow}>
             <View style={{ flex: 1 }}>
@@ -887,7 +911,13 @@ export default function TrackingScreen() {
         </View>
 
         {/* ── EXPANDED CONTENT ── */}
-        <ScrollView style={s.expandedSection} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={s.expandedSection}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onScroll={e => { scrollOffsetRef.current = e.nativeEvent.contentOffset.y; }}
+          contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) + 16 }}
+        >
           <View style={s.routeCard}>
             <View style={s.routeCardHeader}>
               <Text style={s.routeCardTitle}>{t("booking.review.route")}</Text>
@@ -950,7 +980,7 @@ export default function TrackingScreen() {
 
       {/* Restore pill — shown when the sheet is dragged fully down for a fullscreen map */}
       {sheetHidden && (
-        <View style={s.restorePillWrap}>
+        <View style={[s.restorePillWrap, { bottom: 40 + insets.bottom }]}>
           <TouchableOpacity style={[s.restorePill, { backgroundColor: mapAccent }]} onPress={collapseSheet}>
             <Text style={s.restorePillTxt} numberOfLines={1}>{t("tracking.restorePillPrefix", { title: copy.title })}</Text>
           </TouchableOpacity>
@@ -1000,7 +1030,8 @@ export default function TrackingScreen() {
                   ))}
                 </View>
                 <TextInput style={s.reviewInput} value={review} onChangeText={setReview}
-                  placeholder={t("tracking.completion.commentPlaceholder")} placeholderTextColor="#AAA" multiline />
+                  placeholder={t("tracking.completion.commentPlaceholder")} placeholderTextColor="#AAA"
+                  cursorColor="#111" selectionColor="#111" multiline />
                 <TouchableOpacity style={[s.submitBtn, rateLoading && {opacity:0.6}]} onPress={submitRating} disabled={rateLoading}>
                   {rateLoading ? <ActivityIndicator color="#fff" /> : <Text style={s.submitBtnTxt}>{t("tracking.completion.submitGoHome")}</Text>}
                 </TouchableOpacity>

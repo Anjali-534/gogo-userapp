@@ -146,6 +146,8 @@ export default function SafetyScreen() {
               onChangeText={setContactName}
               placeholder={t("profile.safety.contactNamePlaceholder")}
               placeholderTextColor="#AAA"
+              cursorColor={COLORS.textPrimary}
+              selectionColor={COLORS.textPrimary}
             />
             <Text style={[s.contactLabel, { marginTop: 12 }]}>{t("profile.safety.contactPhoneLabel")}</Text>
             <TextInput
@@ -154,6 +156,8 @@ export default function SafetyScreen() {
               onChangeText={setContactPhone}
               placeholder={t("profile.safety.contactPhonePlaceholder")}
               placeholderTextColor="#AAA"
+              cursorColor={COLORS.textPrimary}
+              selectionColor={COLORS.textPrimary}
               keyboardType="phone-pad"
               maxLength={10}
             />

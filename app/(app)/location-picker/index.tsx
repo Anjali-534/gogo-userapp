@@ -342,6 +342,8 @@ const mode = params.mode;
               onChangeText={onQueryChange}
               placeholder={isPickup ? t("locationPicker.searchPickupPlaceholder") : t("locationPicker.searchDropPlaceholder")}
               placeholderTextColor="#AAA"
+              cursorColor="#111"
+              selectionColor="#111"
               returnKeyType="search"
               onFocus={() => query.length > 1 && setShowSuggestions(true)}
             />
@@ -435,6 +437,8 @@ const mode = params.mode;
               onChangeText={setSaveLabel}
               placeholder={t("locationPicker.customLabelPlaceholder")}
               placeholderTextColor="#AAA"
+              cursorColor="#111"
+              selectionColor="#111"
               autoFocus
               returnKeyType="done"
               onSubmitEditing={() => { if (saveLabel.trim()) doSave(saveLabel.trim()); }}

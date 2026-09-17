@@ -298,6 +298,8 @@ export default function CabBookingScreen() {
                 style={s.overlayInput}
                 placeholder={activeField === "pickup" ? t("booking.overlay.searchPickup") : t("booking.overlay.searchDestination")}
                 placeholderTextColor={COLORS.textMuted}
+                cursorColor={COLORS.textStrong}
+                selectionColor={COLORS.textStrong}
                 value={searchText}
                 onChangeText={onSearchChange}
                 autoCorrect={false}

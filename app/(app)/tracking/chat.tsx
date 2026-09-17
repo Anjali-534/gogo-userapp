@@ -145,6 +145,8 @@ export default function RideChatScreen() {
                 onChangeText={setInput}
                 placeholder={t("tracking.chat.inputPlaceholder")}
                 placeholderTextColor={COLORS.textMuted}
+                cursorColor={COLORS.textPrimary}
+                selectionColor={COLORS.textPrimary}
                 multiline
               />
               <TouchableOpacity

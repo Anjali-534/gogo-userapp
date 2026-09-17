@@ -86,6 +86,8 @@ export default function TruckCouponsScreen() {
             style={s.manualInput}
             placeholder={t("booking.coupons.enterCode")}
             placeholderTextColor="#AAA"
+            cursorColor={COLORS.textPrimary}
+            selectionColor={COLORS.textPrimary}
             value={manualCode}
             onChangeText={v => { setManualCode(v.toUpperCase()); setManualError(""); }}
             autoCapitalize="characters"

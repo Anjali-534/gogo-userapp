@@ -184,6 +184,8 @@ export default function LostItemScreen() {
             style={s.input}
             placeholder={t("support.lostItem.itemPlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textPrimary}
+            selectionColor={COLORS.textPrimary}
             value={itemDescription}
             onChangeText={setItemDescription}
             maxLength={200}
@@ -208,6 +210,8 @@ export default function LostItemScreen() {
             style={s.textarea}
             placeholder={t("support.lostItem.detailsPlaceholder")}
             placeholderTextColor={COLORS.textMuted}
+            cursorColor={COLORS.textPrimary}
+            selectionColor={COLORS.textPrimary}
             value={additionalDetails}
             onChangeText={setAdditionalDetails}
             multiline

@@ -296,6 +296,8 @@ export default function SupportChatScreen() {
               style={s.input}
               placeholder={t("support.chat.inputPlaceholder")}
               placeholderTextColor={COLORS.textMuted}
+              cursorColor={COLORS.textPrimary}
+              selectionColor={COLORS.textPrimary}
               value={input}
               onChangeText={setInput}
               multiline

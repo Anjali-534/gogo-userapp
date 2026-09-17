@@ -26,7 +26,7 @@ export default function PromosScreen() {
         <View style={s.inputCard}>
           <Text style={s.inputLabel}>{t("profile.promos.enterCodeLabel")}</Text>
           <View style={s.inputRow}>
-            <TextInput style={s.input} value={code} onChangeText={setCode} placeholder={t("profile.promos.placeholder")} placeholderTextColor="#AAA" autoCapitalize="characters" />
+            <TextInput style={s.input} value={code} onChangeText={setCode} placeholder={t("profile.promos.placeholder")} placeholderTextColor="#AAA" cursorColor={COLORS.textPrimary} selectionColor={COLORS.textPrimary} autoCapitalize="characters" />
             <TouchableOpacity style={s.applyBtn} onPress={apply}><Text style={s.applyBtnText}>{t("profile.promos.apply")}</Text></TouchableOpacity>
           </View>
         </View>

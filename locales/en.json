@@ -1174,6 +1174,12 @@
     "cancelRideBtn": "Cancel Ride",
     "cancellationFeeNotice": "A ₹{{fee}} cancellation fee will be added to your next ride.",
     "viewMyRides": "View My Rides",
+    "noDriverFound": {
+      "message": "No drivers were available nearby. You haven't been charged — try again or come back later.",
+      "retry": "Try Again",
+      "back": "Back to Home",
+      "retryFailed": "Could not start a new search. Please try again."
+    },
     "expandHint": "▲  Route details",
     "collapseHint": "▼  Collapse",
     "fareEstimateTitle": "Fare estimate",

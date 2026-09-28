@@ -204,6 +204,7 @@ export default function TrackingScreen() {
   const [rated,              setRated]              = useState(false);
   const [rateLoading,        setRateLoading]        = useState(false);
   const [cancelling,         setCancelling]         = useState(false);
+  const [retrying,           setRetrying]           = useState(false);
   const [routeCoords,        setRouteCoords]        = useState<{latitude:number;longitude:number}[]>([]);
   const [routeDistText,      setRouteDistText]      = useState("");
   const [routeDurText,       setRouteDurText]       = useState("");
@@ -485,6 +486,62 @@ export default function TrackingScreen() {
       router.replace("/(app)/history");
     } catch { Alert.alert(t("common.error"), t("home.upcoming.cancelError")); }
     finally { setCancelling(false); }
+  };
+
+  // Re-submits the same pickup/drop/service as a fresh booking after a
+  // no-driver-found system cancel. Reuses the exact fields createBookingCore
+  // needs (service_type_id, coordinates, estimated_fare, distance_km,
+  // payment_method) straight from the cancelled booking's own GetBooking
+  // response — the server recomputes and re-verifies the fare from those
+  // coordinates the same way the original review-screen submit did, so an
+  // unchanged route still passes its fare-tolerance check.
+  const retrySearch = async () => {
+    if (!booking) return;
+    setRetrying(true);
+    try {
+      const token = await getToken();
+      if (!token) {
+        Alert.alert(t("booking.session.expiredTitle"), t("booking.session.expiredMsg"));
+        router.replace("/(auth)/login" as any);
+        return;
+      }
+      const res = await axios.post(`${API}/gogoo/bookings`, {
+        service_type_id: booking.service_type_id,
+        pickup_lat: booking.pickup?.lat, pickup_lng: booking.pickup?.lng, pickup_address: booking.pickup?.address,
+        drop_lat: booking.drop?.lat, drop_lng: booking.drop?.lng, drop_address: booking.drop?.address,
+        estimated_fare: booking.estimated_fare,
+        distance_km: booking.distance_km,
+        payment_method: booking.payment_method,
+        receiver_name: booking.receiver_name || undefined,
+        receiver_phone: booking.receiver_phone || undefined,
+        hospital_id: booking.hospital_id || undefined,
+        hospital_name: booking.hospital_name || undefined,
+        ambulance_sub_type: booking.ambulance_sub_type || undefined,
+        purpose_type: booking.purpose_type || undefined,
+        patient_name: booking.patient_name || undefined,
+      }, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } });
+      const newBookingId = res.data?.booking_id || res.data?.id;
+      if (!newBookingId) throw new Error("No booking ID returned from server");
+      await AsyncStorage.setItem("active_booking_id", String(newBookingId));
+      router.replace(`/(app)/tracking/${newBookingId}` as any);
+    } catch (e: any) {
+      if (e.response?.status === 401) {
+        const auth = await resolve401(e, "Tracking.retrySearch");
+        if (auth.shouldLogout) {
+          if (auth.deactivated) {
+            Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+              { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+            ]);
+            return;
+          }
+          router.replace("/(auth)/login" as any);
+          return;
+        }
+      }
+      Alert.alert(t("common.error"), e.response?.data?.error || t("tracking.noDriverFound.retryFailed"));
+    } finally {
+      setRetrying(false);
+    }
   };
 
   // Always asks the server what cancelling would cost right now — the fee
@@ -897,7 +954,29 @@ export default function TrackingScreen() {
             </TouchableOpacity>
           )}
 
-          {booking.status === "cancelled" && (
+          {booking.status === "cancelled" && booking.cancelled_by === "system" && booking.cancel_reason === "no_driver_found" ? (
+            <>
+              <View style={s.feeNoticeBox}>
+                <Text style={s.feeNoticeText}>{t("tracking.noDriverFound.message")}</Text>
+              </View>
+              <TouchableOpacity
+                style={[s.doneBtn, retrying && { opacity: 0.6 }]}
+                onPress={retrySearch}
+                disabled={retrying}
+              >
+                {retrying
+                  ? <ActivityIndicator color="#fff" />
+                  : <Text style={s.doneTxt}>{t("tracking.noDriverFound.retry")}</Text>}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[s.doneBtn, { backgroundColor: "transparent", marginTop: 8 }]}
+                onPress={() => router.replace("/(app)/home")}
+                disabled={retrying}
+              >
+                <Text style={[s.doneTxt, { color: COLORS.textSecondary }]}>{t("tracking.noDriverFound.back")}</Text>
+              </TouchableOpacity>
+            </>
+          ) : booking.status === "cancelled" && (
             <>
               {booking.cancellation_fee > 0 && (
                 <View style={s.feeNoticeBox}>

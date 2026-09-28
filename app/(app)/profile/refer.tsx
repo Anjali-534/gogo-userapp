@@ -3,8 +3,8 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, ActivityIndicator, RefreshControl, Linking, Alert, Image,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import { useRouter } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import axios from "axios";
@@ -43,10 +43,17 @@ export default function ReferScreen() {
       } else {
         console.error("referral/my-code failed:", codeRes.reason?.response?.data || codeRes.reason?.message);
         if (codeRes.reason?.response?.status === 401) {
-          await clearToken();
-          await AsyncStorage.multiRemove(["user", "rider_id"]);
-          router.replace("/(auth)/login" as any);
-          return;
+          const auth = await resolve401(codeRes.reason, "ReferScreen.fetchData");
+          if (auth.shouldLogout) {
+            if (auth.deactivated) {
+              Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+                { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+              ]);
+              return;
+            }
+            router.replace("/(auth)/login" as any);
+            return;
+          }
         }
         setError(true);
       }

@@ -1,8 +1,8 @@
 ﻿import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, StatusBar, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, StatusBar, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -33,10 +33,17 @@ export default function HistoryScreen() {
         trackHistoryViewed({ bookingCount: loaded.length });
       } catch (e: any) {
         if (e?.response?.status === 401) {
-          await clearToken();
-          await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
-          router.replace("/(auth)/login" as any);
-          return;
+          const auth = await resolve401(e, "History.fetchBookings");
+          if (auth.shouldLogout) {
+            if (auth.deactivated) {
+              Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+                { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+              ]);
+              return;
+            }
+            router.replace("/(auth)/login" as any);
+            return;
+          }
         }
       } finally { setLoading(false); }
     })();

@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, StyleSheet, ScrollView, Image,
-  TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl,
+  TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -43,10 +43,17 @@ export default function SupportIndexScreen() {
       trackSupportOpened({ from: "profile", existingTickets: loaded.length });
     } catch (e: any) {
       if (e?.response?.status === 401) {
-        await clearToken();
-        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
-        router.replace("/(auth)/login" as any);
-        return;
+        const auth = await resolve401(e, "SupportIndex.fetchTickets");
+        if (auth.shouldLogout) {
+          if (auth.deactivated) {
+            Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+              { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+            ]);
+            return;
+          }
+          router.replace("/(auth)/login" as any);
+          return;
+        }
       }
       setTickets([]);
     } finally {

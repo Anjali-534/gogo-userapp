@@ -5,10 +5,12 @@ const TOKEN_KEY = "access_token";
 
 // Every AsyncStorage key that identifies a specific rider or their in-app
 // session. Cleared together on logout so a shared/handed-down device never
-// leaks the previous rider's account to whoever logs in next. The token
-// itself lives in SecureStore, not here — see getToken/setToken/clearToken
-// below.
-const SESSION_KEYS = ["user", "rider_id"];
+// leaks the previous rider's account to whoever logs in next — including
+// active_booking_id, which several screens read on next launch to
+// auto-resume tracking (see home/index.tsx's restoreActiveBooking) and must
+// not point at the previous session's ride. The token itself lives in
+// SecureStore, not here — see getToken/setToken/clearToken below.
+const SESSION_KEYS = ["user", "rider_id", "active_booking_id"];
 
 export async function getToken(): Promise<string | null> {
   return SecureStore.getItemAsync(TOKEN_KEY);

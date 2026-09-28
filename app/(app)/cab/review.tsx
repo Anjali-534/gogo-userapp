@@ -6,7 +6,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -125,13 +126,18 @@ export default function CabReviewScreen() {
           if (riderId) await AsyncStorage.setItem("rider_id", riderId);
         } catch (profileErr: any) {
           if (profileErr?.response?.status === 401) {
-            await clearToken();
-            await AsyncStorage.multiRemove(["rider_id", "user"]);
-            Alert.alert(t("booking.session.expiredTitle"), t("booking.session.expiredMsg"), [
-              { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
-            ]);
-            setBooking(false);
-            return;
+            const auth = await resolve401(profileErr, "CabReview.profileLookup");
+            if (auth.shouldLogout) {
+              Alert.alert(
+                auth.deactivated ? t("booking.session.deactivatedTitle") : t("booking.session.expiredTitle"),
+                auth.deactivated ? t("booking.session.deactivatedMsg") : t("booking.session.expiredMsg"),
+                [{ text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) }]
+              );
+              setBooking(false);
+              return;
+            }
+            // Not a session/account failure — fall through; riderId stays
+            // empty and is handled by the couldNotIdentify check below.
           }
         }
       }
@@ -228,12 +234,17 @@ export default function CabReviewScreen() {
       await proceed();
     } catch (e: any) {
       if (e.response?.status === 401) {
-        await clearToken();
-        await AsyncStorage.multiRemove(["rider_id", "user"]);
-        Alert.alert(t("booking.session.expiredTitle"), t("booking.session.expiredMsg"), [
-          { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
-        ]);
-        return;
+        const auth = await resolve401(e, "CabReview.handleBook");
+        if (auth.shouldLogout) {
+          Alert.alert(
+            auth.deactivated ? t("booking.session.deactivatedTitle") : t("booking.session.expiredTitle"),
+            auth.deactivated ? t("booking.session.deactivatedMsg") : t("booking.session.expiredMsg"),
+            [{ text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) }]
+          );
+          return;
+        }
+        // Not a session/account failure — fall through to the generic
+        // error alert below, which already surfaces the real message.
       }
       const errMsg =
         e.response?.data?.error ||

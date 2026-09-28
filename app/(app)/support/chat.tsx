@@ -6,7 +6,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -76,10 +77,18 @@ export default function SupportChatScreen() {
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 100);
     } catch (e: any) {
       if (e?.response?.status === 401) {
-        await clearToken();
-        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
-        router.replace("/(auth)/login" as any);
-        return;
+        const auth = await resolve401(e, "SupportChat.fetchMessages");
+        if (auth.shouldLogout) {
+          if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+          if (auth.deactivated) {
+            Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+              { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+            ]);
+            return;
+          }
+          router.replace("/(auth)/login" as any);
+          return;
+        }
       }
     } finally {
       setLoading(false);

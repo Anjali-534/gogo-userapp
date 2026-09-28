@@ -6,7 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import axios from "axios";
 import { trackAppOpen, setUserProperties } from "@/services/analytics";
 import { requestPermissionsOnce } from "@/services/permissions";
-import { clearSession, clearToken, getToken, migrateTokenIfNeeded } from "@/services/session";
+import { clearToken, getToken, migrateTokenIfNeeded } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 const ACTIVE_STATUSES = ["searching", "accepted", "arriving", "in_progress"];
@@ -74,8 +75,8 @@ export default function Index() {
           setTarget(active ? `/(app)/tracking/${active.id}` : "/(app)/home");
         } catch (e: any) {
           if (e.response?.status === 401) {
-            await clearSession();
-            setTarget("/(auth)/login");
+            const auth = await resolve401(e, "AppBoot.sessionCheck");
+            setTarget(auth.shouldLogout ? "/(auth)/login" : "/(app)/home");
           } else {
             setTarget("/(app)/home");
           }

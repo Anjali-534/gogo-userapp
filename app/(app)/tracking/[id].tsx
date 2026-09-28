@@ -11,7 +11,8 @@ import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
 import SOSButton from "../../../components/SOSButton";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import * as Speech from "expo-speech";
 import { useTranslation } from "react-i18next";
@@ -325,11 +326,20 @@ export default function TrackingScreen() {
     } catch (e: any) {
       if (cancelledRef.current) return;
       if (e?.response?.status === 401) {
-        if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
-        await clearToken();
-        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
-        router.replace("/(auth)/login" as any);
-        return;
+        const auth = await resolve401(e, "Tracking.fetchBooking");
+        if (auth.shouldLogout) {
+          if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+          if (auth.deactivated) {
+            Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+              { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+            ]);
+            return;
+          }
+          router.replace("/(auth)/login" as any);
+          return;
+        }
+        // Not a session/account failure — fall through to the generic
+        // error state below, which already surfaces the real message.
       }
       setLoading(false);
       setError(e.response?.data?.error || e.message || t("tracking.failedToLoad"));

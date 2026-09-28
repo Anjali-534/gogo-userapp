@@ -9,7 +9,8 @@ import { PickupMarker } from "../../../components/VehicleMarkers";
 import { VEHICLE_INFO } from "../../../components/VehicleInfo";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearToken, getToken } from "@/services/session";
+import { getToken } from "@/services/session";
+import { resolve401 } from "@/services/authError";
 import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -129,10 +130,19 @@ export default function RentalsScreen() {
       }
     } catch (e: any) {
       if (e?.response?.status === 401) {
-        await clearToken();
-        await AsyncStorage.multiRemove(["rider_id", "user", "active_booking_id"]);
-        router.replace("/(auth)/login" as any);
-        return;
+        const auth = await resolve401(e, "CabRentals.handleBook");
+        if (auth.shouldLogout) {
+          if (auth.deactivated) {
+            Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+              { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+            ]);
+            return;
+          }
+          router.replace("/(auth)/login" as any);
+          return;
+        }
+        // Not a session/account failure — fall through to the generic
+        // error alert below, which already surfaces the real message.
       }
       Alert.alert(t("common.error"), e.response?.data?.error || t("booking.errors.bookingFailed"));
     } finally {

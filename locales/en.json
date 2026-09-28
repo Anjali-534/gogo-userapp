@@ -170,7 +170,9 @@
     "session": {
       "expiredTitle": "Session Expired",
       "expiredMsg": "Please log in again to continue.",
-      "couldNotIdentify": "Could not identify your account. Please log in again."
+      "couldNotIdentify": "Could not identify your account. Please log in again.",
+      "deactivatedTitle": "Account No Longer Active",
+      "deactivatedMsg": "Your account is no longer active. Please contact support if you think this is a mistake."
     },
     "missingInfoTitle": "Missing Information",
     "missingInfoMsg": "Please provide: {{fields}}",

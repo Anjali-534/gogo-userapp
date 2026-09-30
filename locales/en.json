@@ -1076,6 +1076,19 @@
       "completed": "completed",
       "cancelled": "cancelled",
       "scheduled": "scheduled"
+    },
+    "invoice": {
+      "download": "Download invoice",
+      "email": "Email invoice",
+      "saved": "Invoice saved",
+      "sentTo": "Invoice sent to {{email}}",
+      "limitBooking": "You've reached today's limit for this ride. Try again after {{time}}.",
+      "limitRider": "You've reached today's limit for invoice emails. Try again after {{time}}.",
+      "limitNoTime": "You've reached today's limit. Please try again later.",
+      "emailDisabled": "Emailing invoices isn't available right now. You can download it instead.",
+      "notSendable": "We can't email this invoice to your account. Please contact support.",
+      "sendFailed": "Couldn't send the invoice. Please try again.",
+      "downloadFailed": "Couldn't download the invoice. Please try again."
     }
   },
   "notifications": {

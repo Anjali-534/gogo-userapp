@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { trackHistoryViewed } from "@/services/analytics";
 import { COLORS, RADIUS } from "@/constants/theme";
+import InvoiceActions from "@/components/InvoiceActions";
 
 
 const ACTIVE_STATUSES = ["scheduled", "searching", "accepted", "arriving", "in_progress"];
@@ -21,6 +22,21 @@ export default function HistoryScreen() {
   const router = useRouter();
   const { t } = useTranslation();
 
+  // Shared 401 handling for the list fetch and the invoice actions. Returns
+  // true when the session is dead and the screen has navigated away.
+  const handleAuth401 = async (e: any, screen: string) => {
+    const auth = await resolve401(e, screen);
+    if (!auth.shouldLogout) return false;
+    if (auth.deactivated) {
+      Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
+        { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
+      ]);
+      return true;
+    }
+    router.replace("/(auth)/login" as any);
+    return true;
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -33,17 +49,7 @@ export default function HistoryScreen() {
         trackHistoryViewed({ bookingCount: loaded.length });
       } catch (e: any) {
         if (e?.response?.status === 401) {
-          const auth = await resolve401(e, "History.fetchBookings");
-          if (auth.shouldLogout) {
-            if (auth.deactivated) {
-              Alert.alert(t("booking.session.deactivatedTitle"), t("booking.session.deactivatedMsg"), [
-                { text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) },
-              ]);
-              return;
-            }
-            router.replace("/(auth)/login" as any);
-            return;
-          }
+          if (await handleAuth401(e, "History.fetchBookings")) return;
         }
       } finally { setLoading(false); }
     })();
@@ -186,6 +192,14 @@ export default function HistoryScreen() {
                     <Text style={s.footerText}>{distText}</Text>
                     <Text style={s.footerText}>{driverText}</Text>
                   </View>
+
+                  {r.status === "completed" && r.invoice_number ? (
+                    <InvoiceActions
+                      bookingId={String(r.id)}
+                      invoiceNumber={r.invoice_number}
+                      onAuthError={(e) => handleAuth401(e, "History.invoice")}
+                    />
+                  ) : null}
                 </TouchableOpacity>
               );
             })}

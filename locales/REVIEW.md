@@ -26,6 +26,7 @@ the batch's checkpoint.
 | account | अकाउंट | ଆକାଉଣ୍ଟ | |
 | emergency | इमरजेंसी | ଜରୁରୀକାଳୀନ | Load-bearing for ambulance/safety strings — see emergency-content rule below. |
 | saved place | सेव की गई जगह | ସେଭ୍ କରାଯାଇଥିବା ସ୍ଥାନ | |
+| invoice | इनवॉइस | ଇନଭଏସ୍ | Loanword, not चालान/बीजक — matches the English "Invoice" on the PDF itself. Added in Batch 5. |
 
 ### Emergency-content rule (ambulance/safety screens)
 
@@ -387,3 +388,28 @@ Key | English | Hindi | Odia
 No other Batch 4 content met the Odia-review-list bar (none of it is safety/emergency/tracking
 critical in the way Batches 2–3 flagged); everything else was translated with normal confidence
 using established glossary terms.
+
+## Batch 5 — history.invoice.* (post-ride invoice download / email, phase 3)
+
+11 new keys under `history.invoice` in both `hi.json` and `or.json`, shown on completed rides in
+Your Rides. New glossary term: invoice → इनवॉइस / ଇନଭଏସ୍ (added to the table above). "Limit" is
+सीमा / ସୀମା. Not safety/emergency content; the whole set is flagged only because it's new and
+several strings are full error sentences a rider reads when something went wrong.
+
+Key | English | Hindi | Odia
+---|---|---|---
+`history.invoice.download` | Download invoice | इनवॉइस डाउनलोड करें | ଇନଭଏସ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ
+`history.invoice.email` | Email invoice | इनवॉइस ईमेल करें | ଇନଭଏସ୍ ଇମେଲ୍ କରନ୍ତୁ
+`history.invoice.saved` | Invoice saved | इनवॉइस सेव हो गया | ଇନଭଏସ୍ ସେଭ୍ ହୋଇଗଲା
+`history.invoice.sentTo` | Invoice sent to {{email}} | इनवॉइस {{email}} पर भेज दिया गया | ଇନଭଏସ୍ {{email}} କୁ ପଠାଯାଇଛି
+`history.invoice.limitBooking` | You've reached today's limit for this ride. Try again after {{time}}. | इस राइड के लिए आज की सीमा पूरी हो गई है। {{time}} के बाद फिर कोशिश करें। | ଏହି ରାଇଡ୍ ପାଇଁ ଆଜିର ସୀମା ପୂରଣ ହୋଇଯାଇଛି। {{time}} ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।
+`history.invoice.limitRider` | You've reached today's limit for invoice emails. Try again after {{time}}. | इनवॉइस ईमेल की आज की सीमा पूरी हो गई है। {{time}} के बाद फिर कोशिश करें। | ଇନଭଏସ୍ ଇମେଲ୍ ପାଇଁ ଆଜିର ସୀମା ପୂରଣ ହୋଇଯାଇଛି। {{time}} ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।
+`history.invoice.limitNoTime` | You've reached today's limit. Please try again later. | आज की सीमा पूरी हो गई है। कृपया बाद में फिर कोशिश करें। | ଆଜିର ସୀମା ପୂରଣ ହୋଇଯାଇଛି। ଦୟାକରି ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।
+`history.invoice.emailDisabled` | Emailing invoices isn't available right now. You can download it instead. | अभी इनवॉइस ईमेल करना उपलब्ध नहीं है। आप इसे डाउनलोड कर सकते हैं। | ବର୍ତ୍ତମାନ ଇନଭଏସ୍ ଇମେଲ୍ କରିବା ଉପଲବ୍ଧ ନାହିଁ। ଆପଣ ଏହାକୁ ଡାଉନଲୋଡ୍ କରିପାରିବେ।
+`history.invoice.notSendable` | We can't email this invoice to your account. Please contact support. | हम यह इनवॉइस आपके अकाउंट पर ईमेल नहीं कर सकते। कृपया सपोर्ट से संपर्क करें। | ଆମେ ଏହି ଇନଭଏସ୍ ଆପଣଙ୍କ ଆକାଉଣ୍ଟକୁ ଇମେଲ୍ କରିପାରିବୁ ନାହିଁ। ଦୟାକରି ସପୋର୍ଟ ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ।
+`history.invoice.sendFailed` | Couldn't send the invoice. Please try again. | इनवॉइस नहीं भेजा जा सका। कृपया फिर कोशिश करें। | ଇନଭଏସ୍ ପଠାଯାଇପାରିଲା ନାହିଁ। ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।
+`history.invoice.downloadFailed` | Couldn't download the invoice. Please try again. | इनवॉइस डाउनलोड नहीं हो सका। कृपया फिर कोशिश करें। | ଇନଭଏସ୍ ଡାଉନଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ। ଦୟାକରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।
+
+Specific doubts for the native pass: whether the "limit reached" phrasing (सीमा पूरी हो गई है /
+ସୀମା ପୂରଣ ହୋଇଯାଇଛି) reads naturally or sounds like an account restriction; and whether Odia
+"ସପୋର୍ଟ" should be the loanword or a native term in `notSendable`.

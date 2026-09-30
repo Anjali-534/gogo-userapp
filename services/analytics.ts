@@ -161,23 +161,23 @@ export const endSession = async () => {
 export const trackUserLocation = async () => {
   try {
     const Location = require("expo-location");
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") return null;
-    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-    const geo = await Location.reverseGeocodeAsync({
-      latitude:  pos.coords.latitude,
-      longitude: pos.coords.longitude,
-    });
+    // City/area only, so a recent or last-known position is plenty; a
+    // fresh fix is fetched only when there's neither (and then lands in the
+    // shared cache the booking screens reuse).
+    const { bestEffortPosition } = require("./location");
+    const c = await bestEffortPosition();
+    if (!c) return null;
+    const geo = await Location.reverseGeocodeAsync({ latitude: c.lat, longitude: c.lng });
     const area = geo[0]?.district ?? geo[0]?.subregion ?? geo[0]?.city ?? "Unknown";
     const city = geo[0]?.city ?? geo[0]?.region ?? "Delhi";
     currentCity = city;
     currentArea = area;
     safe(async () => {
       await analytics().setUserProperties({ current_city: city, current_area: area });
-      await analytics().logEvent("user_location_tracked", { city, area, accuracy: pos.coords.accuracy });
+      await analytics().logEvent("user_location_tracked", { city, area, accuracy: c.accuracy });
     });
     postToBackend("user_location_tracked", { city, area });
-    return { city, area, lat: pos.coords.latitude, lng: pos.coords.longitude };
+    return { city, area, lat: c.lat, lng: c.lng };
   } catch {
     return null;
   }

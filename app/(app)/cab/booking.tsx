@@ -7,13 +7,13 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { PickupMarker, DropMarker } from "../../../components/VehicleMarkers";
-import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
 import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
+import { useAutoPickup } from "@/services/location";
 
 // Still needed by reverseGeocode()'s Google Geocoding fallback below (a
 // different Google API, out of scope for the backend-proxy port — Ola stays
@@ -74,39 +74,26 @@ export default function CabBookingScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<Record<string, string>>();
 
-  const [userLat, setUserLat] = useState(0);
-  const [userLng, setUserLng] = useState(0);
-  const [pickup,  setPickup]  = useState<LocationPoint | null>(null);
+  // Pickup auto-fills from the cached/last-known position at once and
+  // refines in the background; the address resolves without blocking it.
+  const {
+    pickup, setPickup, ensurePickupAddress, userLat, userLng, locLoading, refining, resolving,
+  } = useAutoPickup(reverseGeocode);
   const [drop,    setDrop]    = useState<LocationPoint | null>(null);
-  const [locLoading, setLocLoading] = useState(true);
 
   const [activeField,   setActiveField]   = useState<"pickup" | "drop" | null>(null);
   const [searchText,    setSearchText]    = useState("");
   const [suggestions,   setSuggestions]   = useState<PlaceSuggestion[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const searchTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Bumped on every keystroke: a response is applied only if it belongs to
+  // the latest request, so a slow older one can't overwrite newer results.
+  const searchSeq    = useRef(0);
   const searchInputRef = useRef<TextInput>(null);
   const [sheetSnap, setSheetSnap] = useState<"FULL" | "HALF" | "PEEK" | "COLLAPSED">("PEEK");
   const sheetRef = useRef<BottomSheetHandle>(null);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        if (!mounted) return;
-        setUserLat(lat);
-        setUserLng(lng);
-        const addr = await reverseGeocode(lat, lng);
-        if (!mounted) return;
-        setPickup({ lat, lng, address: addr });
-      }
-      if (mounted) setLocLoading(false);
-    })();
-
     if (params.dropAddress && params.dropLat && params.dropLng) {
       setDrop({
         address: params.dropAddress,
@@ -114,7 +101,6 @@ export default function CabBookingScreen() {
         lng:     parseFloat(params.dropLng),
       });
     }
-    return () => { mounted = false; };
   }, []);
 
   const openSearch = (field: "pickup" | "drop") => {
@@ -127,10 +113,12 @@ export default function CabBookingScreen() {
   const onSearchChange = (t: string) => {
     setSearchText(t);
     if (searchTimer.current) clearTimeout(searchTimer.current);
-    if (t.length < 3) { setSuggestions([]); return; }
+    const seq = ++searchSeq.current;
+    if (t.length < 3) { setSuggestions([]); setSearchLoading(false); return; }
     searchTimer.current = setTimeout(async () => {
       setSearchLoading(true);
       const results = await autocompletePlaces(t, userLat, userLng);
+      if (seq !== searchSeq.current) return;
       setSuggestions(results);
       setSearchLoading(false);
     }, 400);
@@ -164,7 +152,8 @@ export default function CabBookingScreen() {
       if (drop) navigateToVehicles(point, drop);
     } else {
       setDrop(point);
-      if (pickup) navigateToVehicles(pickup, point);
+      const p = await ensurePickupAddress();
+      if (p) navigateToVehicles(p, point);
     }
   };
 
@@ -227,9 +216,12 @@ export default function CabBookingScreen() {
             {locLoading && !pickup ? (
               <ActivityIndicator size="small" color="#10B981" style={{ marginLeft: 4 }} />
             ) : (
-              <Text style={[s.locText, !pickup && s.locPlaceholder]} numberOfLines={1}>
-                {pickup?.address || t("locationPicker.searchPickupPlaceholder")}
+              <Text style={[s.locText, (!pickup || resolving) && s.locPlaceholder]} numberOfLines={1}>
+                {pickup && resolving ? t("locationPicker.gettingAddress") : pickup?.address || t("locationPicker.searchPickupPlaceholder")}
               </Text>
+            )}
+            {pickup && (refining || resolving) && (
+              <ActivityIndicator size="small" color={COLORS.textMuted} style={{ marginRight: 8 }} />
             )}
             {!locLoading && pickup && (
               <TouchableOpacity

@@ -2,6 +2,18 @@ export const OLA_KEY = process.env.EXPO_PUBLIC_OLA_MAPS_KEY || "";
 const BASE = "https://api.olamaps.io";
 const STYLE_URL = `${BASE}/tiles/vector/v1/styles/default-light-standard/style.json?api_key=${OLA_KEY}`;
 
+// Places calls (autocomplete, details, reverse geocode) sit in fallback
+// chains (Ola -> Google, Google -> Ola); without a limit a stalled Ola
+// response would hold up the fallback indefinitely. On timeout fetch
+// rejects, which each caller's catch already treats as "no result".
+const PLACES_TIMEOUT_MS = 5000;
+
+function fetchWithTimeout(url: string, ms = PLACES_TIMEOUT_MS): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 function withApiKeyParam(url: string): string {
   return url.includes("api_key") ? url : url + (url.includes("?") ? "&" : "?") + `api_key=${OLA_KEY}`;
 }
@@ -34,7 +46,7 @@ export const olaAutocomplete = async (
       `${BASE}/places/v1/autocomplete?input=${encodeURIComponent(input)}` +
       `&api_key=${OLA_KEY}`;
     if (lat && lng) url += `&location=${lat},${lng}`;
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url);
     if (!res.ok) return [];
     const data = await res.json();
     const preds = data?.predictions || [];
@@ -55,7 +67,7 @@ export const olaPlaceDetails = async (
   placeId: string
 ): Promise<{ lat: number; lng: number } | null> => {
   try {
-    const res = await fetch(`${BASE}/places/v1/details?place_id=${placeId}&api_key=${OLA_KEY}`);
+    const res = await fetchWithTimeout(`${BASE}/places/v1/details?place_id=${placeId}&api_key=${OLA_KEY}`);
     if (!res.ok) return null;
     const data = await res.json();
     const loc = data?.result?.geometry?.location;
@@ -67,7 +79,7 @@ export const olaPlaceDetails = async (
 
 export const olaReverseGeocode = async (lat: number, lng: number): Promise<string> => {
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${BASE}/places/v1/reverse-geocode?latlng=${lat},${lng}&api_key=${OLA_KEY}`
     );
     if (!res.ok) return "";

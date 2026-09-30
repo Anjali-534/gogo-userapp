@@ -5,13 +5,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
 import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
+import { useAutoPickup } from "@/services/location";
 
 // Still needed by reverseGeocode()'s Google Geocoding fallback below (a
 // different Google API, out of scope for the backend-proxy port — Ola stays
@@ -153,13 +153,16 @@ export default function AmbulanceBookingScreen() {
   const { type } = useLocalSearchParams<{ type: string }>();
   const isFree = type === "free";
 
-  const [userLat, setUserLat] = useState(0);
-  const [userLng, setUserLng] = useState(0);
   const [purpose, setPurpose] = useState("");
   const [ambulanceSubType, setAmbulanceSubType] = useState<"bls" | "als" | "">("");
-  const [pickup,  setPickup]  = useState<LocationPoint | null>(null);
+  // Pickup auto-fills from the cached/last-known position at once and
+  // refines in the background; the address resolves without blocking it.
+  // Nearby hospitals load as soon as a position is known, not after the
+  // address.
+  const {
+    pickup, setPickup, relocate, ensurePickupAddress, userLat, userLng, locLoading, refining, resolving,
+  } = useAutoPickup(reverseGeocode, (c) => fetchNearbyHospitals(c.lat, c.lng));
   const [drop,    setDrop]    = useState<LocationPoint | null>(null);
-  const [locLoading, setLocLoading] = useState(true);
 
   // Pickup search overlay
   const [showPickupSearch,    setShowPickupSearch]    = useState(false);
@@ -167,6 +170,7 @@ export default function AmbulanceBookingScreen() {
   const [pickupSuggestions,   setPickupSuggestions]   = useState<PlaceSuggestion[]>([]);
   const [pickupSearchLoading, setPickupSearchLoading] = useState(false);
   const pickupSearchTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pickupSearchSeq      = useRef(0); // latest-request guard, see onPickupSearchChange
   const pickupSearchInputRef = useRef<TextInput>(null);
 
   // Drop search overlay
@@ -175,6 +179,7 @@ export default function AmbulanceBookingScreen() {
   const [dropSuggestions,   setDropSuggestions]   = useState<PlaceSuggestion[]>([]);
   const [dropSearchLoading, setDropSearchLoading] = useState(false);
   const dropSearchTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dropSearchSeq      = useRef(0);
   const dropSearchInputRef = useRef<TextInput>(null);
 
   // Nearby hospitals — appear as top suggestions in drop overlay
@@ -203,21 +208,6 @@ export default function AmbulanceBookingScreen() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        if (!mounted) return;
-        setUserLat(lat);
-        setUserLng(lng);
-        const addr = await reverseGeocode(lat, lng);
-        if (!mounted) return;
-        setPickup({ lat, lng, address: addr });
-        fetchNearbyHospitals(lat, lng);
-      }
-      if (!mounted) return;
-      setLocLoading(false);
       const stored = await AsyncStorage.getItem("user");
       if (stored && mounted) {
         try {
@@ -249,33 +239,22 @@ export default function AmbulanceBookingScreen() {
     setContactPhone(next ? myPhone : "");
   };
 
-  const getCurrentLocation = async () => {
-    setLocLoading(true);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setUserLat(lat);
-        setUserLng(lng);
-        const addr = await reverseGeocode(lat, lng);
-        setPickup({ lat, lng, address: addr });
-        fetchNearbyHospitals(lat, lng);
-      }
-    } finally {
-      setLocLoading(false);
-    }
-  };
+  // "Use current location" — back to the auto-filled pickup.
+  const getCurrentLocation = () => relocate();
 
   // ── Pickup search handlers ───────────────────────────────────────────────
   const onPickupSearchChange = (t: string) => {
     setPickupSearchText(t);
     if (pickupSearchTimer.current) clearTimeout(pickupSearchTimer.current);
-    if (t.length < 3) { setPickupSuggestions([]); return; }
+    // Only the latest request's response is applied, so a slow older one
+    // can't overwrite newer results.
+    const seq = ++pickupSearchSeq.current;
+    if (t.length < 3) { setPickupSuggestions([]); setPickupSearchLoading(false); return; }
     pickupSearchTimer.current = setTimeout(async () => {
       setPickupSearchLoading(true);
-      setPickupSuggestions(await autocompletePlaces(t, userLat, userLng));
+      const results = await autocompletePlaces(t, userLat, userLng);
+      if (seq !== pickupSearchSeq.current) return;
+      setPickupSuggestions(results);
       setPickupSearchLoading(false);
     }, 400);
   };
@@ -294,10 +273,13 @@ export default function AmbulanceBookingScreen() {
   const onDropSearchChange = (t: string) => {
     setDropSearchText(t);
     if (dropSearchTimer.current) clearTimeout(dropSearchTimer.current);
-    if (t.length < 3) { setDropSuggestions([]); return; }
+    const seq = ++dropSearchSeq.current;
+    if (t.length < 3) { setDropSuggestions([]); setDropSearchLoading(false); return; }
     dropSearchTimer.current = setTimeout(async () => {
       setDropSearchLoading(true);
-      setDropSuggestions(await autocompletePlaces(t, userLat, userLng));
+      const results = await autocompletePlaces(t, userLat, userLng);
+      if (seq !== dropSearchSeq.current) return;
+      setDropSuggestions(results);
       setDropSearchLoading(false);
     }, 400);
   };
@@ -366,9 +348,12 @@ export default function AmbulanceBookingScreen() {
       }
     } catch {}
 
+    // Give an in-flight reverse geocode of the auto pickup a moment, so the
+    // booking carries a real address rather than coordinates.
+    const p = (await ensurePickupAddress()) ?? pickup!;
     const distanceKm =
-      pickup && drop
-        ? Math.round(haversineKm(pickup.lat, pickup.lng, drop.lat, drop.lng) * 1.3 * 10) / 10
+      p && drop
+        ? Math.round(haversineKm(p.lat, p.lng, drop.lat, drop.lng) * 1.3 * 10) / 10
         : 0;
     const estimatedFare = Math.round(baseFareNum + distanceKm * perKmRateNum);
 
@@ -376,9 +361,9 @@ export default function AmbulanceBookingScreen() {
       type,
       purpose,
       ambulanceSubType,
-      pickupLat:     String(pickup!.lat),
-      pickupLng:     String(pickup!.lng),
-      pickupAddress: pickup!.address,
+      pickupLat:     String(p.lat),
+      pickupLng:     String(p.lng),
+      pickupAddress: p.address,
       dropLat:       String(drop!.lat),
       dropLng:       String(drop!.lng),
       dropAddress:   drop!.address,
@@ -551,11 +536,14 @@ export default function AmbulanceBookingScreen() {
                 </Text>
               </>
             ) : (
-              <Text style={pickup ? s.locText : s.locPlaceholder} numberOfLines={1}>
-                {pickup?.address || t("locationPicker.searchPickupPlaceholder")}
+              <Text style={pickup && !resolving ? s.locText : s.locPlaceholder} numberOfLines={1}>
+                {pickup && resolving ? t("locationPicker.gettingAddress") : pickup?.address || t("locationPicker.searchPickupPlaceholder")}
               </Text>
             )}
           </View>
+          {pickup && (refining || resolving) && (
+            <ActivityIndicator size="small" color={COLORS.textMuted} style={{ marginRight: 8 }} />
+          )}
           {!locLoading && (pickup ? (
             <TouchableOpacity
               style={s.clearBtn}

@@ -28,6 +28,8 @@ export default function AddSavedPlaceScreen() {
   const { t }  = useTranslation();
   const insets = useSafeAreaInsets();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Latest autocomplete request; a slower older response is dropped.
+  const sugSeqRef   = useRef(0);
 
   const [query,       setQuery]       = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -39,7 +41,9 @@ export default function AddSavedPlaceScreen() {
   const [saving,      setSaving]      = useState(false);
 
   const fetchSuggestions = useCallback(async (text: string) => {
-    if (text.length < 2) { setSuggestions([]); return; }
+    const seq = ++sugSeqRef.current;
+    const isLatest = () => seq === sugSeqRef.current;
+    if (text.length < 2) { setSuggestions([]); setSugLoading(false); return; }
     setSugLoading(true);
     try {
       let results: { place_id: string; description: string; lat: number | null; lng: number | null }[];
@@ -51,11 +55,12 @@ export default function AddSavedPlaceScreen() {
         results = await olaAutocomplete(text);
         provider = "ola";
       }
+      if (!isLatest()) return;
       logMapsProvider(provider, "autocomplete");
       setSuggestions(results.slice(0, 6).map(p => ({ ...p, provider })));
     } catch {
-      setSuggestions([]);
-    } finally { setSugLoading(false); }
+      if (isLatest()) setSuggestions([]);
+    } finally { if (isLatest()) setSugLoading(false); }
   }, []);
 
   const onQueryChange = (text: string) => {

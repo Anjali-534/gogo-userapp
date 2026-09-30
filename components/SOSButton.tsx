@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Animated, Modal,
   Share, Linking, Alert, ActivityIndicator, ViewStyle,
 } from "react-native";
-import * as Location from "expo-location";
+import { urgentPosition } from "@/services/location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { getToken } from "@/services/session";
@@ -22,14 +22,12 @@ type SOSButtonProps = {
   style?: ViewStyle;
 };
 
+// A position from the last minute is used as-is; otherwise a fresh fix,
+// capped at 8s before falling back to last-known — an SOS must never hang
+// on a slow GPS fix. Then the ride's own coordinates.
 async function getBestLocation(fallbackLat?: number, fallbackLng?: number) {
-  try {
-    const { status } = await Location.getForegroundPermissionsAsync();
-    if (status === "granted") {
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-      return { lat: loc.coords.latitude, lng: loc.coords.longitude };
-    }
-  } catch {}
+  const pos = await urgentPosition();
+  if (pos) return pos;
   if (fallbackLat && fallbackLng) return { lat: fallbackLat, lng: fallbackLng };
   return null;
 }

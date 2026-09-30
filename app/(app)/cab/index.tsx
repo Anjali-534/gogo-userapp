@@ -11,7 +11,7 @@ import BookingHero from "../../../components/BookingHero";
 import BottomSheet, { BottomSheetHandle, useCollapsedPillBottom } from "../../../components/BottomSheet";
 import { trackScreenView, trackBookingStarted } from "@/services/analytics";
 import { COLORS } from "@/constants/theme";
-import * as Location from "expo-location";
+import { locate } from "@/services/location";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
 
@@ -37,13 +37,11 @@ export default function CabIndexScreen() {
 
   useEffect(() => {
     trackScreenView("CabHome");
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      }
-    })();
+    // Cached/last-known position first, refined in the background. The fix
+    // also lands in the shared cache that cab/booking reuses.
+    let mounted = true;
+    locate((c) => { if (mounted) setLocation(c); });
+    return () => { mounted = false; };
   }, []);
 
   useFocusEffect(

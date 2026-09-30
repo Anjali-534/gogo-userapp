@@ -6,6 +6,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
 import * as Location from "expo-location";
+import { locate, distanceMeters, REFINE_MOVE_THRESHOLD_M } from "@/services/location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -50,6 +51,14 @@ const mode = params.mode;
   const inputRef    = useRef<TextInput>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Set once the rider moves the map or picks a place: a GPS fix arriving
+  // later must not yank the pin away from their choice.
+  const userMovedRef = useRef(false);
+  // Latest reverse-geocode request; older responses are dropped.
+  const geoSeqRef = useRef(0);
+  // Latest autocomplete request; a slower older response is dropped.
+  const sugSeqRef = useRef(0);
+  const gpsShownRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const [region,          setRegion]          = useState<Region>(DEFAULT);
   const [pin,             setPin]             = useState({ lat: DEFAULT.latitude, lng: DEFAULT.longitude });
@@ -88,25 +97,29 @@ const mode = params.mode;
   const retryMap = () => setMapKey(k => k + 1);
 
   // ── GPS on mount + load saved places ─────────────────────────
+  // Moves the pin to a GPS position unless the rider has already moved the
+  // map, or the position is within REFINE_MOVE_THRESHOLD_M of the one shown.
+  const showGpsPosition = (c: { lat: number; lng: number }, duration: number) => {
+    if (userMovedRef.current) return;
+    const prev = gpsShownRef.current;
+    if (prev && distanceMeters(prev, c) < REFINE_MOVE_THRESHOLD_M) return;
+    gpsShownRef.current = c;
+    const r: Region = { latitude: c.lat, longitude: c.lng, latitudeDelta: 0.015, longitudeDelta: 0.015 };
+    setRegion(r);
+    setPin({ lat: r.latitude, lng: r.longitude });
+    mapRef.current?.animateToRegion(r, duration);
+    reverseGeocode(r.latitude, r.longitude);
+  };
+
+  // ── GPS on mount + load saved places ─────────────────────────
+  // Cached/last-known position first so the pin lands at once; a fresh fix
+  // refines it in the background.
   useEffect(() => {
     loadSavedPlaces();
-    (async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === "granted") {
-          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-          const r: Region = {
-            latitude: loc.coords.latitude, longitude: loc.coords.longitude,
-            latitudeDelta: 0.015, longitudeDelta: 0.015,
-          };
-          setRegion(r);
-          setPin({ lat: r.latitude, lng: r.longitude });
-          mapRef.current?.animateToRegion(r, 800);
-          reverseGeocode(r.latitude, r.longitude);
-        }
-      } catch {}
-      finally { setGpsLoading(false); }
-    })();
+    locate((c) => {
+      setGpsLoading(false);
+      showGpsPosition(c, 800);
+    }).finally(() => setGpsLoading(false));
   }, []);
 
   const loadSavedPlaces = async () => {
@@ -120,10 +133,15 @@ const mode = params.mode;
   };
 
   // ── Reverse geocode ───────────────────────────────────────────
+  // Only the latest request may set the address — dragging the map fires
+  // one per stop, and a slow earlier response must not overwrite a newer one.
   const reverseGeocode = async (lat: number, lng: number) => {
+    const seq = ++geoSeqRef.current;
+    const isLatest = () => seq === geoSeqRef.current;
     setResolving(true);
     try {
       const olaAddr = await olaReverseGeocode(lat, lng);
+      if (!isLatest()) return;
       if (olaAddr) {
         logMapsProvider("ola", "reverse-geocode");
         setAddress(olaAddr);
@@ -132,20 +150,24 @@ const mode = params.mode;
       const url  = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GMAPS_KEY}`;
       const res  = await fetch(url);
       const json = await res.json();
+      if (!isLatest()) return;
       if (json.status === "OK" && json.results?.[0]) {
         logMapsProvider("google", "reverse-geocode");
         setAddress(json.results[0].formatted_address);
       } else {
         const r = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
+        if (!isLatest()) return;
         if (r?.[0]) setAddress([r[0].name, r[0].street, r[0].city].filter(Boolean).join(", "));
       }
     } catch {}
-    finally { setResolving(false); }
+    finally { if (isLatest()) setResolving(false); }
   };
 
   // ── Autocomplete ──────────────────────────────────────────────
   const fetchSuggestions = useCallback(async (text: string) => {
-    if (text.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
+    const seq = ++sugSeqRef.current;
+    const isLatest = () => seq === sugSeqRef.current;
+    if (text.length < 2) { setSuggestions([]); setShowSuggestions(false); setSugLoading(false); return; }
     setSugLoading(true);
     try {
       let results: { place_id: string; description: string; lat: number | null; lng: number | null }[];
@@ -157,6 +179,7 @@ const mode = params.mode;
         results = await olaAutocomplete(text, pin.lat, pin.lng);
         provider = "ola";
       }
+      if (!isLatest()) return;
       logMapsProvider(provider, "autocomplete");
       if (results.length) {
         setSuggestions(results.slice(0, 6).map((p) => ({
@@ -184,6 +207,8 @@ const mode = params.mode;
   };
 
   const selectSuggestion = async (item: Suggestion) => {
+    userMovedRef.current = true;
+    geoSeqRef.current++; // drop any in-flight reverse geocode of the old pin
     Keyboard.dismiss();
     setShowSuggestions(false);
     setQuery(item.main_text);
@@ -227,6 +252,8 @@ const mode = params.mode;
 
   // ── Select saved place → snap map ────────────────────────────
   const selectSavedPlace = (place: SavedPlace) => {
+    userMovedRef.current = true;
+    geoSeqRef.current++; // drop any in-flight reverse geocode of the old pin
     Keyboard.dismiss();
     setShowSuggestions(false);
     setQuery("");
@@ -304,6 +331,7 @@ const mode = params.mode;
         style={StyleSheet.absoluteFill}
         initialRegion={region}
         onRegionChangeComplete={onRegionChangeComplete}
+        onPanDrag={() => { userMovedRef.current = true; }}
         onMapReady={onMapReady}
         showsUserLocation
         showsMyLocationButton={false}
@@ -403,15 +431,12 @@ const mode = params.mode;
       </View>
 
       {/* MY LOCATION BUTTON */}
-      <TouchableOpacity style={s.myLocBtn} onPress={async () => {
-        try {
-          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-          const r: Region = { latitude: loc.coords.latitude, longitude: loc.coords.longitude, latitudeDelta: 0.015, longitudeDelta: 0.015 };
-          setPin({ lat: r.latitude, lng: r.longitude });
-          setRegion(r);
-          mapRef.current?.animateToRegion(r, 600);
-          reverseGeocode(r.latitude, r.longitude);
-        } catch {}
+      <TouchableOpacity style={s.myLocBtn} onPress={() => {
+        // Explicit "take me to my location": follow GPS again, recent
+        // position first.
+        userMovedRef.current = false;
+        gpsShownRef.current = null;
+        locate((c) => showGpsPosition(c, 600));
       }}>
         <Text style={{ fontSize: 20 }}>📍</Text>
       </TouchableOpacity>

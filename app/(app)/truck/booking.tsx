@@ -7,13 +7,13 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Location from "expo-location";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { olaAutocomplete, olaPlaceDetails, olaReverseGeocode, logMapsProvider } from "@/services/olamaps";
 import { googleAutocomplete, googlePlaceDetails } from "@/services/googlePlaces";
 import { COLORS, RADIUS } from "@/constants/theme";
+import { useAutoPickup } from "@/services/location";
 
 // Still needed by reverseGeocode()'s Google Geocoding fallback below (a
 // different Google API, out of scope for the backend-proxy port — Ola stays
@@ -87,6 +87,7 @@ function LocationInput({
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
   const [fetching, setFetching] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const seqRef = useRef(0); // latest-request guard for out-of-order responses
 
   useEffect(() => {
     if (value?.address && value.address !== text) setText(value.address);
@@ -95,10 +96,12 @@ function LocationInput({
   const onChangeText = (t: string) => {
     setText(t);
     if (timer.current) clearTimeout(timer.current);
-    if (t.length < 3) { setSuggestions([]); return; }
+    const seq = ++seqRef.current;
+    if (t.length < 3) { setSuggestions([]); setFetching(false); return; }
     timer.current = setTimeout(async () => {
       setFetching(true);
       const results = await autocompletePlaces(t, userLat, userLng);
+      if (seq !== seqRef.current) return;
       setSuggestions(results);
       setFetching(false);
     }, 400);
@@ -176,16 +179,18 @@ export default function TruckBookingScreen() {
   const insets = useSafeAreaInsets();
   const { scope } = useLocalSearchParams<{ scope: string }>();
 
-  const [userLat, setUserLat] = useState(0);
-  const [userLng, setUserLng] = useState(0);
-  const [pickup,  setPickup]  = useState<LocationPoint | null>(null);
+  // Pickup auto-fills from the cached/last-known position at once and
+  // refines in the background; the address resolves without blocking it.
+  const {
+    pickup, setPickup, relocate, ensurePickupAddress, userLat, userLng, locLoading, refining, resolving,
+  } = useAutoPickup(reverseGeocode);
   const [drop,    setDrop]    = useState<LocationPoint | null>(null);
-  const [locLoading,          setLocLoading]          = useState(true);
   const [showPickupSearch,    setShowPickupSearch]    = useState(false);
   const [pickupSearchText,    setPickupSearchText]    = useState("");
   const [pickupSuggestions,   setPickupSuggestions]   = useState<PlaceSuggestion[]>([]);
   const [pickupSearchLoading, setPickupSearchLoading] = useState(false);
   const pickupSearchTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pickupSearchSeq      = useRef(0); // latest-request guard, see onPickupSearchChange
   const pickupSearchInputRef = useRef<TextInput>(null);
 
   const [receiverName,  setReceiverName]  = useState("");
@@ -197,20 +202,6 @@ export default function TruckBookingScreen() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        if (!mounted) return;
-        setUserLat(lat);
-        setUserLng(lng);
-        const addr = await reverseGeocode(lat, lng);
-        if (!mounted) return;
-        setPickup({ lat, lng, address: addr });
-      }
-      if (!mounted) return;
-      setLocLoading(false);
       const stored = await AsyncStorage.getItem("user");
       if (stored) {
         try {
@@ -228,31 +219,20 @@ export default function TruckBookingScreen() {
     setReceiverPhone(next ? myPhone : "");
   };
 
-  const getCurrentLocation = async () => {
-    setLocLoading(true);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const pos = await Location.getCurrentPositionAsync({});
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setUserLat(lat);
-        setUserLng(lng);
-        const addr = await reverseGeocode(lat, lng);
-        setPickup({ lat, lng, address: addr });
-      }
-    } finally {
-      setLocLoading(false);
-    }
-  };
+  // "Use current location" — back to the auto-filled pickup.
+  const getCurrentLocation = () => relocate();
 
   const onPickupSearchChange = (t: string) => {
     setPickupSearchText(t);
     if (pickupSearchTimer.current) clearTimeout(pickupSearchTimer.current);
-    if (t.length < 3) { setPickupSuggestions([]); return; }
+    // Only the latest request's response is applied, so a slow older one
+    // can't overwrite newer results.
+    const seq = ++pickupSearchSeq.current;
+    if (t.length < 3) { setPickupSuggestions([]); setPickupSearchLoading(false); return; }
     pickupSearchTimer.current = setTimeout(async () => {
       setPickupSearchLoading(true);
       const results = await autocompletePlaces(t, userLat, userLng);
+      if (seq !== pickupSearchSeq.current) return;
       setPickupSuggestions(results);
       setPickupSearchLoading(false);
     }, 400);
@@ -273,15 +253,17 @@ export default function TruckBookingScreen() {
     receiverName.trim().length > 0 &&
     receiverPhone.length === 10;
 
-  const proceed = () => {
+  const proceed = async () => {
     if (!canProceed) return;
+    const p = await ensurePickupAddress();
+    if (!p) return;
     router.push({
       pathname: "/(app)/truck/vehicles" as any,
       params: {
         scope:          scope || "city",
-        pickupLat:      String(pickup!.lat),
-        pickupLng:      String(pickup!.lng),
-        pickupAddress:  pickup!.address,
+        pickupLat:      String(p.lat),
+        pickupLng:      String(p.lng),
+        pickupAddress:  p.address,
         dropLat:        String(drop!.lat),
         dropLng:        String(drop!.lng),
         dropAddress:    drop!.address,
@@ -354,11 +336,14 @@ export default function TruckBookingScreen() {
                 </Text>
               </>
             ) : (
-              <Text style={pickup ? s.locText : s.locPlaceholder} numberOfLines={1}>
-                {pickup?.address || t("locationPicker.searchPickupPlaceholder")}
+              <Text style={pickup && !resolving ? s.locText : s.locPlaceholder} numberOfLines={1}>
+                {pickup && resolving ? t("locationPicker.gettingAddress") : pickup?.address || t("locationPicker.searchPickupPlaceholder")}
               </Text>
             )}
           </View>
+          {pickup && (refining || resolving) && (
+            <ActivityIndicator size="small" color={COLORS.textMuted} style={{ marginRight: 8 }} />
+          )}
           {!locLoading && (pickup ? (
             <TouchableOpacity
               style={s.clearBtn}

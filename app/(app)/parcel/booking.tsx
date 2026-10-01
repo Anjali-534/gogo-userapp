@@ -198,7 +198,7 @@ export default function ParcelBookingScreen() {
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior="padding"
       >
       <ScrollView
         style={s.scroll}

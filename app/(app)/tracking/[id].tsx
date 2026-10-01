@@ -1080,7 +1080,7 @@ export default function TrackingScreen() {
       <Modal visible={showCompletionModal} transparent animationType="slide">
         <KeyboardAvoidingView
           style={s.completionOverlay}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          behavior="padding"
         >
           <View style={s.completionCard}>
             <Text style={s.completionEmoji}>🎉</Text>

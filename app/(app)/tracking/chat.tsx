@@ -111,7 +111,7 @@ export default function RideChatScreen() {
         </View>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         {loading ? (
           <ActivityIndicator size="large" color={COLORS.primary} style={{ flex: 1 }} />
         ) : (
@@ -121,6 +121,8 @@ export default function RideChatScreen() {
             contentContainerStyle={{ paddingVertical: 16, paddingHorizontal: 16 }}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+            // Keeps the newest message visible when the list shrinks for the keyboard.
+            onLayout={() => scrollRef.current?.scrollToEnd({ animated: true })}
           >
             {messages.length === 0 && (
               <Text style={s.emptyChat}>{chatEnabled ? t("tracking.chat.sendMessagePrompt") : t("tracking.chat.chatOpensLater")}</Text>

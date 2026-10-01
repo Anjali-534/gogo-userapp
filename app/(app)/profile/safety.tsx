@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput, Linking, Alert, KeyboardAvoidingView, Platform, Image } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput, Linking, Alert, KeyboardAvoidingView, Image } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
@@ -74,7 +74,7 @@ export default function SafetyScreen() {
         <Text style={s.title}>{t("profile.safety.title")}</Text>
         <Image source={require("../../../assets/illustrations/shieldcheckmark.png")} style={s.headerArt} resizeMode="contain" />
       </View>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
 
         {/* Hero banner */}

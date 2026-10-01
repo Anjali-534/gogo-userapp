@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert,
-  Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Image,
+  Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -240,7 +240,7 @@ export default function WalletScreen() {
       <Modal visible={addMoneyOpen} transparent animationType="slide" onRequestClose={() => setAddMoneyOpen(false)}>
         <KeyboardAvoidingView
           style={s.modalBackdrop}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          behavior="padding"
         >
           <View style={s.modalCard}>
             <Text style={s.modalTitle}>{t("profile.wallet.addMoneyModalTitle")}</Text>

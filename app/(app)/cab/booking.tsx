@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
-  TextInput, ScrollView, ActivityIndicator, Platform,
+  TextInput, ScrollView, ActivityIndicator, Platform, KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetHandle } from "../../../components/BottomSheet";
@@ -269,6 +269,9 @@ export default function CabBookingScreen() {
       {/* Full-screen search overlay */}
       {activeField && (
         <View style={s.overlay}>
+          {/* Shrinks the suggestions list above the keyboard so every result
+              can be scrolled into view (edge-to-edge: no adjustResize). */}
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
           <SafeAreaView style={{ flex: 1 }}>
             <View style={[s.overlayHeader, { paddingTop: 14 + (Platform.OS === "android" ? insets.top : 0) }]}>
               <TouchableOpacity
@@ -316,6 +319,7 @@ export default function CabBookingScreen() {
               ))}
             </ScrollView>
           </SafeAreaView>
+          </KeyboardAvoidingView>
         </View>
       )}
     </View>

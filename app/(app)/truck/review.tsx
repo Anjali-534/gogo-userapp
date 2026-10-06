@@ -8,6 +8,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
 import { resolve401 } from "@/services/authError";
+import { isRetryableError } from "@/services/networkError";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -134,41 +135,11 @@ export default function TruckReviewScreen() {
         return;
       }
 
-      let riderId = (await AsyncStorage.getItem("rider_id")) || "";
-      if (!riderId) {
-        try {
-          const profileRes = await axios.get(`${API}/gogoo/rider/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          riderId = profileRes.data?.rider_id || "";
-          if (riderId) await AsyncStorage.setItem("rider_id", riderId);
-        } catch (profileErr: any) {
-          if (profileErr?.response?.status === 401) {
-            const auth = await resolve401(profileErr, "TruckReview.profileLookup");
-            if (auth.shouldLogout) {
-              Alert.alert(
-                auth.deactivated ? t("booking.session.deactivatedTitle") : t("booking.session.expiredTitle"),
-                auth.deactivated ? t("booking.session.deactivatedMsg") : t("booking.session.expiredMsg"),
-                [{ text: t("common.ok"), onPress: () => router.replace("/(auth)/login" as any) }]
-              );
-              setBooking(false);
-              return;
-            }
-            // Not a session/account failure — fall through; riderId stays
-            // empty and is handled by the couldNotIdentify check below.
-          }
-        }
-      }
-
-      if (!riderId) {
-        Alert.alert(t("common.error"), t("booking.session.couldNotIdentify"));
-        setBooking(false);
-        router.replace("/(auth)/login" as any);
-        return;
-      }
+      // No local rider_id needed: the server takes the rider from the token
+      // (creating the riders row if it is missing), so an empty or stale
+      // AsyncStorage rider_id must never block a booking.
 
       const body: Record<string, any> = {
-        rider_id:        riderId,
         service_type_id: serviceTypeId,
         pickup_lat:      parseFloat(pickupLat  || "0"),
         pickup_lng:      parseFloat(pickupLng  || "0"),
@@ -191,7 +162,6 @@ export default function TruckReviewScreen() {
 
       // Validate required fields before sending
       const missing: string[] = [];
-      if (!body.rider_id)        missing.push("rider_id");
       if (!body.service_type_id) missing.push("service_type_id");
       if (!body.pickup_lat && !body.pickup_lng) missing.push("pickup location");
       if (!body.drop_lat   && !body.drop_lng)   missing.push("drop location");
@@ -260,6 +230,15 @@ export default function TruckReviewScreen() {
         e.response?.data?.message ||
         e.message ||
         t("booking.failedDefault");
+      if (isRetryableError(e)) {
+        // Offline, timeout or a 5xx — nothing wrong with the session, so
+        // offer a retry instead of a raw "Network Error"/"database error".
+        Alert.alert(t("booking.failedTitle"), t("booking.failedDefault"), [
+          { text: t("common.cancel"), style: "cancel" },
+          { text: t("common.retry"), onPress: () => { handleBook(); } },
+        ]);
+        return;
+      }
       Alert.alert(t("booking.failedTitle"), errMsg);
     } finally {
       setBooking(false);

@@ -2,7 +2,7 @@
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Alert, ActivityIndicator, ScrollView, StatusBar, Image,
-  KeyboardAvoidingView, NativeModules,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -57,7 +57,11 @@ export default function LoginScreen() {
 
   const storeSession = async (data: any) => {
     await setToken(data.access_token);
-    await AsyncStorage.setItem("rider_id", String(data.rider_id || ""));
+    // Never store an empty rider_id: when the profile lookup fails, drop
+    // any stale value instead — home re-fetches it, and booking doesn't
+    // need it (the server takes the rider from the token).
+    if (data.rider_id) await AsyncStorage.setItem("rider_id", String(data.rider_id));
+    else await AsyncStorage.removeItem("rider_id");
     await AsyncStorage.setItem("user",     JSON.stringify(data.user));
   };
 
@@ -138,31 +142,11 @@ export default function LoginScreen() {
         error: isErrorWithCode(e) ? `google_signin code=${e.code}: ${e.message}` : String(e?.message || e),
         screen: "login_google",
       });
-      // ─── TEMPORARY DEBUG — surfaces the raw error on screen so it can't be ───
-      // missed. Revert to the real user-facing message once identified:
-      //   Alert.alert(
-      //     t("auth.login.errors.googleSignInFailedTitle"),
-      //     e.response?.data?.error || t("auth.login.errors.googleSignInFailedDefault")
-      //   );
       Alert.alert(
-        "DEBUG: Google Sign-In Failed",
-        `code: ${(e as any)?.code}\nmessage: ${(e as any)?.message}\nname: ${(e as any)?.name}\nisErrorWithCode: ${isErrorWithCode(e)}\nserverResponse: ${JSON.stringify((e as any)?.response?.data)}`
+        t("auth.login.errors.googleSignInFailedTitle"),
+        e.response?.data?.error || t("auth.login.errors.googleSignInFailedDefault")
       );
-      // ──────────────────────────────────────────────────────────────────────
     } finally { setGoogleLoading(false); }
-  };
-
-  // TEMPORARY DEBUG: shows this running build's actual signing certificate
-  // SHA-1, read directly from PackageManager on-device. Remove alongside
-  // android/.../SigningCertModule.kt + SigningCertPackage.kt once the
-  // Google Sign-In SHA-1 mismatch investigation is closed.
-  const handleShowSigningCertDebug = async () => {
-    try {
-      const sha1 = await NativeModules.SigningCertModule.getSigningCertSha1();
-      Alert.alert("TEMPORARY DEBUG: Signing Cert SHA-1", sha1);
-    } catch (e: any) {
-      Alert.alert("TEMPORARY DEBUG: Signing Cert SHA-1", `Error: ${e?.message || e}`);
-    }
   };
 
   return (
@@ -253,7 +237,6 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={[s.googleBtn, googleLoading && s.btnDisabled]}
             onPress={handleGoogleLogin}
-            onLongPress={handleShowSigningCertDebug}
             disabled={googleLoading || loading}
           >
             {googleLoading

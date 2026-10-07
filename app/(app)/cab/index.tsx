@@ -202,12 +202,12 @@ const s = StyleSheet.create({
   savedAddr:      { color: COLORS.textMuted, fontSize: 12, marginTop: 1 },
   savedArrow:     { color: COLORS.textMuted, fontSize: 20 },
 
-  pillsScroll:   { marginHorizontal: -20 },
-  pillsContent:  { paddingHorizontal: 20, flexDirection: "row" },
+  pillsScroll:   { flexGrow: 0, flexShrink: 0, marginHorizontal: -20 },
+  pillsContent:  { alignItems: "center", paddingHorizontal: 20, flexDirection: "row" },
   pill: {
     borderRadius: 20, borderWidth: 1.5, borderColor: COLORS.border,
     backgroundColor: COLORS.bgAlt, paddingHorizontal: 16, paddingVertical: 9,
-    marginRight: 8,
+    minHeight: 36, justifyContent: "center", marginRight: 8,
   },
   pillActive:     { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   pillText:       { color: COLORS.textSecondary, fontSize: 13, fontWeight: "600" },

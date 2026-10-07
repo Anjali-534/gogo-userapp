@@ -392,7 +392,7 @@ const mode = params.mode;
             horizontal
             showsHorizontalScrollIndicator={false}
             style={s.savedScroll}
-            contentContainerStyle={{ paddingHorizontal: 2 }}
+            contentContainerStyle={{ alignItems: "center", paddingHorizontal: 2 }}
           >
             {savedPlaces.map(place => (
               <TouchableOpacity
@@ -530,8 +530,8 @@ const s = StyleSheet.create({
   searchBox:  { flex: 1, flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 14, borderWidth: 2, paddingLeft: 14, height: 44, elevation: 4, shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 6 },
   searchInput:{ flex: 1, color: "#111", fontSize: 14, padding: 0 },
 
-  savedScroll:{ marginTop: 8 },
-  savedChip:  { flexDirection: "row", alignItems: "center", gap: 6, marginRight: 8, backgroundColor: "#fff", borderWidth: 1.5, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, elevation: 3, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 4 },
+  savedScroll:{ flexGrow: 0, flexShrink: 0, marginTop: 8 },
+  savedChip:  { minHeight: 36, flexDirection: "row", alignItems: "center", gap: 6, marginRight: 8, backgroundColor: "#fff", borderWidth: 1.5, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, elevation: 3, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 4 },
   savedChipIcon: { fontSize: 14 },
   savedChipText: { fontSize: 12, fontWeight: "700" },
 

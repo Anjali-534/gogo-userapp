@@ -134,13 +134,16 @@ const s = StyleSheet.create({
   sheet: { backgroundColor: "#fff", borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingTop: 10, paddingBottom: 24, maxHeight: "75%" },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: "#DDD", alignSelf: "center", marginBottom: 12 },
   title: { fontSize: 18, fontWeight: "800", color: "#0D0D0D", paddingHorizontal: 20, marginBottom: 14 },
-  dayRow: { flexGrow: 0, marginBottom: 14 },
-  dayRowContent: { paddingHorizontal: 20 },
-  dayChip: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, backgroundColor: "#F8F9FA", borderWidth: 1, borderColor: "#F0F0F0", marginRight: 8 },
+  // flexShrink: 0 — RN ScrollView defaults to flexShrink: 1, so inside the
+  // maxHeight sheet the 48-slot list below squashed this row and clipped the
+  // chip labels. Only the slot list should give up height.
+  dayRow: { flexGrow: 0, flexShrink: 0, marginBottom: 14 },
+  dayRowContent: { alignItems: "center", paddingHorizontal: 20 },
+  dayChip: { minHeight: 36, justifyContent: "center", paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12, backgroundColor: "#F8F9FA", borderWidth: 1, borderColor: "#F0F0F0", marginRight: 8 },
   dayChipActive: { backgroundColor: "#FF6B2B", borderColor: "#FF6B2B" },
   dayChipText: { color: "#6B7280", fontSize: 13, fontWeight: "700" },
   dayChipTextActive: { color: "#fff" },
-  slotScroll: { paddingHorizontal: 20 },
+  slotScroll: { flexShrink: 1, paddingHorizontal: 20 },
   slotGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingBottom: 10 },
   slot: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 10, backgroundColor: "#F8F9FA", borderWidth: 1, borderColor: "#F0F0F0", minWidth: "30%", alignItems: "center" },
   slotActive: { backgroundColor: "#FFF0EC", borderColor: "#FF6B2B" },

@@ -337,14 +337,14 @@ const s = StyleSheet.create({
   routeDivider:     { height: 1, backgroundColor: "#EAEAEA", marginVertical: 2, marginLeft: 22 },
   distanceNote:     { color: "#666", fontSize: 12, marginBottom: 16, marginLeft: 4 },
 
-  groupTabScroll:     { marginBottom: 16, marginHorizontal: -20, paddingHorizontal: 20 },
-  groupTab:           { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: "#E5E5E5", marginRight: 8, backgroundColor: "#F7F7F7" },
+  groupTabScroll:     { flexGrow: 0, flexShrink: 0, marginBottom: 16, marginHorizontal: -20, paddingHorizontal: 20 },
+  groupTab:           { minHeight: 34, justifyContent: "center", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: "#E5E5E5", marginRight: 8, backgroundColor: "#F7F7F7" },
   groupTabActive:     { backgroundColor: "#FF6B2B", borderColor: "#FF6B2B" },
   groupTabText:       { color: "#777", fontSize: 12, fontWeight: "600" },
   groupTabTextActive: { color: "#fff" },
 
   sectionTitle: { color: "#111", fontSize: 16, fontWeight: "700", marginBottom: 12 },
-  serviceScroll: { marginBottom: 20, marginHorizontal: -20, paddingHorizontal: 20 },
+  serviceScroll: { flexGrow: 0, flexShrink: 0, marginBottom: 20, marginHorizontal: -20, paddingHorizontal: 20 },
   serviceCard:       { width: 100, backgroundColor: "#F7F7F7", borderRadius: 14, borderWidth: 1, borderColor: "#ECECEC", padding: 12, alignItems: "center", marginRight: 10 },
   serviceCardActive: { borderColor: "#FF6B2B", backgroundColor: "#FFF3EC" },
   serviceIcon:  { fontSize: 26, marginBottom: 6 },

@@ -1,8 +1,9 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, ActivityIndicator, Image, Animated, Alert, useWindowDimensions,
+  ActivityIndicator, Image, Animated, Alert, useWindowDimensions,
 } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
 import { useRouter, useFocusEffect } from "expo-router";
@@ -32,6 +33,10 @@ const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.u
 // so they stay as plain constants.
 const HERO_TOP_BAND = 32;
 const HERO_BOT_GAP  = 12;
+// The hero is drawn edge-to-edge behind the status bar (SafeAreaView has no
+// top edge). These layouts were tuned assuming a ~24dp status bar inside the
+// hero, so the real top inset replaces that allowance in height + padding.
+const ASSUMED_STATUS_BAR = 24;
 
 // Illustrations are placeholders (assets/illustrations/) — real 3D-style
 // artwork drops in later using these exact filenames, see build report.
@@ -61,7 +66,8 @@ export default function HomeScreen() {
   // why this isn't a module-level Dimensions.get() constant.
   const { width: heroScreenW } = useWindowDimensions();
   const heroImgH = Math.round(heroScreenW * (887 / 1774));
-  const heroH    = HERO_TOP_BAND + heroImgH + HERO_BOT_GAP;
+  const insets   = useSafeAreaInsets();
+  const heroH    = HERO_TOP_BAND + heroImgH + HERO_BOT_GAP - ASSUMED_STATUS_BAR + insets.top;
   const [user,          setUser]          = useState<any>(null);
   const [savedPlaces,   setSavedPlaces]   = useState<any[]>([]);
   const [loadingPlaces, setLoadingPlaces] = useState(false);
@@ -246,10 +252,10 @@ export default function HomeScreen() {
   const greeting  = hour < 12 ? t("home.greeting.morning") : hour < 17 ? t("home.greeting.afternoon") : t("home.greeting.evening");
 
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.safe} edges={["left", "right"]}>
       {/* In-app notification toast */}
       {toast && (
-        <Animated.View style={[s.toast, { transform: [{ translateY: toastAnim }] }]}>
+        <Animated.View style={[s.toast, { paddingTop: insets.top + 52 - ASSUMED_STATUS_BAR, transform: [{ translateY: toastAnim }] }]}>
           <TouchableOpacity
             style={s.toastInner}
             onPress={() => { hideToast(); setUnreadCount(0); router.push("/(app)/notifications"); }}
@@ -296,7 +302,7 @@ export default function HomeScreen() {
             heroContent pattern (text on one side, bell on the other,
             both starting at the same paddingTop) instead of two stacked
             rows with independent offsets. */}
-        <View style={s.heroContent}>
+        <View style={[s.heroContent, { paddingTop: insets.top + 34 - ASSUMED_STATUS_BAR }]}>
           <View style={s.heroTextCol}>
             <Text style={s.greeting}>{greeting}, {firstName} 👋</Text>
             <Text style={s.subGreeting}>{t("home.subGreeting")}</Text>
@@ -489,7 +495,7 @@ const s = StyleSheet.create({
   scroll:         { flex: 1, paddingBottom: 80 },
   contentPad:     { paddingHorizontal: 20 },
 
-  toast:          { position: "absolute", top: 0, left: 0, right: 0, zIndex: 999, paddingHorizontal: 12, paddingTop: 52 },
+  toast:          { position: "absolute", top: 0, left: 0, right: 0, zIndex: 999, paddingHorizontal: 12 },
   toastInner:     { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: COLORS.white, borderRadius: RADIUS.card, padding: 14, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.12, shadowRadius: 12, elevation: 8, borderWidth: 1, borderColor: "#FFE5D9" },
   toastIcon:      { width: 36, height: 36, borderRadius: RADIUS.input, backgroundColor: COLORS.primaryTint, alignItems: "center", justifyContent: "center", flexShrink: 0 },
   toastTitle:     { color: COLORS.textPrimary, fontWeight: "800", fontSize: 13 },
@@ -508,7 +514,7 @@ const s = StyleSheet.create({
   // Greeting + bell in one row, same height, same paddingTop — matching
   // driver-app's heroContent pattern instead of two independently-offset
   // stacked rows.
-  heroContent:    { zIndex: 1, flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", paddingTop: 34, gap: 12 },
+  heroContent:    { zIndex: 1, flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12 },
   heroTextCol:    { flex: 1 },
   // Lightened hero background (was solid brand orange) needs dark text now,
   // not the white that worked on the old saturated gradient.

@@ -1,8 +1,9 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import {
-  View, Text, StyleSheet, SafeAreaView, ScrollView,
+  View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, Image, useWindowDimensions,
 } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -18,6 +19,10 @@ const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.u
 // (1774x887, 2:1), not aspectRatio/percentage sizing.
 const HERO_TOP_BAND = 32;
 const HERO_BOT_GAP  = 12;
+// The hero is drawn edge-to-edge behind the status bar (SafeAreaView has no
+// top edge). These layouts were tuned assuming a ~24dp status bar inside the
+// hero, so the real top inset replaces that allowance in height + padding.
+const ASSUMED_STATUS_BAR = 24;
 
 export default function ProfileScreen() {
   const [user,        setUser]        = useState<any>(null);
@@ -27,7 +32,8 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { width: heroScreenW } = useWindowDimensions();
   const heroImgH = Math.round(heroScreenW * (887 / 1774));
-  const heroH    = HERO_TOP_BAND + heroImgH + HERO_BOT_GAP;
+  const insets   = useSafeAreaInsets();
+  const heroH    = HERO_TOP_BAND + heroImgH + HERO_BOT_GAP - ASSUMED_STATUS_BAR + insets.top;
 
   const fetchUnread = useCallback(async () => {
     try {
@@ -92,7 +98,7 @@ export default function ProfileScreen() {
   ];
 
   return (
-    <SafeAreaView style={[s.safe, { position: "relative" }]}>
+    <SafeAreaView style={[s.safe, { position: "relative" }]} edges={["left", "right"]}>
 
       {/* ── FIXED HEADER — does not scroll ── */}
       {/* Hero — same full-bleed background-image + overlaid-content pattern
@@ -110,7 +116,7 @@ export default function ProfileScreen() {
           style={[s.heroBgImg, { width: heroScreenW, height: heroImgH }]}
           resizeMode="contain"
         />
-        <View style={s.heroContent}>
+        <View style={[s.heroContent, { paddingTop: insets.top + 34 - ASSUMED_STATUS_BAR }]}>
           <View style={{ flex: 1 }}>
             <Text style={s.userName}>{user?.name || "Rider"}</Text>
             <View style={s.ratingRow}>
@@ -226,7 +232,7 @@ const s = StyleSheet.create({
   // is cropped or distorted. Pinned to the hero's bottom edge, behind the
   // name/rating/avatar content.
   heroBgImg:     { position: "absolute", left: 0, bottom: HERO_BOT_GAP, zIndex: 0 },
-  heroContent:   { zIndex: 2, flexDirection: "row", alignItems: "center", paddingTop: 34, paddingBottom: 12 },
+  heroContent:   { zIndex: 2, flexDirection: "row", alignItems: "center", paddingBottom: 12 },
   userName:    { color: COLORS.textPrimary, fontSize: 28, fontWeight: "900" },
   ratingRow:   { marginTop: 6, backgroundColor: COLORS.border, alignSelf: "flex-start", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   ratingText:  { color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },

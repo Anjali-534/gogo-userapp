@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { COLORS, RADIUS } from "@/constants/theme";
@@ -17,7 +18,7 @@ export default function LanguageSwitcherButton() {
 
   return (
     <>
-      <SafeAreaView style={s.overlay} pointerEvents="box-none">
+      <SafeAreaView style={s.overlay} edges={["top", "left", "right"]} pointerEvents="box-none">
         <TouchableOpacity style={s.pill} onPress={() => setOpen(true)} activeOpacity={0.7}>
           <Ionicons name="globe-outline" size={14} color={COLORS.textSecondary} />
           <Text style={s.pillText}>{native}</Text>

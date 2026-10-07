@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Image, TouchableOpacity, Text, StyleSheet, SafeAreaView, ImageSourcePropType } from "react-native";
+import { View, Image, TouchableOpacity, Text, StyleSheet, ImageSourcePropType } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS } from "@/constants/theme";
 import { SNAP } from "./BottomSheet";
@@ -25,7 +26,7 @@ export default function BookingHero({ illustration, onBack }: Props) {
       <View style={[s.illustrationWrap, { height: SNAP.PEEK }]} pointerEvents="none">
         <Image source={illustration} style={s.illustration} resizeMode="contain" />
       </View>
-      <SafeAreaView style={s.topBar} pointerEvents="box-none">
+      <SafeAreaView style={s.topBar} edges={["top", "left", "right"]} pointerEvents="box-none">
         <TouchableOpacity
           style={s.backBtn}
           onPress={onBack}
@@ -49,7 +50,7 @@ const s = StyleSheet.create({
 
   topBar: {
     position: "absolute", top: 0, left: 0, right: 0,
-    paddingHorizontal: 16, paddingTop: 52,
+    paddingHorizontal: 16, paddingTop: 28,
   },
   backBtn: {
     width: 42, height: 42, borderRadius: 21,

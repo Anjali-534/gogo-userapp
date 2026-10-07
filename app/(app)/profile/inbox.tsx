@@ -1,5 +1,6 @@
 ﻿import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -9,7 +10,7 @@ export default function InboxScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.safe} edges={["top", "left", "right"]}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => router.back()} style={s.back} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}><Ionicons name="arrow-back" size={20} color={COLORS.textPrimary} /></TouchableOpacity>
         <Text style={s.title}>{t("profile.inbox.title")}</Text>
@@ -25,7 +26,7 @@ export default function InboxScreen() {
 
 const s = StyleSheet.create({
   safe:       { flex: 1, backgroundColor: COLORS.bg },
-  header:     { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingTop: 36, paddingBottom: 16 },
+  header:     { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16 },
   back:       { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.border, alignItems: "center", justifyContent: "center" },
   title:      { color: COLORS.textPrimary, fontSize: 20, fontWeight: "900" },
   empty:      { flex: 1, alignItems: "center", justifyContent: "center", gap: 12, paddingHorizontal: 40 },

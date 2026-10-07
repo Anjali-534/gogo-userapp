@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  View, Text, StyleSheet, SafeAreaView, ScrollView,
+  View, Text, StyleSheet, ScrollView,
   TouchableOpacity, TextInput, StatusBar, Alert, ActivityIndicator,
   KeyboardAvoidingView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
@@ -102,7 +103,7 @@ export default function NewSupportChatScreen() {
   })).filter(g => g.items.length > 0);
 
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.safe} edges={["top", "left", "right", "bottom"]}>
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
@@ -195,7 +196,7 @@ export default function NewSupportChatScreen() {
 
 const s = StyleSheet.create({
   safe:              { flex: 1, backgroundColor: COLORS.bg },
-  header:            { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingTop: 36, paddingBottom: 16 },
+  header:            { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16 },
   back:              { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.border, alignItems: "center", justifyContent: "center" },
   title:             { fontSize: 20, fontWeight: "900", color: COLORS.textPrimary },
   scroll:            { paddingHorizontal: 20 },

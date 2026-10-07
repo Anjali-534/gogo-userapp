@@ -1,8 +1,8 @@
 ﻿import React, { useEffect, useState } from "react";
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView,
-  ActivityIndicator, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -183,7 +183,7 @@ export default function BookingScreen() {
   };
 
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.safe} edges={["top", "left", "right", "bottom"]}>
       <ScrollView style={s.scroll} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
 
         {/* ── HEADER ── */}

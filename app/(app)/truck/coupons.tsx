@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar,
+  View, Text, StyleSheet, TouchableOpacity, StatusBar,
   ScrollView, TextInput,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -62,7 +63,7 @@ export default function TruckCouponsScreen() {
   };
 
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.safe} edges={["top", "left", "right", "bottom"]}>
       <StatusBar barStyle="dark-content" />
 
       <View style={s.header}>

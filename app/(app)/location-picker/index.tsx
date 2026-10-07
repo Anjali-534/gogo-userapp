@@ -356,7 +356,7 @@ const mode = params.mode;
       </View>
 
       {/* TOP PANEL */}
-      <View style={s.topPanel}>
+      <View style={[s.topPanel, { top: insets.top + 12 }]}>
         {/* Back + Search */}
         <View style={s.headerRow}>
           <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
@@ -524,7 +524,7 @@ const s = StyleSheet.create({
   pinStem:    { width: 3, height: 18, marginTop: -1 },
   pinShadow:  { width: 16, height: 6, borderRadius: 8, marginTop: 2 },
 
-  topPanel:   { position: "absolute", top: Platform.OS === "ios" ? 52 : 36, left: 12, right: 12, zIndex: 10 },
+  topPanel:   { position: "absolute", left: 12, right: 12, zIndex: 10 },
   headerRow:  { flexDirection: "row", alignItems: "center", gap: 8 },
   backBtn:    { width: 44, height: 44, borderRadius: 22, backgroundColor: "#fff", alignItems: "center", justifyContent: "center", elevation: 4, shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 6 },
   searchBox:  { flex: 1, flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 14, borderWidth: 2, paddingLeft: 14, height: 44, elevation: 4, shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 6 },

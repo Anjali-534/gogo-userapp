@@ -186,12 +186,10 @@ export default function CabBookingScreen() {
       </MapView>
 
       {/* Back button over map */}
-      <View style={s.topOverlay} pointerEvents="box-none">
-        <SafeAreaView>
-          <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-            <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
-          </TouchableOpacity>
-        </SafeAreaView>
+      <View style={[s.topOverlay, { paddingTop: insets.top + 8 }]} pointerEvents="box-none">
+        <TouchableOpacity style={s.backBtn} onPress={() => router.back()} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+          <Ionicons name="arrow-back" size={20} color={COLORS.textStrong} />
+        </TouchableOpacity>
       </View>
 
       {/* Collapsible bottom sheet */}
@@ -329,7 +327,7 @@ export default function CabBookingScreen() {
 const s = StyleSheet.create({
   map: { ...StyleSheet.absoluteFillObject },
 
-  topOverlay: { position: "absolute", top: 0, left: 0, right: 0, paddingHorizontal: 16, paddingTop: 8 },
+  topOverlay: { position: "absolute", top: 0, left: 0, right: 0, paddingHorizontal: 16 },
   backBtn: {
     width: 42, height: 42, borderRadius: 21,
     backgroundColor: COLORS.white, alignItems: "center", justifyContent: "center",

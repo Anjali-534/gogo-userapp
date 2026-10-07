@@ -749,7 +749,7 @@ export default function TrackingScreen() {
       )}
 
       {/* Back button */}
-      <TouchableOpacity style={s.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+      <TouchableOpacity style={[s.backBtn, { top: insets.top + 16 }]} onPress={() => router.canGoBack() ? router.back() : router.replace("/(app)/home")} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
         <Ionicons name="arrow-back" size={20} color="#111" />
       </TouchableOpacity>
 
@@ -759,7 +759,7 @@ export default function TrackingScreen() {
           while in overview (tap to snap back to the driver). */}
       {isActiveRide && (
         <TouchableOpacity
-          style={s.mapModeBtn}
+          style={[s.mapModeBtn, { top: insets.top + 16 }]}
           onPress={() => setMapViewMode(m => (m === "follow" ? "overview" : "follow"))}
           hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
         >
@@ -769,7 +769,7 @@ export default function TrackingScreen() {
 
       {/* Nearby driver density overlay — searching screen only */}
       {booking.status === "searching" && (
-        <View style={s.nearbyPill}>
+        <View style={[s.nearbyPill, { top: insets.top + 64 }]}>
           <Text style={s.nearbyPillTxt}>
             {!nearbyTotal ? t("tracking.nearbyLooking") : t("tracking.nearbyDrivers", { count: nearbyTotal })}
           </Text>
@@ -778,7 +778,7 @@ export default function TrackingScreen() {
 
       {/* Distance pill */}
       {driver?.lat && distLabel && !["completed","cancelled"].includes(booking.status) ? (
-        <View style={[s.distPill, { backgroundColor: mapAccent }]}>
+        <View style={[s.distPill, { top: insets.top + 16, backgroundColor: mapAccent }]}>
           <Text style={s.distPillTxt}>{beforePickup ? t("tracking.distToDriver", { dist: distLabel }) : t("tracking.distToDrop", { dist: distLabel })}</Text>
         </View>
       ) : null}
@@ -787,7 +787,7 @@ export default function TrackingScreen() {
           user-app's right-side slot is already taken by mapModeBtn (active-ride
           only), so this sits centered below distPill instead of beside it. */}
       {driver?.lat && !["completed","cancelled"].includes(booking.status) ? (
-        <View style={s.speedPill}>
+        <View style={[s.speedPill, { top: insets.top + 62 }]}>
           <Text style={s.speedPillTxt}>{t("tracking.speedKmh", { speed: Math.round(driver.speed ?? 0) })}</Text>
         </View>
       ) : null}
@@ -1150,14 +1150,14 @@ const s = StyleSheet.create({
   mapErrorBtn:    { borderRadius:10, paddingHorizontal:20, paddingVertical:9 },
   mapErrorBtnText:{ color:"#fff", fontWeight:"800", fontSize:13 },
 
-  backBtn:    { position:"absolute", top:Platform.OS==="ios"?56:40, left:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
-  mapModeBtn: { position:"absolute", top:Platform.OS==="ios"?56:40, right:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
+  backBtn:    { position:"absolute", left:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
+  mapModeBtn: { position:"absolute", right:16, width:42, height:42, borderRadius:21, backgroundColor:"#fff", alignItems:"center", justifyContent:"center", elevation:5 },
   mapModeBtnTxt: { fontSize:19 },
-  distPill:   { position:"absolute", top:Platform.OS==="ios"?56:40, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, elevation:5 },
+  distPill:   { position:"absolute", alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, elevation:5 },
   distPillTxt:{ color:"#fff", fontWeight:"800", fontSize:13 },
-  speedPill:    { position:"absolute", top:Platform.OS==="ios"?102:86, alignSelf:"center", backgroundColor:"#fff", paddingHorizontal:12, paddingVertical:6, borderRadius:16, elevation:4 },
+  speedPill:    { position:"absolute", alignSelf:"center", backgroundColor:"#fff", paddingHorizontal:12, paddingVertical:6, borderRadius:16, elevation:4 },
   speedPillTxt: { color:"#111", fontWeight:"800", fontSize:12 },
-  nearbyPill:   { position:"absolute", top:Platform.OS==="ios"?104:88, alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, backgroundColor:"rgba(17,17,17,0.75)", elevation:5 },
+  nearbyPill:   { position:"absolute", alignSelf:"center", paddingHorizontal:16, paddingVertical:8, borderRadius:20, backgroundColor:"rgba(17,17,17,0.75)", elevation:5 },
   nearbyPillTxt:{ color:"#fff", fontWeight:"700", fontSize:13 },
 
   restorePillWrap: { position:"absolute", bottom:40, left:0, right:0, alignItems:"center" },

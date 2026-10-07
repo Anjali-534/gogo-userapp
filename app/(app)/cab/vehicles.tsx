@@ -376,7 +376,7 @@ export default function CabVehiclesScreen() {
         onRequestClose={() => setInfoSlug(null)}
       >
         <TouchableOpacity style={s.modalOverlay} activeOpacity={1} onPress={() => setInfoSlug(null)}>
-          <TouchableOpacity style={s.modalSheet} activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity style={[s.modalSheet, { paddingBottom: 24 + insets.bottom }]} activeOpacity={1} onPress={() => {}}>
             {infoSlug && VEHICLE_INFO[infoSlug as keyof typeof VEHICLE_INFO] && (() => {
               const info = VEHICLE_INFO[infoSlug as keyof typeof VEHICLE_INFO];
               const disp = VEHICLE_DISPLAY[infoSlug] || { emoji: "🚗" };

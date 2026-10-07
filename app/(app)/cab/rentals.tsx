@@ -336,7 +336,7 @@ export default function RentalsScreen() {
           onPress={() => setInfoSlug(null)}
         >
           <TouchableOpacity
-            style={s.modalSheet}
+            style={[s.modalSheet, { paddingBottom: 24 + insets.bottom }]}
             activeOpacity={1}
             onPress={() => {/* absorb touches */}}
           >

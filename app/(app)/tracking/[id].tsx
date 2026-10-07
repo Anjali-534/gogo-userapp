@@ -1082,7 +1082,7 @@ export default function TrackingScreen() {
           style={s.completionOverlay}
           behavior="padding"
         >
-          <View style={s.completionCard}>
+          <View style={[s.completionCard, { paddingBottom: 44 + insets.bottom }]}>
             <Text style={s.completionEmoji}>🎉</Text>
             <Text style={s.completionTitle}>{t("tracking.completion.title")}</Text>
             <Text style={s.completionSub}>{t("tracking.completion.sub")}</Text>
@@ -1270,7 +1270,7 @@ const s = StyleSheet.create({
 
   // Completion modal
   completionOverlay: { flex:1, backgroundColor:"rgba(0,0,0,0.55)", justifyContent:"flex-end" },
-  completionCard:    { backgroundColor:"#fff", borderTopLeftRadius:28, borderTopRightRadius:28, padding:28, paddingBottom:44, alignItems:"center", maxHeight:"85%" },
+  completionCard:    { backgroundColor:"#fff", borderTopLeftRadius:28, borderTopRightRadius:28, padding:28, alignItems:"center", maxHeight:"85%" },
   completionEmoji:   { fontSize:52, marginBottom:4 },
   completionTitle:   { color:"#111", fontWeight:"900", fontSize:24, textAlign:"center" },
   completionSub:     { color:"#777", fontSize:13, textAlign:"center", marginBottom:16 },

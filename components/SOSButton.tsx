@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Animated, Modal,
   Share, Linking, Alert, ActivityIndicator, ViewStyle,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { urgentPosition } from "@/services/location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -55,6 +56,7 @@ export default function SOSButton({
   bookingId, fallbackLat, fallbackLng, driverName, driverPhone,
   variant = "floating", style,
 }: SOSButtonProps) {
+  const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [alerting, setAlerting] = useState(false);
@@ -180,7 +182,7 @@ export default function SOSButton({
 
       <Modal visible={visible} transparent animationType="slide" onRequestClose={() => setVisible(false)}>
         <View style={s.overlay}>
-          <View style={s.sheet}>
+          <View style={[s.sheet, { paddingBottom: 36 + insets.bottom }]}>
             <Text style={s.sheetTitle}>🚨 Emergency SOS</Text>
             <Text style={s.sheetSub}>Are you in danger? Choose an action:</Text>
 
@@ -226,7 +228,7 @@ const s = StyleSheet.create({
   inlineChevron: { color: "#EF4444", fontSize: 20, fontWeight: "700" },
 
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "flex-end" },
-  sheet: { backgroundColor: "#fff", borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 36 },
+  sheet: { backgroundColor: "#fff", borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24 },
   sheetTitle: { fontSize: 20, fontWeight: "900", color: "#111", marginBottom: 4, textAlign: "center" },
   sheetSub: { fontSize: 13, color: "#6B7280", marginBottom: 20, textAlign: "center" },
   actionBtn: { borderRadius: 14, paddingVertical: 15, alignItems: "center", marginBottom: 10 },

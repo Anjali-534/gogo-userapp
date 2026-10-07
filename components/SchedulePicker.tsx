@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Custom date + time picker for scheduled rides — deliberately built from
 // plain RN primitives (no @react-native-community/datetimepicker) since
@@ -29,6 +30,7 @@ export default function SchedulePicker({ visible, onClose, onConfirm }: Props) {
     [today]
   );
 
+  const insets = useSafeAreaInsets();
   const [selectedDayIdx, setSelectedDayIdx] = useState(0);
   const [selectedSlotMin, setSelectedSlotMin] = useState<number | null>(null);
 
@@ -69,7 +71,7 @@ export default function SchedulePicker({ visible, onClose, onConfirm }: Props) {
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={s.overlay}>
-        <View style={s.sheet}>
+        <View style={[s.sheet, { paddingBottom: 24 + insets.bottom }]}>
           <View style={s.handle} />
           <Text style={s.title}>Schedule your ride</Text>
 
@@ -131,7 +133,7 @@ export default function SchedulePicker({ visible, onClose, onConfirm }: Props) {
 
 const s = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" },
-  sheet: { backgroundColor: "#fff", borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingTop: 10, paddingBottom: 24, maxHeight: "75%" },
+  sheet: { backgroundColor: "#fff", borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingTop: 10, maxHeight: "75%" },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: "#DDD", alignSelf: "center", marginBottom: 12 },
   title: { fontSize: 18, fontWeight: "800", color: "#0D0D0D", paddingHorizontal: 20, marginBottom: 14 },
   // flexShrink: 0 — RN ScrollView defaults to flexShrink: 1, so inside the

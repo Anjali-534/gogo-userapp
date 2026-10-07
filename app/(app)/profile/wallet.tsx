@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert,
   Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Image,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getToken } from "@/services/session";
@@ -43,6 +43,7 @@ async function authHeaders() {
 
 export default function WalletScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [balance, setBalance] = useState(0);
   const [ledger, setLedger] = useState<any[]>([]);
@@ -243,7 +244,7 @@ export default function WalletScreen() {
           style={s.modalBackdrop}
           behavior="padding"
         >
-          <View style={s.modalCard}>
+          <View style={[s.modalCard, { paddingBottom: 34 + insets.bottom }]}>
             <Text style={s.modalTitle}>{t("profile.wallet.addMoneyModalTitle")}</Text>
             <Text style={s.modalLabel}>{t("profile.wallet.addMoneyAmountLabel")}</Text>
             <View style={s.amountInputRow}>
@@ -330,7 +331,7 @@ const s = StyleSheet.create({
   emptySub:     { color: "#999", fontSize: 13, textAlign: "center", lineHeight: 18 },
 
   modalBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
-  modalCard:     { backgroundColor: COLORS.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 34 },
+  modalCard:     { backgroundColor: COLORS.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 },
   modalTitle:    { fontSize: 18, fontWeight: "900", color: COLORS.textPrimary, marginBottom: 16 },
   modalLabel:    { fontSize: 13, fontWeight: "700", color: "#374151", marginBottom: 8 },
   amountInputRow:{ flexDirection: "row", alignItems: "center", backgroundColor: COLORS.bgAlt, borderRadius: RADIUS.card, borderWidth: 1, borderColor: COLORS.borderSubtle, paddingHorizontal: 16 },

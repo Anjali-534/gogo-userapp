@@ -8,6 +8,7 @@ import * as SplashScreen from "expo-splash-screen";
 import * as Updates from "expo-updates";
 import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { I18nextProvider } from "react-i18next";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { trackUserInteraction } from "@/services/analytics";
@@ -33,6 +34,27 @@ async function fetchNewUpdate(): Promise<boolean> {
   if (!check.isAvailable) return false;
   const result = await Updates.fetchUpdateAsync();
   return result.isNew;
+}
+
+const API = process.env.EXPO_PUBLIC_API_URL || "https://gogobackend-production.up.railway.app";
+const ACTIVE_STATUSES = ["searching", "accepted", "arriving", "in_progress"];
+
+// A foreground reload must never pull a rider off the tracking screen — the
+// fetched update then applies on the next launch instead. Same lookup as
+// Home's fetchActiveBooking. Any failure counts as "active".
+async function hasActiveRide(): Promise<boolean> {
+  try {
+    const token = await getToken();
+    if (!token) return false;
+    const res = await axios.get(`${API}/gogoo/rider/bookings`, {
+      headers: { Authorization: `Bearer ${token}` },
+      timeout: 5000,
+    });
+    const bookings = Array.isArray(res.data) ? res.data : [];
+    return bookings.some((b: any) => ACTIVE_STATUSES.includes(b.status));
+  } catch {
+    return true;
+  }
 }
 
 // Handles https://<backend>/r/<code> (path-based, from the referral
@@ -116,6 +138,7 @@ export default function RootLayout() {
       lastCheck = Date.now();
       try {
         if (!(await fetchNewUpdate())) return;
+        if (await hasActiveRide()) return;
         await Updates.reloadAsync();
       } catch {}
     });

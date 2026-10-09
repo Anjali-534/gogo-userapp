@@ -5,6 +5,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Linking from "expo-linking";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
+import * as Updates from "expo-updates";
+import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nextProvider } from "react-i18next";
 import { ErrorBoundary } from "../components/ErrorBoundary";
@@ -16,6 +18,22 @@ import i18n, { initI18n } from "@/i18n";
 // the persisted/device language is ready — see initI18n's own comment for
 // why this must finish before the first render, not just before paint.
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+// Native config is checkOnLaunch ALWAYS + launchWaitMs 0: the launch check
+// downloads a new OTA in the background but keeps running the old bundle,
+// and it only applies on a later *cold* start — Android usually resumes the
+// existing process instead, which is why an update took 2-3 restarts. This
+// fetches and applies it in the same session. Failures are always silent.
+const UPDATE_LAUNCH_TIMEOUT_MS = 5000;
+const UPDATE_FOREGROUND_THROTTLE_MS = 10 * 60 * 1000;
+
+async function fetchNewUpdate(): Promise<boolean> {
+  if (__DEV__ || !Updates.isEnabled) return false;
+  const check = await Updates.checkForUpdateAsync();
+  if (!check.isAvailable) return false;
+  const result = await Updates.fetchUpdateAsync();
+  return result.isNew;
+}
 
 // Handles https://<backend>/r/<code> (path-based, from the referral
 // landing page's universal link) and gogoo://referral?code=<code>
@@ -56,14 +74,52 @@ function handleNotificationTap(
 export default function RootLayout() {
   const router = useRouter();
   const [i18nReady, setI18nReady] = useState(false);
+  const [updateCheckDone, setUpdateCheckDone] = useState(false);
 
   useEffect(() => {
     initI18n()
       .catch(() => {}) // falls back to English inside initI18n itself
+      .finally(() => setI18nReady(true));
+  }, []);
+
+  useEffect(() => {
+    if (i18nReady && updateCheckDone) SplashScreen.hideAsync().catch(() => {});
+  }, [i18nReady, updateCheckDone]);
+
+  // Launch: hold the splash while checking, but never longer than
+  // UPDATE_LAUNCH_TIMEOUT_MS — past that the app starts on the current
+  // bundle and a late download applies on the next launch.
+  useEffect(() => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      setUpdateCheckDone(true);
+    };
+    const timer = setTimeout(finish, UPDATE_LAUNCH_TIMEOUT_MS);
+    fetchNewUpdate()
+      .then((isNew) => {
+        if (isNew && !done) return Updates.reloadAsync();
+      })
+      .catch(() => {})
       .finally(() => {
-        setI18nReady(true);
-        SplashScreen.hideAsync().catch(() => {});
+        clearTimeout(timer);
+        finish();
       });
+  }, []);
+
+  // Foreground: re-check at most once per UPDATE_FOREGROUND_THROTTLE_MS.
+  useEffect(() => {
+    let lastCheck = Date.now(); // the launch check above counts
+    const sub = AppState.addEventListener("change", async (state) => {
+      if (state !== "active" || Date.now() - lastCheck < UPDATE_FOREGROUND_THROTTLE_MS) return;
+      lastCheck = Date.now();
+      try {
+        if (!(await fetchNewUpdate())) return;
+        await Updates.reloadAsync();
+      } catch {}
+    });
+    return () => sub.remove();
   }, []);
 
   useEffect(() => {
@@ -99,7 +155,7 @@ export default function RootLayout() {
     }
   }, [router]);
 
-  if (!i18nReady) return null; // splash screen is still held at this point
+  if (!i18nReady || !updateCheckDone) return null; // splash screen is still held at this point
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }} onTouchStart={trackUserInteraction}>
